@@ -47,3 +47,4 @@ File extension,Name
 .java,dot java
 .class,dot class
 .log,dot log
+.devcontainer,dot devcontainer

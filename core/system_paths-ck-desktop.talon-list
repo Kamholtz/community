@@ -1,0 +1,17 @@
+list: user.system_paths
+hostname: ck-desktop
+-
+user: C:\Users\carlk
+desktop: C:\Users\carlk\OneDrive\Desktop
+desk: C:\Users\carlk\Desktop
+documents: C:\Users\carlk\OneDrive\Documents
+docks: C:\Users\carlk\Documents
+downloads: C:\Users\carlk\Downloads
+music: C:\Users\carlk\Music
+pictures: C:\Users\carlk\OneDrive\Pictures
+videos: C:\Users\carlk\Videos
+talon home: C:\Users\carlk\AppData\Roaming\talon
+talon recordings: C:\Users\carlk\AppData\Roaming\talon\recordings
+talon user: C:\Users\carlk\AppData\Roaming\talon\user
+profile: C:\Users\carlk
+one drive: C:\Users\carlk\OneDrive
