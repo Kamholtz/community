@@ -73,7 +73,7 @@ symbols = [
     Symbol("_", None, ["down score", "underscore"]),
     Symbol("(", ["paren", "L paren", "left paren"], None),
     Symbol(")", ["R paren", "right paren", "raren"], None),
-    Symbol("[", None,["brack", "L brack", "bracket", "L bracket", "left bracket", "square", "L square", "left square", "lack"],),
+    Symbol("[", None,["lack", "L brack", "bracket", "L bracket", "left bracket", "square", "L square", "left square", "lack"],),
     Symbol("]", None, ["R brack", "R bracket", "right bracket", "R square", "right square", "rack"]),
     Symbol("/", ["forward slash"], ["slash"]),
     Symbol("\\", None, ["backslash"]),
