@@ -37,6 +37,7 @@ class Symbol:
         self.character = character
 
         if command_and_dictation_forms:
+        if command_and_dictation_forms:
             self.command_and_dictation_forms = (
                 [command_and_dictation_forms]
                 if isinstance(command_and_dictation_forms, str)
@@ -78,7 +79,7 @@ symbols = [
     Symbol("/", ["forward slash"], ["slash"]),
     Symbol("\\", None, ["backslash"]),
     Symbol("{", None, ["brace", "L brace", "left brace", "curly bracket", "left curly bracket"],),
-    Symbol("}", None, ["R brace", "right brace","R curly bracket", "right curly bracket"]),
+    Symbol("}", None, ["R brace", "right brace","R curly bracket", "right curly bracket", "rurly"]),
     Symbol("<", None, ["angle", "L Angle", "left angle", "less than"]),
     Symbol(">", None, ["rangle", "R angle", "right angle", "greater than"]),
     Symbol("^", None, ["caret"]),
