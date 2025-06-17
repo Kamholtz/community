@@ -37,7 +37,6 @@ class Symbol:
         self.character = character
 
         if command_and_dictation_forms:
-        if command_and_dictation_forms:
             self.command_and_dictation_forms = (
                 [command_and_dictation_forms]
                 if isinstance(command_and_dictation_forms, str)
