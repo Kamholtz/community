@@ -1,0 +1,40 @@
+app: /WezTerm/i
+os: windows
+
+---
+
+# Tabs
+tab next:                 key(ctrl-tab)
+tab last:                 key(ctrl-shift-tab)
+new tab:                  key(ctrl-shift-t)
+close tab:                key(ctrl-shift-w)
+tab one:                  key(ctrl-1)
+tab two:                  key(ctrl-2)
+tab three:                key(ctrl-3)
+tab four:                 key(ctrl-4)
+tab five:                 key(ctrl-5)
+
+# Panes (adjust these if you have custom bindings in wezterm.lua)
+split right:              key(ctrl-shift-%)          # Often ctrl-shift-% is vertical split
+split down:               key(ctrl-shift-quote)      # Horizontal split
+
+pane left:                key(ctrl-shift-left)
+pane right:               key(ctrl-shift-right)
+pane up:                  key(ctrl-shift-up)
+pane down:                key(ctrl-shift-down)
+pane close:               key(ctrl-shift-w)
+
+# Command palette or launcher (customize if needed)
+command palette:          key(ctrl-shift-p)
+
+# Reverse history search (FZF-style)
+reverse search:           key(ctrl-r)
+
+# Git quick commands
+git status:               insert("git status\n")
+git commit:               insert("git commit -m \"\"") key(left)
+git pull:                 insert("git pull\n")
+git push:                 insert("git push\n")
+
+# Run command via dictation (requires user.text command below)
+say command <user.text>:  insert("{text}") key(enter)
