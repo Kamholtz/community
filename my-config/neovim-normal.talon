@@ -66,7 +66,7 @@ please:
 go to def:
     insert("gd")
 
-find refs:
+find (refs|references):
     insert(" lr")
 
 find file:

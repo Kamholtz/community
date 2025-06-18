@@ -3,6 +3,10 @@ os: windows
 
 ---
 
+# Need to enable the terminal and git tags to make use of the talent community git application config
+tag(): terminal
+tag(): user.git
+
 # Tabs
 tab next:                 key(ctrl-tab)
 tab last:                 key(ctrl-shift-tab)
