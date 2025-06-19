@@ -89,3 +89,21 @@ show sig:
 
 # G status:
 #     insert(":G\n")
+
+# "drink <TARGET>": Inserts a new line above the target line, and moves the cursor to the newly created line
+drink line:
+    insert("O")
+    key("escape")
+# "pour <TARGET>": Inserts a new line below the target line, and moves the cursor to the newly created line
+pour line:
+    insert("s")
+    key("escape")
+# "drop <TARGET>": Inserts an empty line above the target line (without moving the cursor)
+drop line:
+    insert("[ ")
+# "float <TARGET>": Inserts an empty line below the target line (without moving the cursor)
+float line:
+    insert("] ")
+# "puff <TARGET>": Inserts empty lines/spaces around the target (without moving the cursor)
+puff line:
+    insert("[ ] ")

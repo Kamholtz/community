@@ -1,13 +1,4 @@
-app: neovim_in_wezterm
+tag: user.vim_mode_insert
+tag: user.vim_mode_normal
+-
 
-insert:
-    key i
-
-vim normal:
-    key escape
-
-save file:
-    key escape
-    key colon
-    insert "w"
-    key enter
