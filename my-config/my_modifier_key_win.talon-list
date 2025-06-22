@@ -1,0 +1,18 @@
+list: user.modifier_key
+os: windows
+os: linux
+-
+# alt
+alt: alt
+alter: alt
+option: alt
+# ctrl
+control: ctrl
+troll: ctrl
+command: ctrl
+# shift
+shift: shift
+sky: shift
+# super is the windows key
+super: super
+win: super

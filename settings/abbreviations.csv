@@ -265,6 +265,7 @@ opt,option
 opts,options
 orig,original
 oob,out of bounds
+proj,project
 pkgbuild,package build
 pkg,package
 pkgs,packages

@@ -1,0 +1,16 @@
+list: user.system_paths
+hostname: pop-os
+-
+user: /home/carl
+desktop: /home/carl/Desktop
+desk: /home/carl/Desktop
+documents: /home/carl/Documents
+docks: /home/carl/Documents
+downloads: /home/carl/Downloads
+music: /home/carl/Music
+pictures: /home/carl/Pictures
+videos: /home/carl/Videos
+talon home: /home/carl/.talon
+talon recordings: /home/carl/.talon/recordings
+talon user: /home/carl/.talon/user
+home: /home/carl

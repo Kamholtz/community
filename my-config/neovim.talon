@@ -49,6 +49,9 @@ G commit refactor:
 G commit format:
     user.vim_run_normal_np(":GitCommitFormat\n")
 
+G verbose commit:
+    user.vim_run_normal_np(":GitVerboseCommit\n")
+
 fugitive (close|hide|kill):
     user.vim_run_normal_np(":CloseFugitive\n")
 
@@ -126,3 +129,9 @@ push <user.key_unmodified>:
 push it:
     key('end')
     edit.paste()
+
+source file:
+    user.vim_run_normal_np(":source %")
+
+save file:
+    user.vim_run_normal_np(":w\n")

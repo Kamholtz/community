@@ -14,6 +14,7 @@
 
 - [ ] remap pascal formatter - can't find it in formatters list anymore
 - [ ] find where talon hud went
+Neovim command for sourcing a lua file
 
 ## Howto
 
@@ -61,7 +62,7 @@ command mode: "dot pie" => .py
 
 Words that are used in dictation mode
 
-vocabulary.talon-list 
+vocabulary.talon-list
 
 [commands for editing vocabulary](https://github.com/talonhub/community/blob/main/core/vocabulary/edit_vocabulary.talon)
 
