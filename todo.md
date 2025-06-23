@@ -101,3 +101,8 @@ redirect that:
     "!! 2>&1 | tee -a ~/output.txt && echo `history 1` | cut -d' ' -f2- >> ~/output.txt"
         key(enter)
         ~~~
+
+
+## dictation mouse command
+ 
+ https://github.com/talonhub/community/blob/main/core/modes/dictation_mode.talon
