@@ -86,3 +86,18 @@ cursorless-settings\actions.csv
 
 take < > past end of line
 take < > past start of line
+
+
+Terminal workflow
+ 
+from slack
+
+If you use VSCode's terminal, you can compose your commands in a regular vscode tab, then say "bring line red bat" from within the terminal and have it appear. (There won't be hats on anything in the terminal itself ... so if I want to e.g. use the output of a command, I'll pipe it to a output.txt file that I then always have open in a tab) (edited) 
+1:20
+Here's my horribly hacky talon command for that:
+1:20
+~~~
+redirect that:
+    "!! 2>&1 | tee -a ~/output.txt && echo `history 1` | cut -d' ' -f2- >> ~/output.txt"
+        key(enter)
+        ~~~
