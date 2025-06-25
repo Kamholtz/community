@@ -2,6 +2,7 @@ tag: user.vim_mode_insert
 tag: user.vim_mode_normal
 -
 
+tag(): user.cursorless
 
 (dup | duplicate) line:
     user.vim_run_normal_np("yy")
@@ -49,8 +50,20 @@ G commit refactor:
 G commit format:
     user.vim_run_normal_np(":GitCommitFormat\n")
 
-G verbose commit:
-    user.vim_run_normal_np(":GitVerboseCommit\n")
+G verbose commit (feature|feat):
+    user.vim_run_normal_np(":GitVerboseCommit feat\n")
+
+G verbose commit fix:
+    user.vim_run_normal_np(":GitVerboseCommit fix\n")
+
+G verbose commit refactor:
+    user.vim_run_normal_np(":GitVerboseCommit refactor\n")
+
+G verbose commit wip:
+    user.vim_run_normal_np(":GitVerboseCommit wip\n")
+
+G verbose commit format:
+    user.vim_run_normal_np(":GitVerboseCommit format\n")
 
 fugitive (close|hide|kill):
     user.vim_run_normal_np(":CloseFugitive\n")
@@ -60,6 +73,9 @@ tab close:
 
 tab new:
     user.vim_run_normal_np(":tabnew\n")
+
+WriteReportTemp:
+    user.vim_run_normal_np(":WriteReportTemp\n")
 
 copy git branch:
     user.vim_run_normal_np(" cgb")
