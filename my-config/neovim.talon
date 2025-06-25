@@ -84,14 +84,17 @@ copy git branch:
 # ^please [<user.text>]$: user.command_search(user.text or "")
     # user.vim_run_normal_np(":lua Snacks.picker.commands({pattern='hi'})\n")
 
-go to def:
+definition show:
     user.vim_run_normal_np("gd")
 
-find (refs|references):
+(ref|references|reference) find:
     user.vim_run_normal_np(" lr")
 
-find file:
+file hunt:
     user.vim_run_normal_np(" ff")
+
+symbol hunt:
+    user.vim_run_normal_np(" lo")
 
 niff:
     user.vim_run_normal_np("]c")
@@ -111,23 +114,23 @@ show sig:
 # G status:
 #     user.vim_run_normal_np(":G\n")
 
-# "drink <TARGET>": Inserts a new line above the target line, and moves the cursor to the newly created line
-drink line:
-    user.vim_run_normal_np("O")
-    key("escape")
-# "pour <TARGET>": Inserts a new line below the target line, and moves the cursor to the newly created line
-pour line:
-    user.vim_run_normal_np("s")
-    key("escape")
-# "drop <TARGET>": Inserts an empty line above the target line (without moving the cursor)
-drop line:
-    user.vim_run_normal_np("[ ")
-# "float <TARGET>": Inserts an empty line below the target line (without moving the cursor)
-float line:
-    user.vim_run_normal_np("] ")
-# "puff <TARGET>": Inserts empty lines/spaces around the target (without moving the cursor)
-puff line:
-    user.vim_run_normal_np("[ ] ")
+# # "drink <TARGET>": Inserts a new line above the target line, and moves the cursor to the newly created line
+# drink line:
+#     user.vim_run_normal_np("O")
+#     key("escape")
+# # "pour <TARGET>": Inserts a new line below the target line, and moves the cursor to the newly created line
+# pour line:
+#     user.vim_run_normal_np("s")
+#     key("escape")
+# # "drop <TARGET>": Inserts an empty line above the target line (without moving the cursor)
+# drop line:
+#     user.vim_run_normal_np("[ ")
+# # "float <TARGET>": Inserts an empty line below the target line (without moving the cursor)
+# float line:
+#     user.vim_run_normal_np("] ")
+# # "puff <TARGET>": Inserts empty lines/spaces around the target (without moving the cursor)
+# puff line:
+#     user.vim_run_normal_np("[ ] ")
 
 (dup | duplicate) line:
     user.vim_run_normal_np("yyp")
