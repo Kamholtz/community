@@ -80,12 +80,20 @@ WriteReportTemp:
 copy git branch:
     user.vim_run_normal_np(" cgb")
 
+(win|window) only:
+    user.vim_run_normal_np(":only\n")
+
+    
+
 # TODO: Figure out how to show the command picker synchronously
 # ^please [<user.text>]$: user.command_search(user.text or "")
     # user.vim_run_normal_np(":lua Snacks.picker.commands({pattern='hi'})\n")
 
-definition show:
+(definition|def) show:
     user.vim_run_normal_np("gd")
+
+(definition|def) split:
+    user.vim_run_normal_np(":norm ]\n")
 
 (ref|references|reference) find:
     user.vim_run_normal_np(" lr")
@@ -96,19 +104,13 @@ file hunt:
 symbol hunt:
     user.vim_run_normal_np(" lo")
 
-niff:
+(niff|next change):
     user.vim_run_normal_np("]c")
 
-next change:
-    user.vim_run_normal_np("]c")
-
-piff:
+(piff|prev change):
     user.vim_run_normal_np("[c")
 
-prev change:
-    user.vim_run_normal_np("[c")
-
-show sig:
+sig show:
     user.vim_run_normal_np(" lh")
 
 # G status:
