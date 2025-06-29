@@ -1,7 +1,12 @@
-from talon import Context, Module, actions, app
+from talon import Context, Module, actions, app, ui
 
 ctx = Context()
 mod = Module()
+
+
+mod.tag("firefox_chatgpt", desc="Tag for Firefox windows with ChatGPT open")
+
+
 apps = mod.apps
 apps.firefox = "app.name: Firefox"
 apps.firefox = "app.name: Firefox Developer Edition"
@@ -59,3 +64,41 @@ class BrowserActions:
 
     def go_home():
         actions.key("alt-home")
+
+
+def update_firefox_tag(app_obj, window):
+    print(window.title())
+    if window and "ChatGPT" in window.title():
+        ctx.tags = ["firefox_chatgpt"]
+    else:
+        ctx.tags = []
+
+
+def win_event_handler(window):
+    global cached_path
+
+    print("win_event_handler: window.title=" + window.title)
+    if window and "ChatGPT" in window.title:
+        print("adding tag firefox_chatgpt")
+        ctx.tags = ["firefox_chatgpt"]
+    else:
+        print("removing tag firefox_chatgpt")
+        ctx.tags = []
+
+    # on windows, we get events from the clock
+    # and such, so this check is important
+    if not window.app.exe or window != ui.active_window():
+        return
+
+
+def register_events():
+    print("register_events")
+    ui.register("win_title", win_event_handler)
+    ui.register("win_focus", win_event_handler)
+
+
+print("refresh...")
+
+# Register app and window focus hooks
+app.register("ready", register_events)
+# app.register("win_focus", update_firefox_tag)
