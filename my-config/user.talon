@@ -16,8 +16,13 @@ yep:
 (fine|end|one|a  ad) list phrase: on_phrase.analyze_phrase
 (phrase view): user.analyze_phrase()
 
-right desk: key(ctrl-super-right)
-left desk: key(ctrl-super-left)
+(right|R) desk: key(ctrl-super-right)
+desk (right|R): key(ctrl-super-right)
+resk: key(ctrl-super-right)
+
+(left|L) desk: key(ctrl-super-left)
+desk (left|L): key(ctrl-super-left)
+lesk: key(ctrl-super-left)
 
 # Command to open Talon user directory in VSCode
 open talon config:

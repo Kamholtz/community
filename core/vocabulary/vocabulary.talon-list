@@ -23,4 +23,7 @@ witch: which
 eventref
 proj
 Lua
-
+pyenv
+grep
+Neovide
+Jupyter
