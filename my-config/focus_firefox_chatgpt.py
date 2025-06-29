@@ -10,7 +10,8 @@ class Actions:
         for window in ui.windows():
             if (
                 window.app
-                and "firefox" in window.app.name.lower()
+                and ( "firefox" in window.app.name.lower() or "edge" in
+                     window.app.name.lower())
                 and "ChatGPT" in window.title
             ):
                 window.focus()
