@@ -288,3 +288,15 @@ cell run: user.vscode("notebook.cell.execute")
 
 install local: user.vscode("workbench.extensions.action.installVSIX")
 preview markdown: user.vscode("markdown.showPreview")
+
+# NOTE: https://github.com/pokey/pokey_talon/blob/0acbc5cc6deac4f9cef4276a4ce0b7571c9770fb/apps/vscode/vscode.talon#L554
+commode:
+    user.vscode_and_wait("vscode-neovim.enable")
+    user.vscode("vscode-neovim.escape")
+    sleep(25ms)
+
+# NOTE: https://github.com/pokey/pokey_talon/blob/0acbc5cc6deac4f9cef4276a4ce0b7571c9770fb/apps/vscode/vscode.talon#L554
+voice mode:
+    user.vscode_and_wait("vscode-neovim.disable")
+    key(i)
+    sleep(25ms)
