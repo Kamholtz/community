@@ -36,10 +36,13 @@ reverse search:           key(ctrl-r)
 
 # Git quick commands
 git status:               insert("git status\n")
-git commit:               insert("git commit -m \"\"") key(left)
+git commit:
+    insert("git commit -m ''")
+    key(left)
 git pull:                 insert("git pull\n")
 git push:                 insert("git push\n")
 git clone:                insert("git clone ")
 
 # Run command via dictation (requires user.text command below)
-say command <user.text>:  insert("{text}") key(enter)
+say command <user.text>:
+    insert("{text}") key(enter)
