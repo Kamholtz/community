@@ -1,8 +1,8 @@
 # Example Talon file
 settings():
     imgui.scale = 3
-    speech.timeout = 0.5
-    subtitles_show = true
+    speech.timeout = 0.6
+    # subtitles_show = true
     user.subtitles_color = "ffffaa"
 
 tag(): user.cursorless_use_community_snippets
@@ -13,8 +13,8 @@ nope:
 yep:
     edit.redo()
 
-(fine|end|one|a  ad) list phrase: on_phrase.analyze_phrase
-(phrase view): user.analyze_phrase()
+# list phrase: on_phrase.analyze_phrase
+# (phrase view): user.analyze_phrase()
 
 (right|R) desk: key(ctrl-super-right)
 desk (right|R): key(ctrl-super-right)
