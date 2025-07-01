@@ -22,8 +22,12 @@ Roboflow
 witch: which
 eventref
 proj
-Lua
+lua
 pyenv
 grep
-Neovide
+neovide
 Jupyter
+mmsegmentation
+mmdetection
+mmpose
+mmengine
