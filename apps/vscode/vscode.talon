@@ -300,3 +300,6 @@ voice mode:
     user.vscode_and_wait("vscode-neovim.disable")
     key(i)
     sleep(25ms)
+
+
+# TODO: Go up and down the callstack
