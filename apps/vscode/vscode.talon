@@ -302,4 +302,21 @@ voice mode:
     sleep(25ms)
 
 
+tab pin: 
+    user.vscode_and_wait("workbench.action.pinEditor")
+
 # TODO: Go up and down the callstack
+
+# Taken from pokey config
+disk ugly: user.vscode("workbench.action.files.saveWithoutFormatting")
+disk:
+    edit.save()
+    sleep(150ms)
+    user.vscode("hideSuggestWidget")
+disclose:
+    key(esc:5)
+    edit.save()
+    sleep(150ms)
+    key(cmd-w)
+disk gentle: edit.save()
+
