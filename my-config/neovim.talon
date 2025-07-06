@@ -11,6 +11,9 @@ tag(): user.cursorless
 change word:
     user.vim_run_normal_np("ciw")
 
+change (nibble|inner word):
+    user.vim_run_normal_np("civ")
+
 change para:
     user.vim_run_normal_np("cip")
 
@@ -83,9 +86,6 @@ copy git branch:
 (win|window) only:
     user.vim_run_normal_np(":only\n")
 
-^please [<user.text>]$:
-    user.vim_search_commands(user.text or "")
-
 (definition|def) show:
     user.vim_run_normal_np("gd")
 
@@ -95,8 +95,20 @@ copy git branch:
 (ref|references|reference) find:
     user.vim_run_normal_np(" lr")
 
-# file hunt:
-#     user.vim_run_normal_np(" ff")
+
+# =====================================
+# Please commands
+# =====================================
+
+^please (pace | paste)$:
+    user.vim_search_commands_clipboard()
+
+^please [<user.text>]$:
+    user.vim_search_commands(user.text or "")
+
+# =====================================
+# Hunt commands
+# =====================================
 
 file hunt (pace | paste):
     user.vim_search_files_clipboard()
@@ -104,8 +116,129 @@ file hunt (pace | paste):
 file hunt [<user.text>]:
     user.vim_search_files(user.text or "")
 
-symbol hunt:
-    user.vim_run_normal_np(" lo")
+recent hunt (pace | paste):
+    user.vim_search_recent_clipboard()
+
+recent hunt [<user.text>]:
+    user.vim_search_recent(user.text or "")
+
+buffers hunt (pace | paste):
+    user.vim_search_buffers_clipboard()
+
+buffers hunt [<user.text>]:
+    user.vim_search_buffers(user.text or "")
+
+undo hunt (pace | paste):
+    user.vim_search_undo_clipboard()
+
+undo hunt [<user.text>]:
+    user.vim_search_undo(user.text or "")
+
+marks hunt (pace | paste):
+    user.vim_search_marks_clipboard()
+
+marks hunt [<user.text>]:
+    user.vim_search_marks(user.text or "")
+
+command history hunt (pace | paste):
+    user.vim_search_command_history_clipboard()
+
+command history hunt [<user.text>]:
+    user.vim_search_command_history(user.text or "")
+
+search history hunt (pace | paste):
+    user.vim_search_search_history_clipboard()
+
+search history hunt [<user.text>]:
+    user.vim_search_search_history(user.text or "")
+
+grep hunt (pace | paste):
+    user.vim_search_grep_clipboard()
+
+grep hunt [<user.text>]:
+    user.vim_search_grep(user.text or "")
+
+grep word hunt (pace | paste):
+    user.vim_search_grep_word_clipboard()
+
+grep word hunt [<user.text>]:
+    user.vim_search_grep_word(user.text or "")
+
+lines hunt (pace | paste):
+    user.vim_search_lines_clipboard()
+
+lines hunt [<user.text>]:
+    user.vim_search_lines(user.text or "")
+
+diagnostics hunt (pace | paste):
+    user.vim_search_diagnostics_clipboard()
+
+diagnostics hunt [<user.text>]:
+    user.vim_search_diagnostics(user.text or "")
+
+help hunt (pace | paste):
+    user.vim_search_help_clipboard()
+
+help hunt [<user.text>]:
+    user.vim_search_help(user.text or "")
+
+jumps hunt (pace | paste):
+    user.vim_search_jumps_clipboard()
+
+jumps hunt [<user.text>]:
+    user.vim_search_jumps(user.text or "")
+
+loclist hunt (pace | paste):
+    user.vim_search_loclist_clipboard()
+
+loclist hunt [<user.text>]:
+    user.vim_search_loclist(user.text or "")
+
+resume hunt (pace | paste):
+    user.vim_search_resume_clipboard()
+
+resume hunt [<user.text>]:
+    user.vim_search_resume(user.text or "")
+
+quickfix hunt (pace | paste):
+    user.vim_search_qf_list_clipboard()
+
+quickfix hunt [<user.text>]:
+    user.vim_search_qf_list(user.text or "")
+
+definitions hunt (pace | paste):
+    user.vim_search_lsp_definitions_clipboard()
+
+definitions hunt [<user.text>]:
+    user.vim_search_lsp_definitions(user.text or "")
+
+references hunt (pace | paste):
+    user.vim_search_lsp_references_clipboard()
+
+references hunt [<user.text>]:
+    user.vim_search_lsp_references(user.text or "")
+
+implementations hunt (pace | paste):
+    user.vim_search_lsp_implementations_clipboard()
+
+implementations hunt [<user.text>]:
+    user.vim_search_lsp_implementations(user.text or "")
+
+type definitions hunt (pace | paste):
+    user.vim_search_lsp_type_definitions_clipboard()
+
+type definitions hunt [<user.text>]:
+    user.vim_search_lsp_type_definitions(user.text or "")
+
+symbols hunt (pace | paste):
+    user.vim_search_lsp_symbols_clipboard()
+
+symbols hunt [<user.text>]:
+    user.vim_search_lsp_symbols(user.text or "")
+
+# =====================================
+# Next/previous commands
+# =====================================
 
 (niff|next change):
     user.vim_run_normal_np("]c")
@@ -115,6 +248,11 @@ symbol hunt:
 
 sig show:
     user.vim_run_normal_np(" lh")
+
+
+# =====================================
+# Cusorless line commands
+# =====================================
 
 # G status:
 #     user.vim_run_normal_np(":G\n")
@@ -159,3 +297,6 @@ source file:
 
 (disk|save file):
     user.vim_run_normal_np(":w\n")
+
+nope:
+    user.vim_run_normal_np("u")
