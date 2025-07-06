@@ -32,3 +32,4 @@ mmdetection
 mmpose
 mmengine
 nix
+treesitter
