@@ -34,8 +34,8 @@ G stage:
 
 G stage file:
     user.vim_run_normal_np(" hS")
-
-G commit feature:
+#
+# G commit feature:
     user.vim_run_normal_np(":GitCommitFeat\n")
 
 G commit wip:
@@ -83,11 +83,8 @@ copy git branch:
 (win|window) only:
     user.vim_run_normal_np(":only\n")
 
-    
-
-# TODO: Figure out how to show the command picker synchronously
-# ^please [<user.text>]$: user.command_search(user.text or "")
-    # user.vim_run_normal_np(":lua Snacks.picker.commands({pattern='hi'})\n")
+^please [<user.text>]$:
+    user.vim_search_commands(user.text or "")
 
 (definition|def) show:
     user.vim_run_normal_np("gd")
@@ -98,8 +95,14 @@ copy git branch:
 (ref|references|reference) find:
     user.vim_run_normal_np(" lr")
 
-file hunt:
-    user.vim_run_normal_np(" ff")
+# file hunt:
+#     user.vim_run_normal_np(" ff")
+
+file hunt (pace | paste):
+    user.vim_search_files_clipboard()
+
+file hunt [<user.text>]:
+    user.vim_search_files(user.text or "")
 
 symbol hunt:
     user.vim_run_normal_np(" lo")
@@ -154,5 +157,5 @@ push it:
 source file:
     user.vim_run_normal_np(":source %")
 
-save file:
+(disk|save file):
     user.vim_run_normal_np(":w\n")
