@@ -33,3 +33,5 @@ mmpose
 mmengine
 nix
 treesitter
+jq
+brows:browse
