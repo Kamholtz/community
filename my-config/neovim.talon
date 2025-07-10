@@ -77,20 +77,30 @@ tab close:
 tab new:
     user.vim_run_normal_np(":tabnew\n")
 
+tab only:
+    user.vim_run_normal_np(":tabonly\n")
+
+(win|window) only:
+    user.vim_run_normal_np(":only\n")
+
 WriteReportTemp:
     user.vim_run_normal_np(":WriteReportTemp\n")
 
 copy git branch:
     user.vim_run_normal_np(" cgb")
 
-(win|window) only:
-    user.vim_run_normal_np(":only\n")
-
 (definition|def) show:
     user.vim_run_normal_np("gd")
 
+(quick|quick fix) show:
+    user.vim_run_normal_np("xq")
+
+(loc|loc fix) show:
+    user.vim_run_normal_np("xl")
+
 (definition|def) split:
-    user.vim_run_normal_np(":norm ]\n")
+    key("ctrl-w")
+    key("]")
 
 (ref|references|reference) find:
     user.vim_run_normal_np(" lr")
@@ -206,16 +216,16 @@ quickfix hunt (pace | paste):
 quickfix hunt [<user.text>]:
     user.vim_search_qf_list(user.text or "")
 
-definitions hunt (pace | paste):
+(definitions|definition|def) hunt (pace | paste):
     user.vim_search_lsp_definitions_clipboard()
 
-definitions hunt [<user.text>]:
+(definitions|definition|def) hunt [<user.text>]:
     user.vim_search_lsp_definitions(user.text or "")
 
-references hunt (pace | paste):
+(references|reference|ref) hunt (pace | paste):
     user.vim_search_lsp_references_clipboard()
 
-references hunt [<user.text>]:
+(references|reference|ref) hunt [<user.text>]:
     user.vim_search_lsp_references(user.text or "")
 
 implementations hunt (pace | paste):
@@ -300,3 +310,36 @@ source file:
 
 nope:
     user.vim_run_normal_np("u")
+
+yep:
+    key("ctrl-r")
+
+north:
+    user.vim_run_normal_np("S")
+
+south:
+    user.vim_run_normal_np("s")
+
+copy remote word:
+    user.vim_run_normal_np('yirw')
+
+bring remote word:
+    user.vim_run_normal_np('""yirw')
+
+copy remote funk:
+    user.vim_run_normal_np('yarf')
+
+bring remote funk:
+    user.vim_run_normal_np('""yarf')
+
+copy remote arg:
+    user.vim_run_normal_np("yara")
+
+bring remote arg:
+    user.vim_run_normal_np('""yara')
+
+clone next arg:
+    user.vim_run_normal_np('gmana')
+
+clone (prev|previous) arg:
+    user.vim_run_normal_np('gmala')

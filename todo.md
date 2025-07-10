@@ -15,6 +15,7 @@
 - [ ] remap pascal formatter - can't find it in formatters list anymore
 - [ ] find where talon hud went
 Neovim command for sourcing a lua file
+Replace the cut command with carve in all instances
 
 ## Howto
 
