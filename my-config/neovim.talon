@@ -343,3 +343,23 @@ clone next arg:
 
 clone (prev|previous) arg:
     user.vim_run_normal_np('gmala')
+
+# Delete remote text objects
+delete remote word:
+    user.vim_run_normal_np('dirw')
+
+delete remote funk:
+    user.vim_run_normal_np('darf')
+
+delete remote arg:
+    user.vim_run_normal_np('dara')
+
+# Change remote text objects
+change remote word:
+    user.vim_run_normal_np('cirw')
+
+change remote funk:
+    user.vim_run_normal_np('carf')
+
+change remote arg:
+    user.vim_run_normal_np('cara')
