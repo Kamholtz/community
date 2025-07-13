@@ -1,5 +1,5 @@
 app: obsidian
--
+*-
 tag(): user.tabs
 
 
@@ -23,4 +23,6 @@ toggle: key(ctrl-enter)
 
 open today: key(ctrl-shift-t)
 search vault: key(ctrl-shift-f)
-open daily: user.open_daily_note()
+open daily: user.obsidian("Open today's daily note")
+open next daily: user.obsidian("Open next daily note")
+open previous daily: user.obsidian("Open previous daily note")
