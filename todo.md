@@ -17,6 +17,8 @@
 Neovim command for sourcing a lua file
 Replace the cut command with carve in all instances
 
+- [ ] PopOS desktop shortcuts
+
 ## Howto
 
 - [ ] Howto trigger commands in neovim: next/prev tab, find command OR find :, find command history
@@ -90,10 +92,10 @@ take < > past start of line
 
 
 Terminal workflow
- 
+
 from slack
 
-If you use VSCode's terminal, you can compose your commands in a regular vscode tab, then say "bring line red bat" from within the terminal and have it appear. (There won't be hats on anything in the terminal itself ... so if I want to e.g. use the output of a command, I'll pipe it to a output.txt file that I then always have open in a tab) (edited) 
+If you use VSCode's terminal, you can compose your commands in a regular vscode tab, then say "bring line red bat" from within the terminal and have it appear. (There won't be hats on anything in the terminal itself ... so if I want to e.g. use the output of a command, I'll pipe it to a output.txt file that I then always have open in a tab) (edited)
 1:20
 Here's my horribly hacky talon command for that:
 1:20
@@ -105,5 +107,5 @@ redirect that:
 
 
 ## dictation mouse command
- 
+
  https://github.com/talonhub/community/blob/main/core/modes/dictation_mode.talon
