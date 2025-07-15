@@ -18,18 +18,27 @@ Neovim command for sourcing a lua file
 Replace the cut command with carve in all instances
 
 - [ ] PopOS desktop shortcuts
+- [ ] Why does clone line cause multiple cursors in cursor
+
+- [ ] Update VSCode config to include cursor as an app
+
+- [ ] Is there markdown filetype that I can use to insert a checkbox
+user.insert_snippet_by_name
+
+- [ ] How to do a text search across all files in the project
+
 
 ## Howto
 
-- [ ] Howto trigger commands in neovim: next/prev tab, find command OR find :, find command history
+- [ ] Howto trigger commands in neovim: next/- [ ] prev tab, find command OR find :, find command history
 - [ ] How to take range in Cursorless
 - [ ] Howto use snippets (markdown lists)
 - [ ] how to change windows
-Add key maps for WezTerm
+- [ ] Add key maps for WezTerm
 - [ ] How to enable Cursorless snippets
-How to take inside surrounding pairs
+- [ ] How to take inside surrounding pairs
 
-How to take to the end of the line
+- [ ] How to take to the end of the line
 
 ## Top level config
 

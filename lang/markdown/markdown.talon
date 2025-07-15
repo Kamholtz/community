@@ -42,3 +42,9 @@ list six:
     user.insert_snippet("```{markdown_code_block_language}\n$0\n```")
 
 link: user.insert_snippet_by_name("link")
+
+
+checkbox: user.insert_snippet_by_name("checkbox")
+checkbox <user.text>:
+    user.insert_snippet_by_name("checkbox")
+    user.insert_formatted(text, "CAPITALIZE_FIRST_WORD")
