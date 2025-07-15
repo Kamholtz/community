@@ -363,3 +363,13 @@ change remote funk:
 
 change remote arg:
     user.vim_run_normal_np('cara')
+
+# Debug log
+debug log remote word:
+    user.vim_run_normal_np('g?rv')
+
+debug log remote funk:
+    user.vim_run_normal_np('carf')
+
+debug log remote arg:
+    user.vim_run_normal_np('cara')
