@@ -40,7 +40,7 @@ user.insert_snippet_by_name
 
 - [ ] How to take to the end of the line
 - [ ] how to prevent the onscreen keyboard showing up on pop os
-- [ ] hunt this <user.text> search with /i
+- [ ] hunt this <user.text> search with / in nvim
 
 ## Top level config
 

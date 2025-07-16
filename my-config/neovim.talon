@@ -120,6 +120,15 @@ copy git branch:
 # Hunt commands
 # =====================================
 
+hunt this (pace | paste):
+    key("/")
+    edit.paste()
+    key("enter")
+
+hunt this [<user.text>]:
+    user.vim_run_normal_np("/{user.text or ''}")
+    key("enter")
+
 file hunt (pace | paste):
     user.vim_search_files_clipboard()
 
