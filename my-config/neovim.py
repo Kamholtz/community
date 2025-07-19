@@ -225,6 +225,45 @@ class Actions:
         cmd = ":PickLspSymbols " + clip.text() + "\n"
         actions.user.vim_run_normal_np(cmd)
 
+    def check_box_tick():
+        """Replace [ ] with [x] in Neovim"""
+        actions.user.vim_run_normal_np(":s/\\[ \\]/[x]/g\n")
+
+    def check_box_untick():
+        """Replace [x] with [ ] in Neovim"""
+        actions.user.vim_run_normal_np(":s/\\[x\\]/[ ]/g\n")
+
+    def remote_text_object_action(spoken_text: str):
+        """Handle generalized remote text object operations"""
+        # Parse the spoken text to extract operation and text object
+        parts = spoken_text.split()
+        if len(parts) >= 3:
+            operation = parts[0]  # copy, bring, delete, change
+            text_object = parts[2]  # word, funk, arg
+
+            # Map spoken text objects to vim text object suffixes
+            text_object_map = {
+                "word": "rw",
+                "funk": "rf",
+                "arg": "ra"
+            }
+
+            # Map operations to vim prefixes
+            operation_map = {
+                "copy": "yi",
+                "bring": '""yi',
+                "delete": "di",
+                "change": "ci"
+            }
+
+            if text_object in text_object_map and operation in operation_map:
+                suffix = text_object_map[text_object]
+                prefix = operation_map[operation]
+                command = f"{prefix}{suffix}"
+                actions.user.vim_run_normal_np(command)
+
+
+
 
 # "PickRecent"
 # "PickBuffers"

@@ -14,18 +14,17 @@
 
 - [ ] remap pascal formatter - can't find it in formatters list anymore
 - [ ] find where talon hud went
-Neovim command for sourcing a lua file
+- [x] Neovim command for sourcing a lua file
 Replace the cut command with carve in all instances
 
 - [ ] PopOS desktop shortcuts
 - [ ] Why does clone line cause multiple cursors in cursor
-
 - [ ] Update VSCode config to include cursor as an app
-
 - [ ] Is there markdown filetype that I can use to insert a checkbox
 user.insert_snippet_by_name
 
 - [ ] How to do a text search across all files in the project
+- [ ] command to tick the checkbox in a markdown file in vscode, obsidian and neovim
 
 
 ## Howto

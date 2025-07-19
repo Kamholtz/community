@@ -382,3 +382,7 @@ debug log remote funk:
 
 debug log remote arg:
     user.vim_run_normal_np('cara')
+
+
+check box tick: user.check_box_tick
+check box untick: user.check_box_untick
