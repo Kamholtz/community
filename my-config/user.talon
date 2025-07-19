@@ -1,3 +1,6 @@
+tag(): user.git
+tag(): user.zoxide
+
 # Example Talon file
 settings():
     imgui.scale = 3
