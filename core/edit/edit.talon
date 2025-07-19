@@ -5,6 +5,8 @@
 # also accept strings, e.g. `user.edit_command("delete", "wordLeft")`.
 # See edit_command_modifiers.py to discover the correct string for the modify argument,
 # and `edit_command_actions.py` `simple_action_callbacks` to find strings for the action argument.
+
+# (CH 1.1): No change but highlighting for documentation
 <user.edit_action> <user.edit_modifier>: user.edit_command(edit_action, edit_modifier)
 
 # Zoom
@@ -50,7 +52,8 @@ indent [more]: edit.indent_more()
 copy that: edit.copy()
 
 # Cut
-cut that: edit.cut()
+# (CH 1.1): cut => carve
+carve that: edit.cut()
 
 # Paste
 (pace | paste) (that | it): edit.paste()
