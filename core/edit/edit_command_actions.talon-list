@@ -6,7 +6,8 @@ go before: goBefore
 go after: goAfter
 
 copy: copyToClipboard
-cut: cutToClipboard
+# (CH 1.1): cut => carve
+carve: cutToClipboard
 paste: pasteFromClipboard
 paste to: pasteFromClipboard
 
