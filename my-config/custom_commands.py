@@ -16,4 +16,4 @@ class Actions:
         if result == 0:
             app.notify("Opened Talon config in VSCode")
         else:
-            app.notify("Failed to open Talon config in VSCode")
+            app.notify(f"Failed to open Talon config in VSCode {config_path}")

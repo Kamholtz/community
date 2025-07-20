@@ -384,5 +384,18 @@ debug log remote arg:
     user.vim_run_normal_np('cara')
 
 
+# =====================================
+# Markdown
+# =====================================
 check box tick: user.check_box_tick
 check box untick: user.check_box_untick
+
+
+# =====================================
+# Mini files
+# =====================================
+mini files:
+    user.vim_run_normal_np(':MyMiniFilesOpen\n')
+
+mini files current:
+    user.vim_run_normal_np(':lua MiniFiles.open()\n')
