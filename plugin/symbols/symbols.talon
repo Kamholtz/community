@@ -25,7 +25,8 @@ patch {user.symbol_key}:
     "{symbol_key}"
     edit.line_insert_down()
 spam: ", "
-pipe gap: " | "
+pipe gap | wide pipe: " | "
+big stack: ": "
 boom|boomer: ". "
 arrow: "->"
 dub arrow: "=>"

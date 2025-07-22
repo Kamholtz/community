@@ -9,8 +9,8 @@ tag(): terminal
 # Tabs
 tab next:                 key(ctrl-tab)
 tab last:                 key(ctrl-shift-tab)
-new tab:                  key(ctrl-shift-t)
-close tab:                key(ctrl-shift-w)
+tab new:                  key(ctrl-shift-t)
+tab close:                key(ctrl-shift-w)
 tab one:                  key(ctrl-1)
 tab two:                  key(ctrl-2)
 tab three:                key(ctrl-3)

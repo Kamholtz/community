@@ -321,3 +321,4 @@ disclose:
     key(cmd-w)
 disk gentle: edit.save()
 
+magit status: user.vscode(magit.status)
