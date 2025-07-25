@@ -57,3 +57,6 @@ yeah
 tmux
 bullion: boolean
 H T M L: HTML
+homography
+no-undef
+no-const-assign
