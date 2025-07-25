@@ -27,3 +27,7 @@ show downloads: browser.show_downloads()
 show extensions: browser.show_extensions()
 show history: browser.show_history()
 show cache: browser.show_clear_cache()
+change path to <user.text>:
+    # key(ctrl-l)
+    sleep(150ms)
+    browser.keep_domain_change_path(text)

@@ -1,4 +1,5 @@
 from talon import Context, Module, actions
+from urllib.parse import urlparse, urlunparse
 
 mod = Module()
 ctx = Context()
@@ -24,5 +25,7 @@ app: microsoft_edge
 @ctx.action_class("browser")
 class BrowserActions:
     def show_extensions():
+        print("")
         actions.app.tab_open()
         actions.browser.go("edge://extensions")
+        

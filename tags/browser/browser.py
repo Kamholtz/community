@@ -1,4 +1,4 @@
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 from talon import Context, Module, actions, app
 
@@ -160,3 +160,19 @@ class BrowserActions:
 
     def toggle_dev_tools():
         actions.key("ctrl-shift-i")
+
+    def keep_domain_change_path(new_path):
+        """Change the path of the current URL while keeping the domain"""
+        print("new_path", new_path)
+        url = actions.browser.address()
+        print("url", url)
+
+        if not url:
+            actions.app.notify("No URL found")
+            return
+
+        parsed = urlparse(url)
+        print(parsed)
+        # new_url = urlunparse((parsed.scheme, parsed.netloc, new_path, '', '', ''))
+        print(parsed)
+        # actions.browser.go(new_url)
