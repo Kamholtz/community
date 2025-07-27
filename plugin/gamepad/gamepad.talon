@@ -1,26 +1,35 @@
-tag: user.gamepad
+# tag: user.gamepad
 and not tag: user.gamepad_tester
 -
 
 # DPAD buttons
-gamepad(dpad_left:down):    user.gamepad_button_down("dpad_left")
-gamepad(dpad_left:up):      user.gamepad_button_up("dpad_left")
+gamepad(dpad_left:down):    key(super-left)
+# gamepad(dpad_left:down):    user.gamepad_button_down("dpad_left")
+# gamepad(dpad_left:up):      user.gamepad_button_up("dpad_left")
 gamepad(dpad_up:down):      user.gamepad_button_down("dpad_up")
-gamepad(dpad_up:up):        user.gamepad_button_up("dpad_up")
-gamepad(dpad_right:down):   user.gamepad_button_down("dpad_right")
-gamepad(dpad_right:up):     user.gamepad_button_up("dpad_right")
+# gamepad(dpad_up:down):      key(super-up)
+# gamepad(dpad_up:down-l1:down):      key(super-ctrl-up)
+# gamepad(l1:down):      key(ctrl)
+# gamepad(dpad_up:down):      user.gamepad_button_down("dpad_up")
+# gamepad(dpad_up:up):        user.gamepad_button_up("dpad_up")
+gamepad(dpad_right:down):   key(super-right)
+# gamepad(dpad_right:down):   user.gamepad_button_down("dpad_right")
+# gamepad(dpad_right:up):     user.gamepad_button_up("dpad_right")
 gamepad(dpad_down:down):    user.gamepad_button_down("dpad_down")
-gamepad(dpad_down:up):      user.gamepad_button_up("dpad_down")
+# gamepad(dpad_down:down):    key(super-down)
+# gamepad(dpad_down:down):    user.gamepad_button_down("dpad_down")
+# gamepad(dpad_down:up):      user.gamepad_button_up("dpad_down")
 
 # Compass / ABXY buttons
-gamepad(west:down):         user.gamepad_button_down("west")
-gamepad(west:up):           user.gamepad_button_up("west")
-gamepad(north:down):        user.gamepad_button_down("north")
-gamepad(north:up):          user.gamepad_button_up("north")
-gamepad(east:down):         user.gamepad_button_down("east")
-gamepad(east:up):           user.gamepad_button_up("east")
-gamepad(south:down):        user.gamepad_button_down("south")
-gamepad(south:up):          user.gamepad_button_up("south")
+gamepad(west:down):         user.switcher_focus_last()
+# gamepad(west:down):         user.gamepad_button_down("west")
+# gamepad(west:up):           user.gamepad_button_up("west")
+gamepad(north:down):        edit.redo()
+# gamepad(north:up):          user.gamepad_button_up("north")
+gamepad(east:down):         edit.undo()
+# gamepad(east:up):           user.gamepad_button_up("east")
+gamepad(south:down):        key(enter)
+# gamepad(south:up):          user.gamepad_button_up("south")
 
 # Select / Start buttons
 gamepad(select:down):       user.gamepad_button_down("select")

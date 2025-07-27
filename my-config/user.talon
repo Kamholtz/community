@@ -1,5 +1,8 @@
 tag(): user.git
 tag(): user.zoxide
+# tag(): user.gamepad_tester
+
+tag(): user.gamepad
 
 # Example Talon file
 settings():

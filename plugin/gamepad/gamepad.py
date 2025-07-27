@@ -4,6 +4,7 @@ from talon.screen import Screen
 screen: Screen = ui.main_screen()
 slow_scroll = False
 slow_mouse_move = False
+hold_left_shoulder = False
 
 mod = Module()
 mod.tag("gamepad", desc="Activate tag to enable gamepad bindings")
@@ -103,11 +104,15 @@ class Actions:
 
     def gamepad_press_left_shoulder():
         """Gamepad press button left shoulder"""
-        actions.user.go_back()
+        global hold_left_shoulder
+        hold_left_shoulder = True
+        # actions.user.go_back()
 
     def gamepad_release_left_shoulder():
         """Gamepad release button left shoulder"""
-        actions.skip()
+        global hold_left_shoulder
+        hold_left_shoulder = False
+        # actions.skip()
 
     def gamepad_press_right_shoulder():
         """Gamepad press button right shoulder"""
@@ -164,11 +169,19 @@ class Actions:
             case "dpad_left":
                 actions.user.gamepad_press_dpad_left()
             case "dpad_up":
-                actions.user.gamepad_press_dpad_up()
+                if hold_left_shoulder:
+                    actions.key("super-ctrl-up")
+                else:
+                    actions.key("super-up")
+                #   actions.user.gamepad_press_dpad_up()
             case "dpad_right":
                 actions.user.gamepad_press_dpad_right()
             case "dpad_down":
-                actions.user.gamepad_press_dpad_down()
+                if hold_left_shoulder:
+                    actions.key("super-ctrl-down")
+                else:
+                    actions.key("super-down")
+                # actions.user.gamepad_press_dpad_down()
 
             # Compass / ABXY buttons
             case "west":
@@ -248,7 +261,7 @@ class Actions:
 
 def gamepad_scroll(x: float, y: float):
     """Perform gamepad scrolling"""
-    multiplier = 1.5 if slow_scroll else 3
+    multiplier = 1.5 if slow_scroll else 2
     x = x**3 * multiplier
     y = y**3 * multiplier
 
