@@ -303,7 +303,7 @@ voice mode:
     sleep(25ms)
 
 
-tab pin: 
+tab pin:
     user.vscode_and_wait("workbench.action.pinEditor")
 
 # TODO: Go up and down the callstack
@@ -322,3 +322,11 @@ disclose:
 disk gentle: edit.save()
 
 magit status: user.vscode("magit.status")
+
+chat prompt:
+    key(super-alt-/)
+    insert("grammer")
+    key(enter)
+
+chat accept:
+    key(ctrl-shift-y)
