@@ -96,8 +96,14 @@ G stage:
 
 G stage file:
     user.vim_run_normal_np(" hS")
-#
-# G commit feature:
+
+G ref log:
+    user.vim_run_normal_np(":Flog\n")
+
+G worktrees:
+    user.vim_run_normal_np(":TelescopeGitWorkTrees\n")
+
+G commit feature:
     user.vim_run_normal_np(":GitCommitFeat\n")
 
 G commit wip:

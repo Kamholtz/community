@@ -61,3 +61,7 @@ word count lines: wc -l
 word count: wc
 who
 who am I: whoami
+rsync
+restic
+nvim
+z
