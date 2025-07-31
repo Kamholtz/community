@@ -88,3 +88,7 @@ Zed Attack Proxy
 systemctl
 VSCode
 worktree
+eslint
+diff
+pray: pre
+turtle: total
