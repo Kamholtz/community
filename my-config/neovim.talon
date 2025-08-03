@@ -1,67 +1,67 @@
 tag: user.vim_mode_insert
 tag: user.vim_mode_normal
--
+-  
 
 tag(): user.cursorless
 
-settings():
-    # Whether or not to always revert back to the previous mode. Example, if
-    # you are in insert mode and say 'delete word' it will delete one word and
-    # keep you in insert mode. Same as ctrl-o in VIM.
-    user.vim_preserve_insert_mode = 1
+# settings():
+#     # Whether or not to always revert back to the previous mode. Example, if
+#     # you are in insert mode and say 'delete word' it will delete one word and
+#     # keep you in insert mode. Same as ctrl-o in VIM.
+#     user.vim_preserve_insert_mode = 1
 
-    # Whether or not to automatically adjust modes when using commands. Example
-    # saying "go line 50" will first switch you out of INSERT into NORMAL and
-    # then jump to the line. Disabling this setting would put :50\n into your
-    # file if you say "row 50" while in INSERT mode.
-    user.vim_adjust_modes = 1
+#     # Whether or not to automatically adjust modes when using commands. Example
+#     # saying "go line 50" will first switch you out of INSERT into NORMAL and
+#     # then jump to the line. Disabling this setting would put :50\n into your
+#     # file if you say "row 50" while in INSERT mode.
+#     user.vim_adjust_modes = 1
 
-    # Select whether or not talon should dispatch notifications on mode changes
-    # that are made. Not yet completed, as notifications are kind of wonky on
-    # Linux
-    user.vim_notify_mode_changes = 0
+#     # Select whether or not talon should dispatch notifications on mode changes
+#     # that are made. Not yet completed, as notifications are kind of wonky on
+#     # Linux
+#     user.vim_notify_mode_changes = 0
 
-    # Whether or not all commands that transfer out of insert mode should also
-    # automatically escape out of terminal mode. Turning this on is quite
-    # troublesome.
-    user.vim_escape_terminal_mode = 0
+#     # Whether or not all commands that transfer out of insert mode should also
+#     # automatically escape out of terminal mode. Turning this on is quite
+#     # troublesome.
+#     user.vim_escape_terminal_mode = 0
 
-    # When issuing counted actions in vim you can prefix a count that will
-    # dictate how many times the command is run, however some peoples talon
-    # grammar already allows you to utter a number without a prefix (ex: voice
-    # command "ten" will put 10 in your file) so we want to cancel any existing
-    # counts that might already by queued in vim in error.
-    #
-    # This also helps prevent accidental number queueing if talon
-    # mishears a command such as "delete line" as "delete" "nine". Without this
-    # setting, if you then said "undo" it would undo the last 9 changes, which
-    # is annoying.
-    #
-    # This setting only applies to commands run through the actual counted
-    # actions grammar itself
-    user.vim_cancel_queued_commands = 1
+#     # When issuing counted actions in vim you can prefix a count that will
+#     # dictate how many times the command is run, however some peoples talon
+#     # grammar already allows you to utter a number without a prefix (ex: voice
+#     # command "ten" will put 10 in your file) so we want to cancel any existing
+#     # counts that might already by queued in vim in error.
+#     #
+#     # This also helps prevent accidental number queueing if talon
+#     # mishears a command such as "delete line" as "delete" "nine". Without this
+#     # setting, if you then said "undo" it would undo the last 9 changes, which
+#     # is annoying.
+#     #
+#     # This setting only applies to commands run through the actual counted
+#     # actions grammar itself
+#     user.vim_cancel_queued_commands = 1
 
-    # When you are escaping queued commands, it seems vim needs time to recover
-    # before issuing the subsequent commands. This controls how long it waits,
-    # in seconds
-    user.vim_cancel_queued_commands_timeout = 0.20
+#     # When you are escaping queued commands, it seems vim needs time to recover
+#     # before issuing the subsequent commands. This controls how long it waits,
+#     # in seconds
+#     user.vim_cancel_queued_commands_timeout = 0.20
 
-    # It how long to wait before issuing commands after a mode change. You
-    # want adjust this if when you say things like undo from INSERT mode, an
-    # "u" gets inserted into INSERT mode. It in theory that shouldn't be
-    # required if using pynvim.
-    user.vim_mode_change_timeout = 0.25
+#     # It how long to wait before issuing commands after a mode change. You
+#     # want adjust this if when you say things like undo from INSERT mode, an
+#     # "u" gets inserted into INSERT mode. It in theory that shouldn't be
+#     # required if using pynvim.
+#     user.vim_mode_change_timeout = 0.25
 
-    # When you preserve mode and switch into into insert mode it will often
-    # move your cursor, which can mess up the commands you're trying to run from
-    # insert. This setting controls the cursor move
-    user.vim_mode_switch_moves_cursor = 0
+#     # When you preserve mode and switch into into insert mode it will often
+#     # move your cursor, which can mess up the commands you're trying to run from
+#     # insert. This setting controls the cursor move
+#     user.vim_mode_switch_moves_cursor = 0
 
-    # Whether or not use pynvim rpc if it is available
-    user.vim_use_rpc = 1
+#     # Whether or not use pynvim rpc if it is available
+#     user.vim_use_rpc = 1
 
-    # Adds debug output to the talon log
-    user.vim_debug = 0
+#     # Adds debug output to the talon log
+#     user.vim_debug = 0
 
 (dup | duplicate) line:
     user.vim_run_normal_np("yy")
