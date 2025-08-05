@@ -328,8 +328,8 @@ disk gentle: edit.save()
 magit status: user.vscode("magit.status")
 
 chat prompt:
-    key(super-alt-/)
-    insert("grammer")
+    user.vscode("workbench.action.chat.run.prompt")
+    insert("grammar")
     key(enter)
 
 chat accept:
