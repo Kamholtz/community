@@ -79,62 +79,73 @@ change para:
 toggle comment:
     user.vim_run_normal_np("gcc")
 
-G status:
+# =====================================
+# Git
+# =====================================
+
+(G | git) status:
     user.vim_normal_mode(" gg")
 
-G status:
+(G | git) status:
     user.vim_run_normal_np(" gg")
 
-G push:
+(G | git) push:
     user.vim_run_normal_np(" gkk")
 
-G pull:
+(G | git) pull:
     user.vim_run_normal_np(" gjj")
 
-G stage:
+(G | git) stage:
     user.vim_run_normal_np(" hs")
 
-G stage file:
+(G | git) stage file:
     user.vim_run_normal_np(" hS")
 
-G ref log:
+(G | git) ref log:
     user.vim_run_normal_np(":Flog\n")
 
-G worktrees:
+(G | git) worktrees:
     user.vim_run_normal_np(":TelescopeGitWorkTrees\n")
 
-G commit feature:
+(G | git) commit feature:
     user.vim_run_normal_np(":GitCommitFeat\n")
 
-G commit wip:
+(G | git) commit wip:
     user.vim_run_normal_np(":GitCommitWip\n")
 
-G commit fix:
+(G | git) commit fix:
     user.vim_run_normal_np(":GitCommitFix\n")
 
-G commit refactor:
+(G | git) commit refactor:
     user.vim_run_normal_np(":GitCommitRefactor\n")
 
-G commit format:
+(G | git) commit format:
     user.vim_run_normal_np(":GitCommitFormat\n")
 
-G verbose commit (feature|feat):
+(G | git) verbose commit (feature|feat):
     user.vim_run_normal_np(":GitVerboseCommit feat\n")
 
-G verbose commit fix:
+(G | git) verbose commit fix:
     user.vim_run_normal_np(":GitVerboseCommit fix\n")
 
-G verbose commit refactor:
+(G | git) verbose commit refactor:
     user.vim_run_normal_np(":GitVerboseCommit refactor\n")
 
-G verbose commit wip:
+(G | git) verbose commit wip:
     user.vim_run_normal_np(":GitVerboseCommit wip\n")
 
-G verbose commit format:
+(G | git) verbose commit format:
     user.vim_run_normal_np(":GitVerboseCommit format\n")
 
 fugitive (close|hide|kill):
     user.vim_run_normal_np(":CloseFugitive\n")
+
+copy git branch:
+    user.vim_run_normal_np(" cgb")
+
+# =====================================
+# Tab
+# =====================================
 
 tab close:
     user.vim_run_normal_np(":tabclose\n")
@@ -145,14 +156,23 @@ tab new:
 tab only:
     user.vim_run_normal_np(":tabonly\n")
 
+# =====================================
+# Window
+# =====================================
+
 (win|window) only:
     user.vim_run_normal_np(":only\n")
 
-WriteReportTemp:
+# =====================================
+# Report
+# =====================================
+
+Write Report Temp:
     user.vim_run_normal_np(":WriteReportTemp\n")
 
-copy git branch:
-    user.vim_run_normal_np(" cgb")
+# =====================================
+# LSP
+# =====================================
 
 (definition|def) show:
     user.vim_run_normal_np("gd")
