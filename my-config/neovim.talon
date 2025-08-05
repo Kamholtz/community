@@ -163,6 +163,13 @@ tab only:
 (win|window) only:
     user.vim_run_normal_np(":only\n")
 
+(win|window) split (h|horizontal):
+    user.vim_run_normal_np(":split\n")
+
+(win|window) split (v|vertical):
+    user.vim_run_normal_np(":vsplit\n")
+
+    
 # =====================================
 # Report
 # =====================================
