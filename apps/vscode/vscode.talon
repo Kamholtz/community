@@ -252,7 +252,7 @@ task run [<user.text>]:
 
 task rerun:
     user.vscode("workbench.action.tasks.reRunTask")
-    
+
 #TODO: should this be added to linecommands?
 copy line down: user.vscode("editor.action.copyLinesDownAction")
 copy line up: user.vscode("editor.action.copyLinesUpAction")
@@ -328,9 +328,14 @@ disk gentle: edit.save()
 
 magit status: user.vscode("magit.status")
 
-chat prompt:
+chat prompt grammar:
     user.vscode("workbench.action.chat.run.prompt")
     insert("grammar")
+    key(enter)
+
+chat prompt answers:
+    user.vscode("workbench.action.chat.run.prompt")
+    insert("answers")
     key(enter)
 
 chat accept:
