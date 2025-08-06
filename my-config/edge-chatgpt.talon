@@ -1,7 +1,8 @@
 app: edge_chatgpt
 -
-
-greet:
-    insert("Hello, ChatGPT!")
-
-# You can add other ChatGPT-specific voice commands here
+explain paste enter:
+    insert("Concisely explain the following: ")
+    key(shift-enter)
+    key(shift-enter)
+    edit.paste()
+    key(enter)
