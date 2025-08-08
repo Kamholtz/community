@@ -11,4 +11,11 @@ explain paste enter:
     edit.paste()
     key(enter)
 
+improve paste enter:
+    insert("Fact check the following and provide concise improvements: ")
+    key(shift-enter)
+    key(shift-enter)
+    edit.paste()
+    key(enter)
+
 # You can add other ChatGPT-specific voice commands here
