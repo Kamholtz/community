@@ -3,6 +3,7 @@ from talon import Context, Module, actions, app, speech_system
 mod = Module()
 ctx_sleep = Context()
 ctx_awake = Context()
+ctx_whisper = Context()
 
 modes = {
     "presentation": "a more strict form of sleep where only a more strict wake up command works",
@@ -17,6 +18,10 @@ mode: sleep
 
 ctx_awake.matches = r"""
 not mode: sleep
+"""
+
+ctx_whisper.matches = r"""
+mode: sleep
 """
 
 
@@ -51,7 +56,7 @@ class Actions:
     def dragon_mode():
         """For windows and Mac with Dragon, disables Talon commands and exits Dragon's command mode"""
         engine = speech_system.engine.name
-        # app.notify(engine)
+        # app.notify(engine).
 
         if "dragon" in engine:
             # app.notify("dragon mode")

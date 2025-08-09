@@ -341,11 +341,12 @@ chat prompt answers:
 chat accept:
     key(ctrl-shift-y)
 
+
 build run:
     user.vscode("workbench.action.tasks.build")
 
-ctrl-m:
-    if not speech.enabled():
+toggle whisper:
+    if speech.enabled():
         key(ctrl-m)
         speech.enable()
     else:
