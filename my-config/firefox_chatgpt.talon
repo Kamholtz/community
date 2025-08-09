@@ -18,4 +18,11 @@ improve paste enter:
     edit.paste()
     key(enter)
 
+custom paste enter [<user.text>]:
+    insert(user.text or "")
+    key(shift-enter)
+    key(shift-enter)
+    edit.paste()
+    key(enter)
+
 # You can add other ChatGPT-specific voice commands here
