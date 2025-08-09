@@ -1,7 +1,7 @@
 {
   description = "Dictation via whisper.cpp with paste injection";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05"; # or unstable
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs = { self, nixpkgs }:
   let
@@ -20,10 +20,12 @@
           if [ ! -f "$MODEL" ]; then
             echo "Model not found: $MODEL" >&2; exit 1
           fi
-          stream -m "$MODEL" -t "$(nproc)" \
-          | stdbuf -oL sed -E 's/^\[[^]]+\]\s*//' \
+          whisper-stream -m "$MODEL" -t "$(nproc)" -c 1 \
+          | tee /dev/stderr \
+          | sed -E 's/^\[[^]]+\]\s*//' \
           | while IFS= read -r line; do
               [ -z "''${line// }" ] && continue
+              echo "Transcribed: $line" >&2
               printf '%s ' "$line" | xclip -selection clipboard
               xdotool key --clearmodifiers ctrl+v
             done
@@ -39,8 +41,8 @@
           if [ ! -f "$MODEL" ]; then
             echo "Model not found: $MODEL" >&2; exit 1
           fi
-          stream -m "$MODEL" -t "$(nproc)" \
-          | stdbuf -oL sed -E 's/^\[[^]]+\]\s*//' \
+          whisper-stream -m "$MODEL" -t "$(nproc)" \
+          | sed -E 's/^\[[^]]+\]\s*//' \
           | while IFS= read -r line; do
               [ -z "''${line// }" ] && continue
               printf '%s ' "$line" | wl-copy
@@ -60,8 +62,8 @@
           if [ ! -f "$MODEL" ]; then
             echo "Model not found: $MODEL" >&2; exit 1
           fi
-          stream -m "$MODEL" -t "$(nproc)" \
-          | stdbuf -oL sed -E 's/^\[[^]]+\]\s*//' \
+          whisper-stream -m "$MODEL" -t "$(nproc)" \
+          | sed -E 's/^\[[^]]+\]\s*//' \
           | awk 'NF' >> "$OUT"
         '';
       };
