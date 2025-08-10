@@ -16,10 +16,10 @@
         runtimeInputs = [ pkgs.curl pkgs.jq pkgs.xdotool pkgs.xclip pkgs.pulseaudio ];
         text = ''
           set -euo pipefail
-          
+
           # Configuration - adjust these for your setup
-          WHISPER_URL="http://localhost:10300"
-          
+          WHISPER_URL="http://localhost:8000"
+
           # Test if whisper service is available
           echo "Testing connection to faster-whisper service..." >&2
           if ! curl -s "$WHISPER_URL" > /dev/null 2>&1; then
@@ -27,14 +27,14 @@
             echo "Please ensure your faster-whisper container is running and accessible" >&2
             exit 1
           fi
-          
+
           echo "Connected to faster-whisper service!" >&2
           echo "Dictation ready - speak now! (Ctrl+C to stop)" >&2
-          
+
           while true; do
             # Record 8 seconds of audio (longer chunks for better accuracy)
             TEMP_AUDIO=$(mktemp --suffix=.wav)
-            
+
             # Use parecord to capture longer audio segments
             timeout 8 parecord \
               --format=s16le \
@@ -42,31 +42,31 @@
               --channels=1 \
               "$TEMP_AUDIO" \
               2>/dev/null || true
-            
+
             # Check if we got meaningful audio
             if [ -f "$TEMP_AUDIO" ] && [ -s "$TEMP_AUDIO" ]; then
               # Get file size to check if there's actual content
               AUDIO_SIZE=$(wc -c < "$TEMP_AUDIO")
-              
+
               if [ "$AUDIO_SIZE" -gt 32000 ]; then  # More than 2 seconds of audio
                 echo "Processing audio..." >&2
-                
+
                 # Send to your faster-whisper service with timeout (OpenAI API format)
                 RESPONSE=$(timeout 10 curl -s -X POST \
                   --max-time 10 \
                   -F "file=@$TEMP_AUDIO" \
-                  -F "model=whisper-1" \
+                  -F "model=Systran/faster-distil-whisper-small.en" \
                   -F "response_format=json" \
                   "$WHISPER_URL/v1/audio/transcriptions" 2>/dev/null || echo "")
-                
+
                 if [ -n "$RESPONSE" ]; then
                   # Extract text from response
                   TEXT=$(echo "$RESPONSE" | jq -r '.text // empty' 2>/dev/null || echo "")
-                  
+
                   if [ -n "$TEXT" ] && [ "$TEXT" != "null" ] && [ "$TEXT" != "" ]; then
                     # Clean the text
                     CLEAN_TEXT=$(echo "$TEXT" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-                    
+
                     if [ -n "$CLEAN_TEXT" ] && [[ "$CLEAN_TEXT" =~ [[:alpha:]] ]]; then
                       echo "Pasting: '$CLEAN_TEXT'" >&2
                       printf '%s ' "$CLEAN_TEXT" | xclip -selection clipboard
@@ -81,16 +81,16 @@
                 echo "Audio too short, skipping..." >&2
               fi
             fi
-            
+
             # Clean up temp audio file
             rm -f "$TEMP_AUDIO"
-            
+
             # Short pause before next recording
             sleep 0.5
           done
         '';
       };
-      
+
       dictate-x11 = pkgs.writeShellApplication {
         name = "dictate-x11";
         runtimeInputs = [ pkgs.whisper-cpp pkgs.xdotool pkgs.xclip pkgs.pulseaudio ];
@@ -100,24 +100,24 @@
           if [ ! -f "$MODEL" ]; then
             echo "Model not found: $MODEL" >&2; exit 1
           fi
-          
+
           echo "Streaming dictation ready - speak now! (Ctrl+C to stop)" >&2
-          
+
           while true; do
             # Record 3 seconds of audio
             TEMP_AUDIO=$(mktemp --suffix=.wav)
-            
+
             # Use parecord to capture audio
             timeout 3 parecord --format=s16le --rate=16000 --channels=1 "$TEMP_AUDIO" 2>/dev/null || true
-            
+
             if [ -f "$TEMP_AUDIO" ] && [ -s "$TEMP_AUDIO" ]; then
               # Process with whisper-cli
               RESULT=$(whisper-cli -m "$MODEL" -f "$TEMP_AUDIO" --no-timestamps 2>/dev/null | grep -v "^$" | head -1 || echo "")
-              
+
               if [ -n "$RESULT" ]; then
                 # Clean up the result and filter out whisper tokens
                 CLEAN_RESULT=$(echo "$RESULT" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-                
+
                 # Skip whisper special tokens and empty results
                 if [ -n "$CLEAN_RESULT" ] && \
                    [[ "$CLEAN_RESULT" =~ [[:alpha:]] ]] && \
@@ -130,10 +130,10 @@
                 fi
               fi
             fi
-            
+
             # Clean up temp audio file
             rm -f "$TEMP_AUDIO"
-            
+
             # Short pause before next recording
             sleep 0.5
           done
@@ -149,26 +149,26 @@
           if [ ! -f "$MODEL" ]; then
             echo "Model not found: $MODEL" >&2; exit 1
           fi
-          
+
           echo "Simple dictation test - speak for 5 seconds..." >&2
-          
+
           # Record 5 seconds of audio directly
           TEMP_AUDIO=$(mktemp --suffix=.wav)
           trap 'rm -f "$TEMP_AUDIO"' EXIT
-          
+
           # Use parecord to capture from default microphone
           timeout 5 parecord --format=s16le --rate=16000 --channels=1 "$TEMP_AUDIO" 2>/dev/null || true
-          
+
           if [ -f "$TEMP_AUDIO" ] && [ -s "$TEMP_AUDIO" ]; then
             echo "Processing audio..." >&2
-            
+
             # Use whisper-cli directly on the audio file
             RESULT=$(whisper-cli -m "$MODEL" -f "$TEMP_AUDIO" --no-timestamps --output-txt 2>/dev/null || echo "")
-            
+
             if [ -n "$RESULT" ]; then
               # Clean up the result
               CLEAN_RESULT=$(echo "$RESULT" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-              
+
               if [ -n "$CLEAN_RESULT" ]; then
                 echo "Transcription: '$CLEAN_RESULT'" >&2
                 printf '%s' "$CLEAN_RESULT" | xclip -selection clipboard
@@ -196,25 +196,25 @@
           if [ ! -f "$MODEL" ]; then
             echo "Model not found: $MODEL" >&2; exit 1
           fi
-          
+
           # Start whisper server in background
           echo "Starting whisper server..." >&2
           whisper-server -m "$MODEL" -t "$(nproc)" --host 127.0.0.1 --port 8080 > /dev/null 2>&1 &
           SERVER_PID=$!
-          
+
           # Wait for server to start
           echo "Waiting for server to initialize..." >&2
           sleep 8
-          
+
           # Test if server is ready
           if ! curl -s http://127.0.0.1:8080 > /dev/null; then
             echo "Failed to start whisper server" >&2
             kill $SERVER_PID 2>/dev/null || true
             exit 1
           fi
-          
+
           echo "Dictation ready - speak now! (Ctrl+C to stop)" >&2
-          
+
           # Cleanup function
           cleanup() {
             echo "Stopping server..." >&2
@@ -222,15 +222,15 @@
             exit 0
           }
           trap cleanup EXIT INT TERM
-          
+
           # Continuous audio capture and transcription loop
           while true; do
             # Record 3 seconds of audio
             TEMP_AUDIO=$(mktemp --suffix=.wav)
-            
+
             # Use sox to record from the specified microphone
             timeout 3 sox -t alsa hw:1,0 -r 16000 -c 1 "$TEMP_AUDIO" silence 1 0.1 2% 1 0.5 2% 2>/dev/null || true
-            
+
             # Check if we got any audio
             if [ -f "$TEMP_AUDIO" ] && [ -s "$TEMP_AUDIO" ]; then
               # Send to whisper server for transcription
@@ -238,21 +238,21 @@
                 -H "Content-Type: multipart/form-data" \
                 -F "file=@$TEMP_AUDIO" \
                 -F "response_format=json") || true
-              
+
               # Extract transcription from JSON response
               if [ -n "$RESPONSE" ]; then
                 TRANSCRIPTION=$(echo "$RESPONSE" | jq -r '.text // empty' 2>/dev/null | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-                
+
                 if [ -n "$TRANSCRIPTION" ] && [ "$TRANSCRIPTION" != "null" ] && [ "$TRANSCRIPTION" != "" ]; then
                   printf '%s ' "$TRANSCRIPTION" | wl-copy
                   wtype --keys ctrl+v
                 fi
               fi
             fi
-            
+
             # Clean up temp audio file
             rm -f "$TEMP_AUDIO"
-            
+
             # Short pause before next recording
             sleep 0.5
           done
@@ -285,39 +285,39 @@
           if [ ! -f "$MODEL" ]; then
             echo "Model not found: $MODEL" >&2; exit 1
           fi
-          
+
           echo "Testing dictation pipeline..."
           echo "Model: $MODEL"
           echo "Starting whisper-stream..."
-          
+
           # Add timeout and verbose output
           timeout 30 whisper-stream -m "$MODEL" -t "$(nproc)" -c 1 2>&1 | while IFS= read -r line; do
             echo "Raw output: '$line'"
-            
+
             # Clean the line
             cleaned=$(echo "$line" | sed -E 's/^\[[^]]+\]\s*//')
             echo "Cleaned: '$cleaned'"
-            
+
             # Skip empty lines
             if [ -z "''${cleaned// }" ]; then
               echo "Skipping empty line"
               continue
             fi
-            
+
             echo "Processing: '$cleaned'"
-            
+
             # Try clipboard
             printf '%s ' "$cleaned" | xclip -selection clipboard
             echo "Copied to clipboard"
-            
+
             # Check clipboard
             clipcontent=$(xclip -selection clipboard -o)
             echo "Clipboard contains: '$clipcontent'"
-            
+
             # Try paste
             echo "Attempting paste..."
             xdotool key --clearmodifiers ctrl+v
-            
+
             sleep 0.5
           done
         '';
