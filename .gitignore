@@ -15,3 +15,5 @@ __pycache__
 .\#*
 # Vim (from https://github.com/github/gitignore/blob/main/Global/Vim.gitignore)
 [._]*.swp
+my-config/whisper/venv_faster_whisper/
+

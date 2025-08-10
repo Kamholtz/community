@@ -359,6 +359,192 @@
         '';
       };
 
+      dictate-x11-sliding = pkgs.writeShellApplication {
+        name = "dictate-x11-sliding";
+        runtimeInputs = [ pkgs.curl pkgs.jq pkgs.xdotool pkgs.xclip pkgs.pulseaudio pkgs.coreutils pkgs.sox ];
+        text = ''
+          set -euo pipefail
+
+          # Configuration
+          WHISPER_URL="http://localhost:8000"
+          MODEL="Systran/faster-distil-whisper-small.en"
+          WINDOW_SIZE=5    # seconds of audio per window
+          OVERLAP_SIZE=1   # seconds of overlap between windows
+          
+          # Test connection
+          if ! curl -s "$WHISPER_URL" > /dev/null 2>&1; then
+            echo "Cannot connect to speaches at $WHISPER_URL" >&2
+            exit 1
+          fi
+
+          echo "Starting sliding window dictation (prevents word splitting)" >&2
+          echo "Window: ''${WINDOW_SIZE}s, Overlap: ''${OVERLAP_SIZE}s" >&2
+
+          # Create audio buffer file
+          AUDIO_BUFFER=$(mktemp --suffix=.wav)
+          LAST_TRANSCRIPT=""
+          
+          cleanup() {
+            echo "Stopping sliding window transcription..." >&2
+            pkill -f "parecord" 2>/dev/null || true
+            rm -f "$AUDIO_BUFFER" 2>/dev/null || true
+          }
+          trap cleanup EXIT INT TERM
+
+          # Start continuous audio recording in background
+          parecord --format=s16le --rate=16000 --channels=1 "$AUDIO_BUFFER" &
+          
+          echo "Audio recording started, processing in sliding windows..." >&2
+          sleep 2  # Let some audio accumulate
+
+          while true; do
+            # Extract current window from the continuous recording
+            CURRENT_WINDOW=$(mktemp --suffix=.wav)
+            
+            # Get the last WINDOW_SIZE seconds of audio
+            sox "$AUDIO_BUFFER" "$CURRENT_WINDOW" trim -"''${WINDOW_SIZE}" 2>/dev/null || continue
+            
+            # Check if we have enough audio
+            AUDIO_SIZE=$(wc -c < "$CURRENT_WINDOW" 2>/dev/null || echo 0)
+            if [ "$AUDIO_SIZE" -lt 32000 ]; then
+              rm -f "$CURRENT_WINDOW"
+              sleep 0.5
+              continue
+            fi
+
+            # Convert to FLAC for faster upload
+            CURRENT_FLAC=$(mktemp --suffix=.flac)
+            sox "$CURRENT_WINDOW" "$CURRENT_FLAC" 2>/dev/null || cp "$CURRENT_WINDOW" "$CURRENT_FLAC"
+
+            # Transcribe the window
+            RESPONSE=$(timeout 10 curl -s -X POST \
+              --max-time 10 \
+              -F "file=@$CURRENT_FLAC" \
+              -F "model=$MODEL" \
+              -F "response_format=json" \
+              "$WHISPER_URL/v1/audio/transcriptions" 2>/dev/null || echo "")
+
+            if [ -n "$RESPONSE" ]; then
+              TRANSCRIPT=$(echo "$RESPONSE" | jq -r '.text // empty' 2>/dev/null || echo "")
+              
+              if [ -n "$TRANSCRIPT" ] && [ "$TRANSCRIPT" != "null" ] && [ "$TRANSCRIPT" != "" ]; then
+                CLEAN_TRANSCRIPT=$(echo "$TRANSCRIPT" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+                
+                if [ -n "$CLEAN_TRANSCRIPT" ] && [[ "$CLEAN_TRANSCRIPT" =~ [[:alpha:]] ]]; then
+                  # Extract new words by comparing with last transcript
+                  if [ -n "$LAST_TRANSCRIPT" ]; then
+                    # Simple word diff - find new words at the end
+                    NEW_WORDS=$(echo "$CLEAN_TRANSCRIPT" | sed "s/^$(echo "$LAST_TRANSCRIPT" | sed 's/[[\.*^$(){}?+|\\]]/\\&/g')//")
+                    if [ -n "$NEW_WORDS" ] && [ "$NEW_WORDS" != "$CLEAN_TRANSCRIPT" ]; then
+                      NEW_WORDS=$(echo "$NEW_WORDS" | sed 's/^[[:space:]]*//')
+                      if [ -n "$NEW_WORDS" ]; then
+                        echo "New: '$NEW_WORDS'" >&2
+                        printf '%s ' "$NEW_WORDS" | xclip -selection clipboard
+                        sleep 0.05
+                        xdotool key --clearmodifiers ctrl+v
+                      fi
+                    fi
+                  else
+                    # First transcript - use it all
+                    echo "First: '$CLEAN_TRANSCRIPT'" >&2
+                    printf '%s ' "$CLEAN_TRANSCRIPT" | xclip -selection clipboard
+                    sleep 0.05
+                    xdotool key --clearmodifiers ctrl+v
+                  fi
+                  
+                  LAST_TRANSCRIPT="$CLEAN_TRANSCRIPT"
+                fi
+              fi
+            fi
+
+            rm -f "$CURRENT_WINDOW" "$CURRENT_FLAC"
+            
+            # Sleep for (WINDOW_SIZE - OVERLAP_SIZE) to create overlap
+            sleep $((WINDOW_SIZE - OVERLAP_SIZE))
+          done
+        '';
+      };
+
+      dictate-whisperx-setup = pkgs.writeShellApplication {
+        name = "dictate-whisperx-setup";
+        runtimeInputs = [
+          pkgs.python3
+          pkgs.python3Packages.pip
+          pkgs.portaudio
+          pkgs.python3Packages.pyaudio  # Pre-built to avoid compilation issues
+        ];
+        text = ''
+          python3 setup_whisperx.py "$@"
+        '';
+      };
+      
+      dictate-whisperx-venv = pkgs.writeShellApplication {
+        name = "dictate-whisperx-venv";
+        runtimeInputs = [
+          pkgs.python3
+          pkgs.xdotool
+          pkgs.xclip
+          pkgs.portaudio
+        ];
+        text = ''
+          # Check if venv exists
+          if [ ! -d "venv_whisperx" ]; then
+            echo "Virtual environment not found!" >&2
+            echo "Run: nix run .#dictate-whisperx-setup" >&2
+            echo "Or manually: python3 setup_whisperx.py" >&2
+            exit 1
+          fi
+          
+          # Check if run script exists
+          if [ -f "run_whisperx.sh" ]; then
+            exec ./run_whisperx.sh "$@"
+          else
+            # Fallback: use venv python directly
+            exec venv_whisperx/bin/python dictate_whisperx.py "$@"
+          fi
+        '';
+      };
+
+      dictate-faster-whisper-setup = pkgs.writeShellApplication {
+        name = "dictate-faster-whisper-setup";
+        runtimeInputs = [
+          pkgs.python3
+          pkgs.python3Packages.pip
+          pkgs.portaudio
+          pkgs.python3Packages.pyaudio
+        ];
+        text = ''
+          python3 setup_faster_whisper.py "$@"
+        '';
+      };
+      
+      dictate-faster-whisper-venv = pkgs.writeShellApplication {
+        name = "dictate-faster-whisper-venv";
+        runtimeInputs = [
+          pkgs.python3
+          pkgs.xdotool
+          pkgs.xclip
+          pkgs.portaudio
+        ];
+        text = ''
+          # Check if venv exists
+          if [ ! -d "venv_faster_whisper" ]; then
+            echo "Virtual environment not found!" >&2
+            echo "Run: nix run .#dictate-faster-whisper-setup" >&2
+            echo "Or manually: python3 setup_faster_whisper.py" >&2
+            exit 1
+          fi
+          
+          # Check if run script exists
+          if [ -f "run_faster_whisper.sh" ]; then
+            exec ./run_faster_whisper.sh "$@"
+          else
+            # Fallback: use venv python directly
+            exec venv_faster_whisper/bin/python dictate_faster_whisper.py "$@"
+          fi
+        '';
+      };
+
       test-dictate = pkgs.writeShellApplication {
         name = "test-dictate";
         runtimeInputs = [ pkgs.whisper-cpp pkgs.xdotool pkgs.xclip pkgs.coreutils ];
@@ -449,6 +635,36 @@
       };
       aarch64-linux.dictate-x11-realtime = {
         type = "app"; program = "${self.packages.aarch64-linux.dictate-x11-realtime}/bin/dictate-x11-realtime";
+      };
+      x86_64-linux.dictate-x11-sliding = {
+        type = "app"; program = "${self.packages.x86_64-linux.dictate-x11-sliding}/bin/dictate-x11-sliding";
+      };
+      aarch64-linux.dictate-x11-sliding = {
+        type = "app"; program = "${self.packages.aarch64-linux.dictate-x11-sliding}/bin/dictate-x11-sliding";
+      };
+      x86_64-linux.dictate-whisperx-setup = {
+        type = "app"; program = "${self.packages.x86_64-linux.dictate-whisperx-setup}/bin/dictate-whisperx-setup";
+      };
+      aarch64-linux.dictate-whisperx-setup = {
+        type = "app"; program = "${self.packages.aarch64-linux.dictate-whisperx-setup}/bin/dictate-whisperx-setup";
+      };
+      x86_64-linux.dictate-whisperx-venv = {
+        type = "app"; program = "${self.packages.x86_64-linux.dictate-whisperx-venv}/bin/dictate-whisperx-venv";
+      };
+      aarch64-linux.dictate-whisperx-venv = {
+        type = "app"; program = "${self.packages.aarch64-linux.dictate-whisperx-venv}/bin/dictate-whisperx-venv";
+      };
+      x86_64-linux.dictate-faster-whisper-setup = {
+        type = "app"; program = "${self.packages.x86_64-linux.dictate-faster-whisper-setup}/bin/dictate-faster-whisper-setup";
+      };
+      aarch64-linux.dictate-faster-whisper-setup = {
+        type = "app"; program = "${self.packages.aarch64-linux.dictate-faster-whisper-setup}/bin/dictate-faster-whisper-setup";
+      };
+      x86_64-linux.dictate-faster-whisper-venv = {
+        type = "app"; program = "${self.packages.x86_64-linux.dictate-faster-whisper-venv}/bin/dictate-faster-whisper-venv";
+      };
+      aarch64-linux.dictate-faster-whisper-venv = {
+        type = "app"; program = "${self.packages.aarch64-linux.dictate-faster-whisper-venv}/bin/dictate-faster-whisper-venv";
       };
     };
   };
