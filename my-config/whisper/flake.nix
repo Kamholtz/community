@@ -13,7 +13,7 @@
     packages = forAll (pkgs: {
       dictate-x11-docker = pkgs.writeShellApplication {
         name = "dictate-x11-docker";
-        runtimeInputs = [ pkgs.curl pkgs.jq pkgs.xdotool pkgs.xclip pkgs.pulseaudio ];
+        runtimeInputs = [ pkgs.curl pkgs.jq pkgs.xdotool pkgs.xclip pkgs.pulseaudio pkgs.sox ];
         text = ''
           set -euo pipefail
 
@@ -32,32 +32,35 @@
           echo "Dictation ready - speak now! (Ctrl+C to stop)" >&2
 
           while true; do
-            # Record 8 seconds of audio (longer chunks for better accuracy)
-            TEMP_AUDIO=$(mktemp --suffix=.wav)
+            # Record 15 seconds of audio (longer chunks for better accuracy and efficiency)
+            TEMP_AUDIO=$(mktemp --suffix=.mp3)
 
-            # Use parecord to capture longer audio segments
-            timeout 8 parecord \
+            # Use parecord to capture audio, then compress with sox
+            TEMP_WAV=$(mktemp --suffix=.mp3)
+            timeout 15 parecord \
               --format=s16le \
               --rate=16000 \
               --channels=1 \
-              "$TEMP_AUDIO" \
+              "$TEMP_WAV" \
               2>/dev/null || true
 
-            # Check if we got meaningful audio
+            # Convert to FLAC for better compression
+            if [ -f "$TEMP_WAV" ] && [ -s "$TEMP_WAV" ]; then
+              sox "$TEMP_WAV" "$TEMP_AUDIO" 2>/dev/null || cp "$TEMP_WAV" "$TEMP_AUDIO"
+              rm -f "$TEMP_WAV"
+            fi
+
+            # Process any audio we captured (removed minimum size check)
             if [ -f "$TEMP_AUDIO" ] && [ -s "$TEMP_AUDIO" ]; then
-              # Get file size to check if there's actual content
-              AUDIO_SIZE=$(wc -c < "$TEMP_AUDIO")
+              echo "Processing audio..." >&2
 
-              if [ "$AUDIO_SIZE" -gt 32000 ]; then  # More than 2 seconds of audio
-                echo "Processing audio..." >&2
-
-                # Send to your faster-whisper service with timeout (OpenAI API format)
-                RESPONSE=$(timeout 10 curl -s -X POST \
-                  --max-time 10 \
-                  -F "file=@$TEMP_AUDIO" \
-                  -F "model=Systran/faster-distil-whisper-small.en" \
-                  -F "response_format=json" \
-                  "$WHISPER_URL/v1/audio/transcriptions" 2>/dev/null || echo "")
+              # Send to faster-whisper service with longer timeout
+              RESPONSE=$(timeout 25 curl -s -X POST \
+                --max-time 25 \
+                -F "file=@$TEMP_AUDIO" \
+                -F "model=Systran/faster-distil-whisper-small.en" \
+                -F "response_format=json" \
+                "$WHISPER_URL/v1/audio/transcriptions" 2>/dev/null || echo "")
 
                 if [ -n "$RESPONSE" ]; then
                   # Extract text from response
@@ -77,9 +80,6 @@
                 else
                   echo "No response from whisper service" >&2
                 fi
-              else
-                echo "Audio too short, skipping..." >&2
-              fi
             fi
 
             # Clean up temp audio file
