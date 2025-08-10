@@ -276,6 +276,89 @@
         '';
       };
 
+      dictate-x11-realtime = pkgs.writeShellApplication {
+        name = "dictate-x11-realtime";
+        runtimeInputs = [ pkgs.curl pkgs.jq pkgs.xdotool pkgs.xclip pkgs.pulseaudio pkgs.coreutils pkgs.sox ];
+        text = ''
+          set -euo pipefail
+
+          # Configuration - adjust these for your setup
+          WHISPER_URL="http://localhost:8000"
+          MODEL="Systran/faster-distil-whisper-small.en"
+
+          # Test if we can reach the service
+          echo "Testing connection to speaches service..." >&2
+          if ! curl -s "$WHISPER_URL" > /dev/null 2>&1; then
+            echo "Cannot connect to speaches at $WHISPER_URL" >&2
+            echo "Please ensure your speaches container is running" >&2
+            exit 1
+          fi
+
+          echo "Starting fast streaming dictation - speak now! (Ctrl+C to stop)" >&2
+          echo "Using very short audio chunks for low latency" >&2
+
+          # Cleanup function
+          cleanup() {
+            echo "Stopping streaming transcription..." >&2
+            pkill -f "parecord" 2>/dev/null || true
+          }
+          trap cleanup EXIT INT TERM
+
+          while true; do
+            # Capture short chunks of audio (3 seconds) for meaningful content
+            TEMP_AUDIO=$(mktemp --suffix=.wav)
+
+            # Use parecord to capture short audio segments  
+            timeout 3 parecord \
+              --format=s16le \
+              --rate=16000 \
+              --channels=1 \
+              "$TEMP_AUDIO" \
+              2>/dev/null || true
+
+            # Process any captured audio immediately (no minimum size check)
+            if [ -f "$TEMP_AUDIO" ] && [ -s "$TEMP_AUDIO" ]; then
+              # Convert to FLAC for better compression and speed
+              TEMP_FLAC=$(mktemp --suffix=.flac)
+              sox "$TEMP_AUDIO" "$TEMP_FLAC" 2>/dev/null || cp "$TEMP_AUDIO" "$TEMP_FLAC"
+
+              # Send to speaches service with reasonable timeout
+              RESPONSE=$(timeout 8 curl -s -X POST \
+                --max-time 8 \
+                -F "file=@$TEMP_FLAC" \
+                -F "model=$MODEL" \
+                -F "response_format=json" \
+                "$WHISPER_URL/v1/audio/transcriptions" 2>/dev/null || echo "")
+
+              if [ -n "$RESPONSE" ]; then
+                # Extract text from response
+                TEXT=$(echo "$RESPONSE" | jq -r '.text // empty' 2>/dev/null || echo "")
+
+                if [ -n "$TEXT" ] && [ "$TEXT" != "null" ] && [ "$TEXT" != "" ]; then
+                  # Clean the text
+                  CLEAN_TEXT=$(echo "$TEXT" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+                  if [ -n "$CLEAN_TEXT" ] && [[ "$CLEAN_TEXT" =~ [[:alpha:]] ]]; then
+                    echo "Fast: '$CLEAN_TEXT'" >&2
+                    printf '%s ' "$CLEAN_TEXT" | xclip -selection clipboard
+                    sleep 0.05
+                    xdotool key --clearmodifiers ctrl+v
+                  fi
+                fi
+              fi
+
+              # Clean up temp files
+              rm -f "$TEMP_AUDIO" "$TEMP_FLAC"
+            else
+              rm -f "$TEMP_AUDIO"
+            fi
+
+            # Very short pause for continuous streaming
+            sleep 0.2
+          done
+        '';
+      };
+
       test-dictate = pkgs.writeShellApplication {
         name = "test-dictate";
         runtimeInputs = [ pkgs.whisper-cpp pkgs.xdotool pkgs.xclip pkgs.coreutils ];
@@ -360,6 +443,12 @@
       };
       aarch64-linux.dictate-x11-docker = {
         type = "app"; program = "${self.packages.aarch64-linux.dictate-x11-docker}/bin/dictate-x11-docker";
+      };
+      x86_64-linux.dictate-x11-realtime = {
+        type = "app"; program = "${self.packages.x86_64-linux.dictate-x11-realtime}/bin/dictate-x11-realtime";
+      };
+      aarch64-linux.dictate-x11-realtime = {
+        type = "app"; program = "${self.packages.aarch64-linux.dictate-x11-realtime}/bin/dictate-x11-realtime";
       };
     };
   };
