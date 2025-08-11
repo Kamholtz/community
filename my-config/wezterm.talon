@@ -31,7 +31,9 @@ pane close:               key(ctrl-shift-w)
 command palette:          key(ctrl-shift-p)
 
 # Reverse history search (FZF-style)
-reverse search:           key(ctrl-r)
+reverse search <user.text>: 
+    key(ctrl-r)
+    insert(user.text or "")
 
 # Git quick commands
 git status:               insert("git status\n")

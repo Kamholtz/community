@@ -178,6 +178,16 @@ Write Report Temp:
     user.vim_run_normal_np(":WriteReportTemp\n")
 
 # =====================================
+# Highlight
+# =====================================
+
+highlight that:
+    user.vim_run_normal_np(":Hi+\n")
+
+unhighlight that:
+    user.vim_run_normal_np(":Hi-\n")
+
+# =====================================
 # LSP
 # =====================================
 
