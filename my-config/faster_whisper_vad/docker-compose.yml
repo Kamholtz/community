@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: realtime-transcription
+    user: "${UID:-1000}:${GID:-1000}"
     environment:
       - DISPLAY=${DISPLAY}
       - PULSE_SERVER=unix:/run/user/1000/pulse/native

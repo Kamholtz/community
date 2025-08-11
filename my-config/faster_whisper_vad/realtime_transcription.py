@@ -13,13 +13,15 @@ import subprocess
 import platform
 from pathlib import Path
 
-# Configure logging
+# Configure logging (use temp directory for log file to avoid permission issues)
+import tempfile
+log_dir = tempfile.gettempdir()
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler('/app/transcription.log', mode='a')
+        logging.FileHandler(f'{log_dir}/transcription.log', mode='a')
     ]
 )
 logger = logging.getLogger(__name__)
@@ -162,21 +164,30 @@ class TypingBackend:
         
         try:
             if self.backend == 'xdotool':
-                subprocess.run(['xdotool', 'type', '--delay', str(self.delay_ms), text], check=True)
+                result = subprocess.run(['xdotool', 'type', '--delay', str(self.delay_ms), text], 
+                                      check=True, capture_output=True, text=True)
             elif self.backend == 'wtype':
-                subprocess.run(['wtype', text], check=True)
+                result = subprocess.run(['wtype', text], check=True, capture_output=True, text=True)
             elif self.backend == 'keyboard':
                 import keyboard
                 keyboard.write(text, delay=self.delay_ms/1000.0)
             else:
                 # Fallback: print to stdout
-                sys.stdout.write(text)
+                sys.stdout.write(f"[TRANSCRIBED]: {text}")
                 sys.stdout.flush()
                 
+        except subprocess.CalledProcessError as e:
+            if "display" in e.stderr.lower():
+                logger.warning(f"X11 display not accessible, falling back to stdout output")
+                sys.stdout.write(f"[TRANSCRIBED]: {text}")
+            else:
+                logger.error(f"Failed to type text with {self.backend}: {e}")
+                sys.stdout.write(f"[TRANSCRIBED]: {text}")
+            sys.stdout.flush()
         except Exception as e:
             logger.error(f"Failed to type text with {self.backend}: {e}")
             # Fallback to stdout
-            sys.stdout.write(text)
+            sys.stdout.write(f"[TRANSCRIBED]: {text}")
             sys.stdout.flush()
 
 class VADProcessor:
@@ -262,11 +273,14 @@ class TranscriptionEngine:
         logger.info(f"Loading whisper model: {self.model_size}, device: {self.device}")
         start_time = time.time()
         
+        # Use HF_HOME if set, otherwise default to /app/models
+        download_root = os.environ.get('HF_HOME', '/app/models')
+        
         self.model = WhisperModel(
             self.model_size,
             device=self.device,
             compute_type=self.compute_type,
-            download_root="/app/models"
+            download_root=download_root
         )
         
         load_time = time.time() - start_time
@@ -287,7 +301,7 @@ class TranscriptionEngine:
         
         segments, info = self.model.transcribe(
             audio_array,
-            language=self.language,
+            language=self.language or "en",  # Force English if not specified
             beam_size=beam_size,
             temperature=self.temperature,
             condition_on_previous_text=self.condition_on_previous,
@@ -349,7 +363,7 @@ class RealtimeTranscriber:
         """Main transcription loop."""
         logger.info("Starting real-time transcription")
         logger.info(f"Model: {self.engine.model_size}, Device: {self.engine.device}")
-        logger.info(f"VAD: aggressiveness={self.vad.vad.mode}, gates={self.vad.start_gate_ms}/{self.vad.end_gate_ms}ms")
+        logger.info(f"VAD: aggressiveness={self.config.get('vad', 'aggressiveness', 2)}, gates={self.vad.start_gate_ms}/{self.vad.end_gate_ms}ms")
         
         self.running = True
         self.audio.start()
