@@ -15,6 +15,7 @@ END_GATE_MS = 400
 PAD_MS = 250
 MODEL_SIZE = "small"  # tiny/ base/ small/ medium.en/ large-v3
 DEVICE = "auto"       # "cuda" if available else "cpu"
+VOLUME_THRESHOLD = 0.01  # Minimum RMS volume to consider as speech
 
 # ---- typing backends ----
 OS = platform.system().lower()
@@ -87,7 +88,12 @@ def loop():
     while True:
         frame = audio_q.get()
         lookback.append(frame)
-        is_speech = vad.is_speech(frame, SR)
+        
+        # Check volume threshold in addition to VAD
+        audio_data = np.frombuffer(frame, dtype=np.int16).astype(np.float32) / 32768.0
+        rms_volume = np.sqrt(np.mean(audio_data ** 2))
+        
+        is_speech = vad.is_speech(frame, SR) and rms_volume > VOLUME_THRESHOLD
         if is_speech:
             speech_run += 1; nonspeech_run = 0
             if not speech_started and speech_run*FRAME_MS >= START_GATE_MS:
@@ -110,8 +116,8 @@ def loop():
                 buf.clear(); speech_started = False; lookback.clear()
                 final_text = transcribe_bytes(final_audio, beam=5)
                 diff_and_type(final_text)
-                # add a trailing space so next partials don’t stick to the last word
-                diff_and_type(typed_so_far + " ")
+                # add a trailing space so next partials don't stick to the last word
+                type_text(" ")
 
 if __name__ == "__main__":
     loop()
