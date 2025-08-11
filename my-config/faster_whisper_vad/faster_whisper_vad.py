@@ -119,5 +119,53 @@ def loop():
                 # add a trailing space so next partials don't stick to the last word
                 type_text(" ")
 
+def check_microphone():
+    """Test microphone setup and show available devices"""
+    print("=== Microphone Setup Check ===")
+    try:
+        devices = sd.query_devices()
+        print("Available audio devices:")
+        for i, device in enumerate(devices):
+            if device['max_input_channels'] > 0:
+                print(f"  {i}: {device['name']} (input channels: {device['max_input_channels']})")
+        
+        default_input = sd.default.device[0]
+        if default_input is not None:
+            default_device = devices[default_input]
+            print(f"\nDefault input device: {default_device['name']}")
+        else:
+            print("\nNo default input device found!")
+            return False
+        
+        print("\nTesting microphone for 2 seconds...")
+        test_audio = sd.rec(int(2 * SR), samplerate=SR, channels=1, dtype='float32')
+        sd.wait()
+        
+        rms_volume = np.sqrt(np.mean(test_audio ** 2))
+        print(f"Recorded RMS volume: {rms_volume:.6f}")
+        print(f"Volume threshold: {VOLUME_THRESHOLD}")
+        
+        if rms_volume > VOLUME_THRESHOLD:
+            print("✅ Microphone appears to be working and above threshold")
+        else:
+            print("⚠️  Warning: Recorded volume is below threshold - may not detect speech")
+            print("   Try speaking louder or adjusting VOLUME_THRESHOLD")
+        
+        print("=== End Microphone Check ===\n")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error testing microphone: {e}")
+        return False
+
 if __name__ == "__main__":
-    loop()
+    print(f"Model: {MODEL_SIZE}, Device: {DEVICE}")
+    print(f"VAD: aggressiveness=2, gates={START_GATE_MS}/{END_GATE_MS}ms")
+    print(f"Volume threshold: {VOLUME_THRESHOLD}")
+    print()
+    
+    if check_microphone():
+        input("Press Enter to start transcription or Ctrl+C to exit...")
+        loop()
+    else:
+        print("Microphone check failed. Please fix audio setup and try again.")

@@ -206,8 +206,30 @@ The system will now provide real-time speech-to-text that appears directly at yo
 
 ## Troubleshooting
 
-### Critical Bug - FIXED
-- **Infinite Typing Loop**: Line 114 in `faster_whisper_vad.py` had `diff_and_type(typed_so_far + " ")` which caused infinite text output, making applications unresponsive. Fixed by changing to `diff_and_type(" ")`.
+### Recent Fixes (Aug 2025)
+
+#### ✅ Critical Bug - FIXED
+- **Infinite Typing Loop**: Line 114 in `faster_whisper_vad.py` had `diff_and_type(typed_so_far + " ")` which caused infinite text output, making applications unresponsive. Fixed by changing to `type_text(" ")`.
+
+#### ✅ VAD Over-sensitivity - FIXED
+- **Problem**: VAD detecting electrical noise as speech even when microphone muted, causing hallucinated transcriptions like "The wind is so much back down the road. Thanks for watching!"
+- **Solution**: Added volume threshold check (`VOLUME_THRESHOLD = 0.01`) - now requires BOTH VAD detection AND audio above RMS volume threshold
+- **Code**: `is_speech = vad.is_speech(frame, SR) and rms_volume > VOLUME_THRESHOLD`
+
+#### ✅ Script Issues - FIXED
+- **run.sh UID Error**: Fixed `UID: readonly variable` by using `USER_ID` and `GROUP_ID` instead
+- **Microphone Detection**: Added automatic microphone testing and device listing in script startup
+
+### Script Purposes
+- **`run-simple.sh`**: Quick test, no persistent models (85s load time each run)
+- **`run.sh`**: Production use with persistent models (3-5s load time after first run) - **RECOMMENDED**
+- **`run-direct.sh`**: Direct Docker run with user permission handling
+- **`run-fixed.sh`**: X11 permissions and English-only model
+- **`build-and-test.sh`**: Development - builds and tests container
+
+### Current Issues
+- **Model Loading**: Still seeing 83-85s load times - ensure using `./run.sh` not `run-simple.sh`
+- **Audio Quality**: Whisper hallucinations from poor audio input - test with `check_microphone()` function
 
 ### Common Issues
 - **Audio Permission**: Container needs access to `/dev/snd`
@@ -215,13 +237,13 @@ The system will now provide real-time speech-to-text that appears directly at yo
 - **Display Access**: Needs X11 forwarding for typing
 - **Model Downloads**: First run requires internet for model download
 
-### Development Issues
-- **VAD Sensitivity**: Adjust `START_GATE_MS`/`END_GATE_MS` for environment
-- **Model Size**: Balance accuracy vs speed/memory based on hardware
-- **Typing Backend**: Platform-specific keyboard automation challenges
+### Configuration Options
+- `VOLUME_THRESHOLD`: Minimum RMS volume (default 0.01) - increase if too sensitive
+- `VAD_AGGRESSIVENESS`: 0-3, higher = more restrictive (default 2)
+- `START_GATE_MS`/`END_GATE_MS`: Speech detection gates (default 200/400ms)
 
 ### Protection Mechanisms
+- **Volume Threshold**: Prevents noise from triggering transcription
 - **Rate Limiting**: Consider adding delays between keystrokes to prevent system overload
-- **Output Length Limits**: Implement maximum text output per transcription cycle
-- **Emergency Stop**: Add keyboard interrupt handling to stop runaway processes
-- **Debug Mode**: Add verbose logging option to identify issues before they affect the system
+- **Emergency Stop**: Ctrl+C handling implemented
+- **Microphone Testing**: Built-in device detection and volume testing

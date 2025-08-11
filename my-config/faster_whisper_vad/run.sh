@@ -6,14 +6,14 @@ echo "Target: RTX 3050 Ti Mobile GPU"
 echo
 
 # Set current user ID for proper file permissions
-export UID=$(id -u)
-export GID=$(id -g)
+export USER_ID=$(id -u)
+export GROUP_ID=$(id -g)
 
-echo "Running as user: $UID:$GID"
+echo "Running as user: $USER_ID:$GROUP_ID"
 
 # Ensure models directory exists and is writable
 mkdir -p models config
-chmod 755 models config
+chmod 755 models config 2>/dev/null || echo "Note: Could not change permissions for models/config directories"
 
 # Check X11 forwarding setup
 if [ -z "$DISPLAY" ]; then
@@ -29,4 +29,4 @@ fi
 
 # Run the container with proper permissions and GPU access
 echo "Starting real-time transcription container..."
-docker-compose up --build
+docker compose up --build

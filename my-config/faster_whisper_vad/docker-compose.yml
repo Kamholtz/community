@@ -6,10 +6,10 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: realtime-transcription
-    user: "${UID:-1000}:${GID:-1000}"
+    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
     environment:
       - DISPLAY=${DISPLAY}
-      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+      - PULSE_SERVER=unix:/run/user/${USER_ID:-1000}/pulse/native
       - MODEL_SIZE=${MODEL_SIZE:-small}
       - DEVICE=${DEVICE:-auto}
       - VAD_AGGRESSIVENESS=${VAD_AGGRESSIVENESS:-2}
@@ -49,7 +49,7 @@ services:
     container_name: realtime-transcription-dev
     environment:
       - DISPLAY=${DISPLAY}
-      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+      - PULSE_SERVER=unix:/run/user/${USER_ID:-1000}/pulse/native
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /run/user/1000/pulse:/run/user/1000/pulse:ro
