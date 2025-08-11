@@ -6,11 +6,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 ENV PULSE_RUNTIME_PATH=/run/user/1000/pulse
 
-# Test GPU compatibility early in build process
-RUN echo "Testing GPU compatibility for RTX 3050 Ti Mobile..." && \
-    nvidia-smi && \
-    python -c "import torch; print(f'PyTorch version: {torch.__version__}'); print(f'CUDA available: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda}'); print(f'GPU device: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"None\"}')" && \
-    echo "GPU compatibility test passed!"
+# Test PyTorch CUDA setup (nvidia-smi only available at runtime with --gpus)
+RUN echo "Testing PyTorch CUDA compatibility for RTX 3050 Ti Mobile..." && \
+    python -c "import torch; print(f'PyTorch version: {torch.__version__}'); print(f'CUDA build available: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda}'); print('GPU detection will be tested at runtime with --gpus flag')" && \
+    echo "PyTorch CUDA build test passed!"
 
 # Install system dependencies (Python/PyTorch already included in base image)
 RUN apt-get update && apt-get install -y \
@@ -51,12 +50,13 @@ COPY config.yaml /app/config/
 # Make scripts executable
 RUN chmod +x /app/*.py /app/install.sh
 
-# Create user for running the application
-RUN useradd -m -u 1000 -g audio transcriber
-RUN usermod -aG audio,pulse-access transcriber
+# Create user for running the application (NGC image may have existing UID 1000)
+RUN groupadd -f audio || true
+RUN id -u transcriber >/dev/null 2>&1 || useradd -m -u 1001 transcriber
+RUN usermod -aG audio transcriber 2>/dev/null || true
 
 # Set ownership
-RUN chown -R transcriber:audio /app
+RUN chown -R transcriber /app 2>/dev/null || chown -R 1001 /app
 
 # Switch to non-root user
 USER transcriber
