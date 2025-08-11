@@ -1,6 +1,7 @@
 mode: command
 mode: dictation
 mode: sleep
+mode: whisper
 not speech.engine: dragon
 -
 # The optional <phrase> afterwards allows these to match even if you say arbitrary text
@@ -39,3 +40,11 @@ not speech.engine: dragon
     user.help_hide()
     user.mouse_sleep()
     speech.disable()
+
+^talon whisper$:
+    speech.disable()
+    key(ctrl-m)
+
+^talon whisper done$:
+    key(ctrl-m)
+    speech.enable()

@@ -401,6 +401,7 @@ tmp,temp
 temp,temperature
 tmp,temporary
 term,terminal
+hud,head up display
 txt,text
 hh:mm:ss,time format
 toctou,time of check time of use
