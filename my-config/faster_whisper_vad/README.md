@@ -51,7 +51,7 @@ A real-time speech transcription system that uses Voice Activity Detection (VAD)
 
 ### Performance Characteristics
 - **Latency**: ~0.9s partial results, ~1.5s final results
-- **Accuracy**: High quality with beam search for final transcription  
+- **Accuracy**: High quality with beam search for final transcription
 - **Resource Usage**: GPU accelerated, ~1GB VRAM for small model
 - **Platform Support**: Linux (primary), Windows, macOS (limited)
 
@@ -76,7 +76,7 @@ pip install sounddevice webrtcvad faster-whisper numpy
 
 ### VAD Parameters
 - `SR`: Sample rate (16000 Hz)
-- `FRAME_MS`: Frame duration (20ms)  
+- `FRAME_MS`: Frame duration (20ms)
 - `START_GATE_MS`: Speech start threshold (200ms)
 - `END_GATE_MS`: Speech end threshold (400ms)
 - `PAD_MS`: Audio padding (250ms)
@@ -84,7 +84,7 @@ pip install sounddevice webrtcvad faster-whisper numpy
 ### Model Selection
 - `tiny`: Fastest, basic accuracy (~39MB)
 - `small`: Good balance (~244MB) - **Current default**
-- `medium`: Better accuracy (~769MB)  
+- `medium`: Better accuracy (~769MB)
 - `large-v3`: Best accuracy (~1550MB)
 
 ### Transcription Settings
@@ -140,13 +140,13 @@ docker run --rm --gpus all -v $(pwd):/app/src \
 
 ### Next Development Session Handoff
 
-**Current State**: 
+**Current State**:
 - Core VAD+transcription pipeline implemented and tested
 - Docker architecture designed but not yet implemented
 - Integration plan with existing whisper infrastructure defined
 
 **Priority Tasks for Next Session**:
-1. Implement Docker container with GPU/audio/X11 passthrough  
+1. Implement Docker container with GPU/audio/X11 passthrough
 2. Create docker-compose.yml for easy deployment
 3. Integrate with existing whisper/ folder infrastructure
 4. Add configuration management system
@@ -167,18 +167,18 @@ docker run --rm --gpus all -v $(pwd):/app/src \
 **READY FOR PRODUCTION USE** - The real-time VAD + faster-whisper transcription system is fully implemented and tested.
 
 ### What Works Right Now:
-✅ **RTX 3050 Ti Mobile GPU**: Full CUDA acceleration validated  
-✅ **Model Loading**: NGC PyTorch container loads small model in 85s  
-✅ **Real-time VAD**: WebRTC VAD chunks audio at natural speech boundaries  
-✅ **GPU Transcription**: 10-20x realtime speed with faster-whisper  
-✅ **Cross-platform Typing**: xdotool/wtype/keyboard backends working  
-✅ **Docker Deployment**: Complete containerized solution  
+✅ **RTX 3050 Ti Mobile GPU**: Full CUDA acceleration validated
+✅ **Model Loading**: NGC PyTorch container loads small model in 85s
+✅ **Real-time VAD**: WebRTC VAD chunks audio at natural speech boundaries
+✅ **GPU Transcription**: 10-20x realtime speed with faster-whisper
+✅ **Cross-platform Typing**: xdotool/wtype/keyboard backends working
+✅ **Docker Deployment**: Complete containerized solution
 
 ### Performance Summary:
-- **Hardware**: RTX 3050 Ti Mobile (3.7GB VRAM detected)  
-- **Model**: faster-whisper small (244MB, fits comfortably in VRAM)  
-- **Speed**: 10-20x realtime transcription speed  
-- **Latency**: 0.9s partial results, 1.5s final results  
+- **Hardware**: RTX 3050 Ti Mobile (3.7GB VRAM detected)
+- **Model**: faster-whisper small (244MB, fits comfortably in VRAM)
+- **Speed**: 10-20x realtime transcription speed
+- **Latency**: 0.9s partial results, 1.5s final results
 - **Architecture**: VAD → Audio Chunking → GPU Transcription → Cursor Typing
 
 ### Ready to Use:
@@ -193,7 +193,7 @@ The system will now provide real-time speech-to-text that appears directly at yo
 
 ### Current Performance (Local Testing)
 - **Model Loading**: ~3-5 seconds (first run)
-- **VAD Latency**: <50ms per frame  
+- **VAD Latency**: <50ms per frame
 - **Transcription Speed**: ~10-20x realtime (GPU), ~2-3x (CPU)
 - **End-to-end Latency**: 0.9-1.5 seconds
 - **Memory Usage**: ~1GB VRAM (small model)
@@ -207,7 +207,7 @@ The system will now provide real-time speech-to-text that appears directly at yo
 ## 📝 README Maintenance Reminder
 **IMPORTANT**: This README must be kept current as the project evolves. When making changes:
 1. ✅ Update the **Current Issues** section with any new problems discovered
-2. ✅ Move resolved issues from "Current Issues" to "Recent Fixes" 
+2. ✅ Move resolved issues from "Current Issues" to "Recent Fixes"
 3. ✅ Update the **✅ Completed Features** section when functionality is working
 4. 🔄 Update the **Next Development Session Handoff** with current status
 5. 📊 Update performance metrics if they change
@@ -221,12 +221,12 @@ This documentation serves as the project's memory between development sessions -
 #### ✅ Critical Bug - FIXED
 - **Infinite Typing Loop**: Line 114 in `faster_whisper_vad.py` had `diff_and_type(typed_so_far + " ")` which caused infinite text output, making applications unresponsive. Fixed by changing to `type_text(" ")`.
 
-#### ✅ Text Repetition Bug - FIXED (Aug 2025)  
+#### ✅ Text Repetition Bug - FIXED (Aug 2025)
 - **Problem**: Identical final transcriptions (e.g., "the quick brown fox jumps over the lazy dog" repeated 5 times) caused massive text duplication instead of being ignored
 - **Root Cause**: Differential text logic was designed for single-utterance partial updates, not separate final transcriptions from VAD chunks
 - **Research**: Investigated proper terminology - this is called "Incremental Speech Recognition with Text Differentiation" or "Real-time ASR Output Reconciliation"
 - **Solution**: Completely redesigned text processing using `StreamingASRTextDiffer` class in `text_differ_v2.py` with proper partial/final hypothesis handling based on streaming ASR best practices
-- **Algorithm**: Uses Longest Common Subsequence (LCS) for efficient text delta computation with final hypothesis deduplication 
+- **Algorithm**: Uses Longest Common Subsequence (LCS) for efficient text delta computation with final hypothesis deduplication
 - **Testing**: Added comprehensive unit tests that verify 100% prevention of repetitions while maintaining correct incremental output
 - **Docker Fix**: Updated Dockerfile to include improved text differ modules
 
@@ -263,10 +263,10 @@ This documentation serves as the project's memory between development sessions -
 - **Solution**: Increased END_GATE_MS from 400ms to 1000ms - now waits 1 full second of silence before ending speech detection
 - **Result**: Should now capture complete phrases and sentences
 
-### Current Issues  
+### Current Issues
 - **ASR Quality Degradation**: The transcription model is producing garbled output ("around the fall" instead of "the quick brown fox"), suggesting audio quality or model configuration issues
-- **Text Repetition Prevention**: ✅ Working correctly - algorithm prevents duplicate final transcriptions 
-- **Model Loading**: Still seeing 83-85s load times - ensure using `./run.sh` not `run-simple.sh`  
+- **Text Repetition Prevention**: ✅ Working correctly - algorithm prevents duplicate final transcriptions
+- **Model Loading**: Still seeing 83-85s load times - ensure using `./run.sh` not `run-simple.sh`
 - **PulseAudio Warning**: May need `pulseaudio --start` for audio to work properly
 
 ### Testing Protocol
