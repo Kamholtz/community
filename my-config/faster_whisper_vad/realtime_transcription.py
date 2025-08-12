@@ -20,8 +20,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler(f'{log_dir}/transcription.log', mode='a')
+        logging.StreamHandler(sys.stdout)
     ]
 )
 logger = logging.getLogger(__name__)
@@ -386,9 +385,9 @@ class RealtimeTranscriber:
                             self.typing.type_text(delta)
                             logger.info(f"Final: '{delta.strip()}'")
                         
-                        # Add trailing space for next utterance
+                        # Add trailing space for next utterance and reset context
                         self.typing.type_text(" ")
-                        self.engine.typed_so_far += " "
+                        self.engine.reset_context()
                 
                 # Handle partial transcription
                 elif partial_buffer and len(partial_buffer) > self.audio.sr * 2 * 0.5:  # Min 0.5s of audio

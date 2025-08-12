@@ -261,9 +261,11 @@ class Actions:
 
 def gamepad_scroll(x: float, y: float):
     """Perform gamepad scrolling"""
-    multiplier = 1.5 if slow_scroll else 2
+    multiplier = 1.5 if slow_scroll else 3
+    print(f"Before multiplier: x={x}, y={y}")
     x = x**3 * multiplier
     y = y**3 * multiplier
+    print(f"After multiplier: x={x}, y={y}")
 
     if x != 0 or y != 0:
         actions.mouse_scroll(x=x, y=y, by_lines=True)

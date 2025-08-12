@@ -227,9 +227,19 @@ The system will now provide real-time speech-to-text that appears directly at yo
 - **`run-fixed.sh`**: X11 permissions and English-only model
 - **`build-and-test.sh`**: Development - builds and tests container
 
+#### ✅ Docker Compose Issues - FIXED
+- **run.sh docker-compose Error**: Fixed `docker-compose: command not found` by updating to `docker compose` (v2 syntax)
+- **Environment Variables**: Fixed `UID`/`GID` readonly errors by using `USER_ID`/`GROUP_ID`
+- **PulseAudio Paths**: Made user ID dynamic in docker-compose.yml
+
+#### ✅ Word Chunking Issue - FIXED
+- **Problem**: Transcription outputting individual words "transcription, working, at, the, moment" instead of full phrases
+- **Solution**: Increased END_GATE_MS from 400ms to 1000ms - now waits 1 full second of silence before ending speech detection
+- **Result**: Should now capture complete phrases and sentences
+
 ### Current Issues
 - **Model Loading**: Still seeing 83-85s load times - ensure using `./run.sh` not `run-simple.sh`
-- **Audio Quality**: Whisper hallucinations from poor audio input - test with `check_microphone()` function
+- **PulseAudio Warning**: May need `pulseaudio --start` for audio to work properly
 
 ### Common Issues
 - **Audio Permission**: Container needs access to `/dev/snd`
@@ -240,7 +250,9 @@ The system will now provide real-time speech-to-text that appears directly at yo
 ### Configuration Options
 - `VOLUME_THRESHOLD`: Minimum RMS volume (default 0.01) - increase if too sensitive
 - `VAD_AGGRESSIVENESS`: 0-3, higher = more restrictive (default 2)
-- `START_GATE_MS`/`END_GATE_MS`: Speech detection gates (default 200/400ms)
+- `START_GATE_MS`: Time before starting speech detection (default 300ms)
+- `END_GATE_MS`: Silence duration before ending speech (default 1000ms - increased from 400ms)
+- `PARTIAL_INTERVAL`: How often to show partial results (default 0.9s)
 
 ### Protection Mechanisms
 - **Volume Threshold**: Prevents noise from triggering transcription

@@ -10,8 +10,8 @@ import platform
 SR = 16000
 FRAME_MS = 20
 PARTIAL_EVERY_SEC = 0.9
-START_GATE_MS = 200
-END_GATE_MS = 400
+START_GATE_MS = 300
+END_GATE_MS = 1000  # Wait longer before ending speech detection
 PAD_MS = 250
 MODEL_SIZE = "small"  # tiny/ base/ small/ medium.en/ large-v3
 DEVICE = "auto"       # "cuda" if available else "cpu"
