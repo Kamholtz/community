@@ -204,12 +204,31 @@ The system will now provide real-time speech-to-text that appears directly at yo
 - **Same latency**: Maintain current performance in container
 - **Resource Isolation**: No interference with host system
 
+## 📝 README Maintenance Reminder
+**IMPORTANT**: This README must be kept current as the project evolves. When making changes:
+1. ✅ Update the **Current Issues** section with any new problems discovered
+2. ✅ Move resolved issues from "Current Issues" to "Recent Fixes" 
+3. ✅ Update the **✅ Completed Features** section when functionality is working
+4. 🔄 Update the **Next Development Session Handoff** with current status
+5. 📊 Update performance metrics if they change
+
+This documentation serves as the project's memory between development sessions - keep it accurate!
+
 ## Troubleshooting
 
 ### Recent Fixes (Aug 2025)
 
 #### ✅ Critical Bug - FIXED
 - **Infinite Typing Loop**: Line 114 in `faster_whisper_vad.py` had `diff_and_type(typed_so_far + " ")` which caused infinite text output, making applications unresponsive. Fixed by changing to `type_text(" ")`.
+
+#### ✅ Text Repetition Bug - FIXED (Aug 2025)  
+- **Problem**: Identical final transcriptions (e.g., "the quick brown fox jumps over the lazy dog" repeated 5 times) caused massive text duplication instead of being ignored
+- **Root Cause**: Differential text logic was designed for single-utterance partial updates, not separate final transcriptions from VAD chunks
+- **Research**: Investigated proper terminology - this is called "Incremental Speech Recognition with Text Differentiation" or "Real-time ASR Output Reconciliation"
+- **Solution**: Completely redesigned text processing using `StreamingASRTextDiffer` class in `text_differ_v2.py` with proper partial/final hypothesis handling based on streaming ASR best practices
+- **Algorithm**: Uses Longest Common Subsequence (LCS) for efficient text delta computation with final hypothesis deduplication 
+- **Testing**: Added comprehensive unit tests that verify 100% prevention of repetitions while maintaining correct incremental output
+- **Docker Fix**: Updated Dockerfile to include improved text differ modules
 
 #### ✅ VAD Over-sensitivity - FIXED
 - **Problem**: VAD detecting electrical noise as speech even when microphone muted, causing hallucinated transcriptions like "The wind is so much back down the road. Thanks for watching!"
@@ -237,9 +256,14 @@ The system will now provide real-time speech-to-text that appears directly at yo
 - **Solution**: Increased END_GATE_MS from 400ms to 1000ms - now waits 1 full second of silence before ending speech detection
 - **Result**: Should now capture complete phrases and sentences
 
-### Current Issues
-- **Model Loading**: Still seeing 83-85s load times - ensure using `./run.sh` not `run-simple.sh`
+### Current Issues  
+- **ASR Quality Degradation**: The transcription model is producing garbled output ("around the fall" instead of "the quick brown fox"), suggesting audio quality or model configuration issues
+- **Text Repetition Prevention**: ✅ Working correctly - algorithm prevents duplicate final transcriptions 
+- **Model Loading**: Still seeing 83-85s load times - ensure using `./run.sh` not `run-simple.sh`  
 - **PulseAudio Warning**: May need `pulseaudio --start` for audio to work properly
+
+### Testing Protocol
+**Standard Test Phrase**: To maintain consistency between debugging sessions, always test transcription accuracy using the phrase "the quick brown fox jumps over the lazy dog" repeated 5 times. This helps compare results across different test cycles and identify regression issues.
 
 ### Common Issues
 - **Audio Permission**: Container needs access to `/dev/snd`

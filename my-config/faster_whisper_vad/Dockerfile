@@ -41,6 +41,8 @@ RUN mkdir -p /app/models /app/config
 
 # Copy application files
 COPY faster_whisper_vad.py /app/
+COPY text_differ.py /app/
+COPY text_differ_v2.py /app/
 COPY install.sh /app/
 
 # Create enhanced version with config support
@@ -74,5 +76,5 @@ ENV PAD_MS=250
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD python3 -c "import torch; print('GPU available:', torch.cuda.is_available())" || exit 1
 
-# Default command
-CMD ["python3", "realtime_transcription.py"]
+# Default command  
+CMD ["python3", "faster_whisper_vad.py"]

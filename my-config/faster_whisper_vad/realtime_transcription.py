@@ -16,12 +16,18 @@ from pathlib import Path
 # Configure logging (use temp directory for log file to avoid permission issues)
 import tempfile
 log_dir = tempfile.gettempdir()
+
+# Clear any existing handlers to prevent duplicates
+root_logger = logging.getLogger()
+root_logger.handlers.clear()
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout)
-    ]
+    ],
+    force=True
 )
 logger = logging.getLogger(__name__)
 

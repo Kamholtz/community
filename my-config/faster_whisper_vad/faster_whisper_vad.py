@@ -1,18 +1,19 @@
-import queue, sys, time, threading, numpy as np
+import queue, sys, time, threading, numpy as np, os
 import sounddevice as sd
 import webrtcvad
 from faster_whisper import WhisperModel
 from collections import deque
 import subprocess
 import platform
+from text_differ_v2 import StreamingASRTextDiffer
 
 # ---- config ----
 SR = 16000
 FRAME_MS = 20
 PARTIAL_EVERY_SEC = 0.9
-START_GATE_MS = 300
-END_GATE_MS = 1000  # Wait longer before ending speech detection
-PAD_MS = 250
+START_GATE_MS = int(os.environ.get('START_GATE_MS', 300))
+END_GATE_MS = int(os.environ.get('END_GATE_MS', 1000))  # Wait longer before ending speech detection
+PAD_MS = int(os.environ.get('PAD_MS', 250))
 MODEL_SIZE = "small"  # tiny/ base/ small/ medium.en/ large-v3
 DEVICE = "auto"       # "cuda" if available else "cpu"
 VOLUME_THRESHOLD = 0.01  # Minimum RMS volume to consider as speech
@@ -21,6 +22,7 @@ VOLUME_THRESHOLD = 0.01  # Minimum RMS volume to consider as speech
 OS = platform.system().lower()
 def type_text(delta):
     if not delta: return
+    
     if "linux" in OS:
         # Prefer xdotool (X11). On Wayland try wtype.
         try:
@@ -57,8 +59,9 @@ buf = bytearray()
 last_partial_emit = 0.0
 
 # ---- ASR ----
-model = WhisperModel(MODEL_SIZE, device=DEVICE)
-typed_so_far = ""  # committed to the target field
+download_root = os.environ.get('HF_HOME', '/app/models')
+model = WhisperModel(MODEL_SIZE, device=DEVICE, download_root=download_root)
+text_differ = StreamingASRTextDiffer()  # Handle differential typing
 
 def transcribe_bytes(b, beam=1):
     # faster-whisper accepts numpy float32 or audio files; convert bytes to float32
@@ -69,18 +72,21 @@ def transcribe_bytes(b, beam=1):
     # merge text
     return "".join(seg.text for seg in segments).strip()
 
-def diff_and_type(full_text):
-    global typed_so_far
-    # find delta to type
-    if full_text.startswith(typed_so_far):
-        delta = full_text[len(typed_so_far):]
-        type_text(delta)
-        typed_so_far = full_text
-    else:
-        # fallback: if mismatch (e.g., punctuation corrections), just type a space + rest
-        # (or you could send backspaces to reconcile)
-        type_text(" " + full_text)
-        typed_so_far += " " + full_text
+def handle_partial_transcription(full_text):
+    """Handle partial transcription results during utterance."""
+    print(f"[PARTIAL_ASR] '{full_text}'")
+    delta = text_differ.process_partial_hypothesis(full_text)
+    if delta:
+        print(f"[PARTIAL_OUT] '{delta}'")
+    type_text(delta)
+
+def handle_final_transcription(full_text):
+    """Handle final transcription at end of utterance."""
+    print(f"[FINAL_ASR] '{full_text}'")
+    delta = text_differ.process_final_hypothesis(full_text)
+    if delta:
+        print(f"[FINAL_OUT] '{delta}'")
+    type_text(delta)
 
 def loop():
     global speech_started, speech_run, nonspeech_run, buf, last_partial_emit
@@ -107,7 +113,7 @@ def loop():
                     last_partial_emit = now
                     # PARTIAL decode (fast)
                     partial_text = transcribe_bytes(bytes(buf), beam=1)
-                    diff_and_type(partial_text)
+                    handle_partial_transcription(partial_text)
         else:
             nonspeech_run += 1; speech_run = 0
             if speech_started and nonspeech_run*FRAME_MS >= END_GATE_MS:
@@ -115,9 +121,10 @@ def loop():
                 final_audio = bytes(buf)
                 buf.clear(); speech_started = False; lookback.clear()
                 final_text = transcribe_bytes(final_audio, beam=5)
-                diff_and_type(final_text)
-                # add a trailing space so next partials don't stick to the last word
-                type_text(" ")
+                handle_final_transcription(final_text)
+                # add a trailing space and reset context for next utterance
+                space = text_differ.end_utterance()
+                type_text(space)
 
 def check_microphone():
     """Test microphone setup and show available devices"""
@@ -165,7 +172,11 @@ if __name__ == "__main__":
     print()
     
     if check_microphone():
-        input("Press Enter to start transcription or Ctrl+C to exit...")
+        # Auto-start in Docker, otherwise wait for input
+        if os.path.exists('/.dockerenv'):
+            print("Running in Docker - auto-starting transcription...")
+        else:
+            input("Press Enter to start transcription or Ctrl+C to exit...")
         loop()
     else:
         print("Microphone check failed. Please fix audio setup and try again.")
