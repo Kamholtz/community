@@ -19,3 +19,5 @@ my-config/whisper/venv_faster_whisper/
 
 my-config/faster_whisper_vad/models/*
 my-config/faster_whisper_vad/test_audio/*.wav
+my-config/faster_whisper_vad/vad_analysis_env/lib/python3.12/site-packages/numpy/__config__.py
+my-config/faster_whisper_vad/vad_analysis_env/*

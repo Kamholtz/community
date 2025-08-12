@@ -1,5 +1,5 @@
 # Comprehensive VAD Analysis Report
-Generated: 2025-08-12T22:44:20.493414
+Generated: 2025-08-12T22:45:23.926887
 
 ## Executive Summary
 **Overall Score: 69.6/100**
@@ -67,7 +67,7 @@ the quick brown fox jumps over the lazy dog the quick brown fox jumps over the l
 ## Technical Data (JSON)
 ```json
 {
-  "timestamp": "2025-08-12T22:44:20.493414",
+  "timestamp": "2025-08-12T22:45:23.926887",
   "audio_file": null,
   "expected_repetitions": 3,
   "actual_text": "and fuckFox jumps over. Fox jumps over the lazy dog., the quick brown fox.. The quick brown fox jumps. the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.",
