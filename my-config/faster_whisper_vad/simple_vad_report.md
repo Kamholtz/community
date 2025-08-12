@@ -1,12 +1,22 @@
 # Simple VAD Testing Report
-Generated: 2025-08-12 22:07:05
+Generated: 2025-08-12 22:19:42
 
 ## Current System Performance
-Overall Score: 65.0/100
+Overall Score: 73.4/100
 Key Words Detected: 100%
-Sequence Similarity: 0%
+Sequence Similarity: 34%
 Word Accuracy: 100%
-Phrase Repetitions: 10 (expected: 5)
+Phrase Repetitions: 10 (expected: 3)
+
+## Actual Output Text
+```
+and fuckfox jumps over. fox jumps over the lazy dog., the quick brown fox.. the quick brown fox jumps. the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog. the quick brown fox jumps over the lazy dog.
+```
+
+## Expected Output Text
+```
+the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+```
 
 ## Performance Assessment
 ✅ **GOOD** - System performing adequately
@@ -15,7 +25,7 @@ Phrase Repetitions: 10 (expected: 5)
 1. Install full dependencies for advanced testing:
    `pip install sounddevice soundfile matplotlib seaborn fuzzywuzzy`
 2. Record standardized test audio with the phrase:
-   'the quick brown fox jumps over the lazy dog' (5 times)
+   'the quick brown fox jumps over the lazy dog' (3 times)
 3. Run comprehensive parameter optimization
 4. Generate visual performance dashboards
 

@@ -212,6 +212,16 @@ def create_simple_report(results):
         f"Word Accuracy: {results['word_accuracy']*100:.0f}%",
         f"Phrase Repetitions: {results['phrase_repetitions']} (expected: 3)",
         "",
+        "## Actual Output Text",
+        "```",
+        results['actual_text'],
+        "```",
+        "",
+        "## Expected Output Text", 
+        "```",
+        results['expected_text'],
+        "```",
+        "",
         "## Performance Assessment",
     ]
     
