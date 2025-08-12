@@ -27,6 +27,10 @@ user.insert_snippet_by_name
 - [ ] command to tick the checkbox in a markdown file in vscode, obsidian and neovim
 
 
+- [ ] Maybe I could use custom regex scopes in reporting
+https://www.cursorless.org/docs/user/customization/#experimental-cursorless-custom-regex-scopes
+
+
 ## Howto
 
 - [ ] Howto trigger commands in neovim: next/- [ ] prev tab, find command OR find :, find command history

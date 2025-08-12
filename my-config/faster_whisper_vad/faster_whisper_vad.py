@@ -11,12 +11,12 @@ from text_differ_v2 import StreamingASRTextDiffer
 SR = 16000
 FRAME_MS = 20
 PARTIAL_EVERY_SEC = 0.9
-START_GATE_MS = int(os.environ.get('START_GATE_MS', 300))
-END_GATE_MS = int(os.environ.get('END_GATE_MS', 1000))  # Wait longer before ending speech detection
+START_GATE_MS = int(os.environ.get('START_GATE_MS', 200))
+END_GATE_MS = int(os.environ.get('END_GATE_MS', 800))  # Optimized for better segmentation
 PAD_MS = int(os.environ.get('PAD_MS', 250))
 MODEL_SIZE = "small"  # tiny/ base/ small/ medium.en/ large-v3
 DEVICE = "auto"       # "cuda" if available else "cpu"
-VOLUME_THRESHOLD = 0.01  # Minimum RMS volume to consider as speech
+VOLUME_THRESHOLD = 0.008  # Optimized volume threshold for better sensitivity
 
 # ---- typing backends ----
 OS = platform.system().lower()
@@ -51,7 +51,7 @@ def start_stream():
                    dtype="float32", callback=audio_cb).start()
 
 # ---- VAD chunker ----
-vad = webrtcvad.Vad(2)
+vad = webrtcvad.Vad(1)  # Optimized: less aggressive VAD
 lookback = deque(maxlen=int(PAD_MS/FRAME_MS))
 speech_started = False
 speech_run = 0; nonspeech_run = 0

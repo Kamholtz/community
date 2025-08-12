@@ -17,16 +17,5 @@ __pycache__
 [._]*.swp
 my-config/whisper/venv_faster_whisper/
 
-my-config/faster_whisper_vad/models/.locks/models--Systran--faster-whisper-small/3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671.lock
-my-config/faster_whisper_vad/models/.locks/models--Systran--faster-whisper-small/7818adb6de9fa3064d3ff81226fdd675be1f6344.lock
-my-config/faster_whisper_vad/models/.locks/models--Systran--faster-whisper-small/c9074644d9d1205686f16d411564729461324b75.lock
-my-config/faster_whisper_vad/models/.locks/models--Systran--faster-whisper-small/e5047537059bd8f182d9ca64c470201585015187.lock
-my-config/faster_whisper_vad/models/models--Systran--faster-whisper-small/blobs/3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671
-my-config/faster_whisper_vad/models/models--Systran--faster-whisper-small/blobs/7818adb6de9fa3064d3ff81226fdd675be1f6344
-my-config/faster_whisper_vad/models/models--Systran--faster-whisper-small/blobs/c9074644d9d1205686f16d411564729461324b75
-my-config/faster_whisper_vad/models/models--Systran--faster-whisper-small/blobs/e5047537059bd8f182d9ca64c470201585015187
-my-config/faster_whisper_vad/models/models--Systran--faster-whisper-small/refs/main
-my-config/faster_whisper_vad/models/models--Systran--faster-whisper-small/snapshots/536b0662742c02347bc0e980a01041f333bce120/config.json
-my-config/faster_whisper_vad/models/models--Systran--faster-whisper-small/snapshots/536b0662742c02347bc0e980a01041f333bce120/model.bin
-my-config/faster_whisper_vad/models/models--Systran--faster-whisper-small/snapshots/536b0662742c02347bc0e980a01041f333bce120/tokenizer.json
-my-config/faster_whisper_vad/models/models--Systran--faster-whisper-small/snapshots/536b0662742c02347bc0e980a01041f333bce120/vocabulary.txt
+my-config/faster_whisper_vad/models/*
+my-config/faster_whisper_vad/test_audio/*.wav
