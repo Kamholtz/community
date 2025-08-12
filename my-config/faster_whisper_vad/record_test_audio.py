@@ -23,9 +23,11 @@ def record_with_sounddevice():
         print("=" * 40)
         print("Instructions:")
         print("• Say: 'the quick brown fox jumps over the lazy dog'")
-        print("• Repeat exactly 5 times")
+        print("• Repeat exactly 3 times")
         print("• Leave 2-3 second pauses between repetitions")
         print("• Speak clearly and at normal volume")
+        print("• Recording will stop automatically after 30 seconds")
+        print("• Press Ctrl+C to stop early if needed")
         print()
         
         # Countdown
@@ -33,7 +35,7 @@ def record_with_sounddevice():
             print(f"Recording starts in {i}...")
             time.sleep(1)
         
-        print("🔴 Recording started!")
+        print("🔴 Recording started! (30 seconds - press Ctrl+C to stop early)")
         print("Speak now...")
         
         # Record audio
@@ -77,9 +79,30 @@ def record_with_system_tools():
     
     print("🎙️  Recording Test Audio with System Tools")
     print("=" * 50)
+    
+    # Show available devices first
+    if "linux" in os_name:
+        try:
+            print("🎤 Available audio devices:")
+            result = subprocess.run(['arecord', '-l'], capture_output=True, text=True)
+            if result.returncode == 0:
+                lines = result.stdout.strip().split('\n')[1:]  # Skip header
+                for line in lines:
+                    if 'card' in line:
+                        print(f"   {line}")
+            
+            # Show default device
+            result = subprocess.run(['arecord', '-L'], capture_output=True, text=True)
+            if result.returncode == 0 and 'default' in result.stdout:
+                default_line = [l for l in result.stdout.split('\n') if l.strip().startswith('default')][0]
+                print(f"📍 Default device: {default_line}")
+        except:
+            print("⚠️  Could not list audio devices")
+    
+    print()
     print("Instructions:")
     print("• Say: 'the quick brown fox jumps over the lazy dog'")
-    print("• Repeat exactly 5 times")
+    print("• Repeat exactly 3 times")
     print("• Leave 2-3 second pauses between repetitions")
     print()
     
@@ -92,7 +115,7 @@ def record_with_system_tools():
         if "linux" in os_name:
             # Try arecord first
             cmd = ['arecord', '-f', 'cd', '-t', 'wav', '-d', '30', output_file]
-            print("🔴 Recording with arecord...")
+            print("🔴 Recording with arecord (using default device)...")
             subprocess.run(cmd, check=True)
             
         elif "darwin" in os_name:  # macOS

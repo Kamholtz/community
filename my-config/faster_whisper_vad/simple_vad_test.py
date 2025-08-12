@@ -18,7 +18,7 @@ class SimpleVADTester:
         self.expected_phrase = "the quick brown fox jumps over the lazy dog"
         self.key_words = ["quick", "brown", "fox", "jumps", "over", "lazy", "dog"]
         
-    def evaluate_transcription(self, actual_text, expected_repetitions=5):
+    def evaluate_transcription(self, actual_text, expected_repetitions=3):
         """Evaluate transcription quality using basic metrics."""
         
         actual = actual_text.lower().strip()
@@ -92,7 +92,7 @@ def test_current_vad_output():
     actual_output = """and fuckFox jumps over. Fox jumps over the lazy dog., the quick brown fox.. The quick brown fox jumps. the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."""
     
     tester = SimpleVADTester()
-    results = tester.evaluate_transcription(actual_output, expected_repetitions=5)
+    results = tester.evaluate_transcription(actual_output, expected_repetitions=3)
     
     print("📊 Current VAD Performance:")
     print(f"   Overall Score: {results['overall_score']:.1f}/100")
@@ -210,7 +210,7 @@ def create_simple_report(results):
         f"Key Words Detected: {results['key_words_detected']*100:.0f}%",
         f"Sequence Similarity: {results['sequence_similarity']*100:.0f}%", 
         f"Word Accuracy: {results['word_accuracy']*100:.0f}%",
-        f"Phrase Repetitions: {results['phrase_repetitions']} (expected: 5)",
+        f"Phrase Repetitions: {results['phrase_repetitions']} (expected: 3)",
         "",
         "## Performance Assessment",
     ]
@@ -230,7 +230,7 @@ def create_simple_report(results):
         "1. Install full dependencies for advanced testing:",
         "   `pip install sounddevice soundfile matplotlib seaborn fuzzywuzzy`",
         "2. Record standardized test audio with the phrase:",
-        "   'the quick brown fox jumps over the lazy dog' (5 times)",
+        "   'the quick brown fox jumps over the lazy dog' (3 times)",
         "3. Run comprehensive parameter optimization",
         "4. Generate visual performance dashboards",
         "",

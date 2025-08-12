@@ -166,8 +166,10 @@ def check_microphone():
         return False
 
 if __name__ == "__main__":
-    print(f"Model: {MODEL_SIZE}, Device: {DEVICE}")
-    print(f"VAD: aggressiveness=2, gates={START_GATE_MS}/{END_GATE_MS}ms")
+    # Print actual device being used by model
+    actual_device = model.device if hasattr(model, 'device') else "unknown"
+    print(f"Model: {MODEL_SIZE}, Configured Device: {DEVICE}, Actual Device: {actual_device}")
+    print(f"VAD: aggressiveness=1, gates={START_GATE_MS}/{END_GATE_MS}ms")
     print(f"Volume threshold: {VOLUME_THRESHOLD}")
     print()
     
