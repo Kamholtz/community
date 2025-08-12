@@ -292,6 +292,16 @@ cell last: user.vscode("notebook.focusPreviousEditor")
 cell run above: user.vscode("notebook.cell.executeCellsAbove")
 cell run: user.vscode("notebook.cell.execute")
 
+# interactive
+interact next: user.vscode("jupyter.gotoNextCellInFile")
+interact last: user.vscode("jupyter.gotoPrevCellInFile")
+interact run above: user.vscode("jupyter.runallcellsabove.palette")
+interact run below: user.vscode("jupyter.runcellandallbelow")
+interact run all: user.vscode("jupyter.runallcells")
+interact run: user.vscode("jupyter.runcurrentcell")
+interact line run: user.vscode("jupyter.execSelectionInteractive")
+interact debug: user.vscode("jupyter.runAndDebugCell")
+
 install local: user.vscode("workbench.extensions.action.installVSIX")
 preview markdown: user.vscode("markdown.showPreview")
 

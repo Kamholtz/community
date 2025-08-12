@@ -92,3 +92,5 @@ debug start: key(f5)
 debug restart: key(ctrl-shift-f5)
 debug stopper: key(shift-f5)
 debug continue: key(f5)
+
+rebuild: key(ctrl-shift-b)
