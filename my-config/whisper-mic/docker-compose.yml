@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  whisper-mic:
+    build:
+      context: ..
+      dockerfile: whisper-mic/Dockerfile
+    container_name: whisper-mic
+    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
+    environment:
+      - DISPLAY=${DISPLAY}
+      - PULSE_SERVER=unix:/run/user/${USER_ID:-1000}/pulse/native
+      - MODEL_SIZE=${MODEL_SIZE:-tiny}
+      - DEVICE=${DEVICE:-auto}
+      - ENGLISH_ONLY=${ENGLISH_ONLY:-true}
+      - USE_FASTER=${USE_FASTER:-true}
+    volumes:
+      # X11 socket for display access
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # PulseAudio socket
+      - /run/user/${USER_ID:-1000}/pulse:/run/user/${USER_ID:-1000}/pulse:ro
+      # Model cache (persistent across runs)
+      - ./models:/app/models
+      # Configuration
+      - ./config:/app/config
+    devices:
+      # Direct audio device access (fallback)
+      - /dev/snd:/dev/snd
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ipc: host
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    network_mode: host
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  # Development service with shell access
+  whisper-mic-dev:
+    build:
+      context: ..
+      dockerfile: whisper-mic/Dockerfile
+    container_name: whisper-mic-dev
+    environment:
+      - DISPLAY=${DISPLAY}
+      - PULSE_SERVER=unix:/run/user/${USER_ID:-1000}/pulse/native
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /run/user/${USER_ID:-1000}/pulse:/run/user/${USER_ID:-1000}/pulse:ro
+      - ./models:/app/models
+      - ./config:/app/config
+      - .:/app/src  # Mount source code for development
+    devices:
+      - /dev/snd:/dev/snd
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ipc: host
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    network_mode: host
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    profiles:
+      - dev
