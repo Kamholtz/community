@@ -10,10 +10,12 @@ services:
     environment:
       - DISPLAY=${DISPLAY}
       - PULSE_SERVER=unix:/run/user/${USER_ID:-1000}/pulse/native
-      - MODEL_SIZE=${MODEL_SIZE:-tiny}
+      - MODEL_SIZE=${MODEL_SIZE:-small}
       - DEVICE=${DEVICE:-auto}
       - ENGLISH_ONLY=${ENGLISH_ONLY:-true}
       - USE_FASTER=${USE_FASTER:-true}
+      - ENERGY_THRESHOLD=${ENERGY_THRESHOLD:-300}
+      - PAUSE_THRESHOLD=${PAUSE_THRESHOLD:-0.8}
     volumes:
       # X11 socket for display access
       - /tmp/.X11-unix:/tmp/.X11-unix:rw

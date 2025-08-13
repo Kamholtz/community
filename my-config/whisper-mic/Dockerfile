@@ -73,14 +73,17 @@ RUN chown -R transcriber /app 2>/dev/null || chown -R 1001 /app
 USER transcriber
 
 # Set environment variables for whisper-mic
-ENV MODEL_SIZE=tiny
+ENV MODEL_SIZE=small
 ENV DEVICE=auto
 ENV ENGLISH_ONLY=true
 ENV USE_FASTER=true
+ENV ENERGY_THRESHOLD=300
+ENV PAUSE_THRESHOLD=0.8
+ENV PHRASE_TIME_LIMIT=None
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD python3 -c "import torch; print('GPU available:', torch.cuda.is_available())" || exit 1
 
-# Default command
-CMD ["python3", "-m", "whisper_mic.cli", "--loop", "--dictate", "--faster", "--model", "tiny", "--english"]
+# Default command with improved audio settings
+CMD ["python3", "-m", "whisper_mic.cli", "--loop", "--dictate", "--faster", "--model", "small", "--english", "--energy", "300", "--pause", "0.8", "--dynamic_energy"]
