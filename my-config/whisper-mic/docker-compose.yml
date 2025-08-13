@@ -14,8 +14,8 @@ services:
       - DEVICE=${DEVICE:-auto}
       - ENGLISH_ONLY=${ENGLISH_ONLY:-true}
       - USE_FASTER=${USE_FASTER:-true}
-      - ENERGY_THRESHOLD=${ENERGY_THRESHOLD:-300}
-      - PAUSE_THRESHOLD=${PAUSE_THRESHOLD:-0.8}
+      - ENERGY_THRESHOLD=${ENERGY_THRESHOLD:-400}
+      - PAUSE_THRESHOLD=${PAUSE_THRESHOLD:-1.2}
     volumes:
       # X11 socket for display access
       - /tmp/.X11-unix:/tmp/.X11-unix:rw

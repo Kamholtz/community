@@ -86,4 +86,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD python3 -c "import torch; print('GPU available:', torch.cuda.is_available())" || exit 1
 
 # Default command with improved audio settings
-CMD ["python3", "-m", "whisper_mic.cli", "--loop", "--dictate", "--faster", "--model", "small", "--english", "--energy", "300", "--pause", "0.8", "--dynamic_energy"]
+CMD ["python3", "-m", "whisper_mic.cli", "--loop", "--dictate", "--faster", "--model", "small", "--english", "--energy", "400", "--pause", "1.2", "--dynamic_energy"]
