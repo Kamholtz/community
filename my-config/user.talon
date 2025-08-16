@@ -11,7 +11,6 @@ settings():
     # subtitles_show = true
     user.subtitles_color = "ffffaa"
 
-tag(): user.cursorless_use_community_snippets
 
 # Custom voice commands for undo and redo
 nope:
