@@ -7,6 +7,7 @@ tag(): user.multiple_cursors
 tag(): user.splits
 tag(): user.tabs
 tag(): user.command_search
+tag(): user.cursorless_use_community_snippets
 
 window reload: user.vscode("workbench.action.reloadWindow")
 window close: user.vscode("workbench.action.closeWindow")
@@ -355,6 +356,10 @@ chat accept:
 build run:
     user.vscode("workbench.action.tasks.build")
 
+# =====================================
+# Whisper
+# =====================================
+
 toggle whisper:
     if speech.enabled():
         key(ctrl-m)
@@ -362,3 +367,20 @@ toggle whisper:
     else:
         speech.disable()
         key(ctrl-m)
+
+
+# =====================================
+# Andreas talon - VSCode extension
+# =====================================
+
+# Show the tabs pane for changing the currently selected tab
+bar tabs: user.run_rpc_command("andreas.tabs.focus")
+
+
+# Switch to a specific tab by its letter
+tab {user.letter} [{user.letter}]:
+    user.run_rpc_command("andreas.focusTab", "{letter_1}{letter_2 or ''}")
+
+# Generate numerical range. Starts from 1 by default
+generate range [from <number_small>]:
+    user.run_rpc_command("andreas.generateRange", number_small or 1)

@@ -3,12 +3,48 @@ language: markdown
 
 name: link
 phrase: link
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+
 -
 [$1]($0)
 ---
 
 name: checkbox
 phrase: checkbox
+$0.insertionFormatter: CAPITALIZE_FIRST_WORD
+
 -
 - [ ] $0
+---
+
+name: bullet
+phrase: bullet
+$0.insertionFormatter: CAPITALIZE_FIRST_WORD
+
+-
+- $0
+---
+
+name: heading one
+phrase: heading one
+$0.wrapperPhrase: heading one
+$0.insertionFormatter: CAPITALIZE_ALL_WORDS
+-
+# $0
+---
+
+name: heading two
+phrase: heading two
+$0.wrapperPhrase: heading two
+$0.insertionFormatter: CAPITALIZE_ALL_WORDS
+-
+## $0
+---
+
+name: heading three
+phrase: heading three
+$0.wrapperPhrase: heading three
+$0.insertionFormatter: CAPITALIZE_ALL_WORDS
+-
+### $0
 ---
