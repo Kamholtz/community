@@ -11,7 +11,7 @@ code.language: razor
 
 ctx.lists["user.code_common_function"] = {
     "integer": "int.TryParse",
-    "print": "Console.WriteLine", 
+    "print": "Console.WriteLine",
     "string": ".ToString",
     "model": "@Model",
     "html": "Html.Raw",

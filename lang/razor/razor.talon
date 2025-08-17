@@ -26,43 +26,19 @@ settings():
     user.code_protected_variable_formatter = "PUBLIC_CAMEL_CASE"
     user.code_public_variable_formatter = "PUBLIC_CAMEL_CASE"
 
-# Razor-specific commands
+# Razor-specific commands (quick inserts)
 at block: user.razor_at_block()
 at expression: user.razor_at_expression()
-razor if: user.razor_if_block()
-razor for each: user.razor_foreach_block()
-razor using: user.razor_using_block()
-razor model: user.razor_model_directive()
-razor section: user.razor_section()
+# Note: More complex constructs like if/foreach/using/model/section are available via snippets
 
-# HTML helpers
-html begin form: "@using (Html.BeginForm()) {}"
-html action link: "Html.ActionLink(\"\", \"\")"
-html partial: "Html.Partial(\"\")"
-html render partial: "Html.RenderPartial(\"\")"
-
-# Model and ViewBag
+# Model and ViewBag (quick access)
 model dot: "@Model."
 view bag: "@ViewBag."
 view data: "@ViewData[\"\"]"
 
-# Layout and sections
-render body: "@RenderBody()"
-render section: "@RenderSection(\"\", required: false)"
-
-# Razor directives
-model directive: "@model "
-layout directive: "@{ Layout = \"\"; }"
-using directive: "@using "
-inherits directive: "@inherits "
-
-# Common Razor patterns
+# Common Razor patterns (simple inserts)
 if model: "@if (Model != null) {}"
 if view bag: "@if (ViewBag. != null) {}"
-display for: "@Html.DisplayFor(m => m.)"
-editor for: "@Html.EditorFor(m => m.)"
-label for: "@Html.LabelFor(m => m.)"
 
-# URL helpers
-url action: "@Url.Action(\"\", \"\")"
-url content: "@Url.Content(\"~/\")"
+# Note: Complex constructs (HTML helpers, directives, URL helpers, etc.) 
+# are available via the snippet system for better parameter handling
