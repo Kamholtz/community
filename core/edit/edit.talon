@@ -86,3 +86,16 @@ file save: edit.save()
 file save all: edit.save_all()
 
 [go] line mid: user.line_middle()
+
+
+
+tug: edit.left()
+tug <number_small> times: user.left_n(number_small)
+push: edit.right()
+push <number_small> times: user.right_n(number_small)
+
+scratch <number_small> times: user.delete_left_n(number_small)
+drill <number_small> times: user.delete_right_n(number_small)
+
+pour: edit.line_insert_down()
+drink: edit.line_insert_up()  
