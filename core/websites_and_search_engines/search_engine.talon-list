@@ -6,3 +6,5 @@ map: https://maps.google.com/maps?q=%s
 scholar: https://scholar.google.com/scholar?q=%s
 wiki: https://en.wikipedia.org/w/index.php?search=%s
 talon doc: https://kamholtz.github.io/talondoc/search.html?q=%s&check_keywords=yes&area=default
+github: https://github.com/search?type=code&q=%s
+github talon: https://github.com/search?type=code&q=language%3Atalon+%s
