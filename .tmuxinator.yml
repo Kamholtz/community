@@ -51,7 +51,7 @@ windows:
       # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
       # synchronize: after
       panes:
-        - nvim -- ./user
+        - nvim -- ./user/community/my-config/user.talon
   - git: lazygit -p ./user/community
   - talon:
       layout: main-vertical
@@ -60,5 +60,5 @@ windows:
       # synchronize: after
       panes:
         - talon
-        - talon repl
-        - echo 'events.tail()' | bin/repl
+        - sleep 3 && talon repl
+        - sleep 3 && echo 'events.tail()' | bin/repl
