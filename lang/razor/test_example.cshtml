@@ -1,0 +1,87 @@
+@model MyApp.Models.UserModel
+@{
+    ViewData["Title"] = "User Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (Model != null)
+{
+    <div class="user-profile">
+        <h3>Welcome, @Model.FirstName @Model.LastName!</h3>
+
+        @using (Html.BeginForm("UpdateProfile", "User", FormMethod.Post))
+        {
+            <div class="form-group">
+                @Html.LabelFor(m => m.FirstName)
+                @Html.EditorFor(m => m.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.LastName)
+                @Html.EditorFor(m => m.LastName, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email)
+                @Html.DisplayFor(m => m.Email)
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+        }
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-info">
+                @ViewBag.Message
+            </div>
+        }
+
+        <div class="actions">
+            @Html.ActionLink("View Orders", "Orders", "User", new { id = Model.Id }, new { @class = "btn btn-secondary" })
+            <a href="@Url.Action("Dashboard", "Home")" class="btn btn-outline-primary">Back to Dashboard</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        <p>User profile not found.</p>
+        @Html.ActionLink("Go to Home", "Index", "Home")
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            @{
+                var isAdmin = ViewBag.IsAdmin ?? false;
+            }
+
+            @if (isAdmin)
+            {
+                <text>
+                console.log('Admin user detected');
+                </text>
+            }
+        });
+    </script>
+}
+
+@* Partial view example *@
+@Html.Partial("_UserStats", Model)
+
+@* Foreach example *@
+@if (Model.Orders != null && Model.Orders.Any())
+{
+    <h4>Recent Orders</h4>
+    <ul>
+        @foreach (var order in Model.Orders.Take(5))
+        {
+            <li>
+                Order #@order.Id - @order.Date.ToString("MM/dd/yyyy") - @order.Total.ToString("C")
+            </li>
+        }
+    </ul>
+}

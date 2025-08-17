@@ -8,6 +8,8 @@ File extension,Name
 .vim,dot vim
 .c,dot see
 .cs,dot see sharp
+.cshtml,dot see sharp html
+.cshtml,dot razor
 .com,dot com
 .net,dot net
 .org,dot org

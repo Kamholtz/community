@@ -1,0 +1,155 @@
+from talon import Context, Module, actions, settings
+
+from ..tags.operators import Operators
+
+mod = Module()
+
+ctx = Context()
+ctx.matches = r"""
+code.language: razor
+"""
+
+ctx.lists["user.code_common_function"] = {
+    "integer": "int.TryParse",
+    "print": "Console.WriteLine", 
+    "string": ".ToString",
+    "model": "@Model",
+    "html": "Html.Raw",
+    "url": "Url.Action",
+    "layout": "Layout",
+}
+
+operators = Operators(
+    # code_operators_array
+    SUBSCRIPT=lambda: actions.user.insert_between("[", "]"),
+    # code_operators_assignment
+    ASSIGNMENT=" = ",
+    ASSIGNMENT_ADDITION=" += ",
+    ASSIGNMENT_SUBTRACTION=" -= ",
+    ASSIGNMENT_DIVISION=" /= ",
+    ASSIGNMENT_MULTIPLICATION=" *= ",
+    ASSIGNMENT_MODULO=" %= ",
+    ASSIGNMENT_BITWISE_AND=" &= ",
+    ASSIGNMENT_BITWISE_EXCLUSIVE_OR=" ^= ",
+    ASSIGNMENT_BITWISE_LEFT_SHIFT=" <<= ",
+    ASSIGNMENT_BITWISE_OR=" |= ",
+    ASSIGNMENT_BITWISE_RIGHT_SHIFT=" >>= ",
+    ASSIGNMENT_INCREMENT="++",
+    # code_operators_bitwise
+    BITWISE_NOT="~",
+    BITWISE_AND=" & ",
+    BITWISE_EXCLUSIVE_OR=" ^ ",
+    BITWISE_LEFT_SHIFT=" << ",
+    BITWISE_OR=" | ",
+    BITWISE_RIGHT_SHIFT=" >> ",
+    # code_operators_lambda
+    LAMBDA="=>",
+    # code_operators_pointer
+    MATH_ADD=" + ",
+    MATH_SUBTRACT=" - ",
+    MATH_MULTIPLY=" * ",
+    MATH_DIVIDE=" / ",
+    MATH_MODULO=" % ",
+    MATH_EQUAL=" == ",
+    MATH_NOT_EQUAL=" != ",
+    MATH_OR=" || ",
+    MATH_AND=" && ",
+    MATH_NOT="!",
+    MATH_GREATER_THAN_OR_EQUAL=" >= ",
+    MATH_GREATER_THAN=" > ",
+    MATH_LESS_THAN_OR_EQUAL=" <= ",
+    MATH_LESS_THAN=" < ",
+    # code_operators_pointer
+    POINTER_ADDRESS_OF="&",
+    POINTER_INDIRECTION="*",
+    POINTER_STRUCTURE_DEREFERENCE="->",
+)
+
+@mod.action_class
+class Actions:
+    def razor_at_block():
+        """Insert @ code block"""
+        actions.auto_insert("@{}")
+        actions.edit.left()
+
+    def razor_at_expression():
+        """Insert @ expression"""
+        actions.auto_insert("@()")
+        actions.edit.left()
+
+    def razor_if_block():
+        """Insert @if block"""
+        actions.auto_insert("@if ()")
+        actions.edit.left()
+
+    def razor_foreach_block():
+        """Insert @foreach block"""
+        actions.auto_insert("@foreach (var item in )")
+        actions.edit.left()
+
+    def razor_using_block():
+        """Insert @using block"""
+        actions.auto_insert("@using ()")
+        actions.edit.left()
+
+    def razor_model_directive():
+        """Insert @model directive"""
+        actions.auto_insert("@model ")
+
+    def razor_section():
+        """Insert @section"""
+        actions.auto_insert("@section  {}")
+        actions.edit.word_left()
+        actions.edit.word_left()
+
+
+@ctx.action_class("user")
+class UserActions:
+    def code_get_operators() -> Operators:
+        return operators
+
+    def code_self():
+        actions.auto_insert("this")
+
+    def code_operator_object_accessor():
+        actions.auto_insert(".")
+
+    def code_insert_null():
+        actions.auto_insert("null")
+
+    def code_insert_is_null():
+        actions.auto_insert(" == null ")
+
+    def code_insert_is_not_null():
+        actions.auto_insert(" != null")
+
+    def code_break():
+        actions.auto_insert("break;")
+
+    def code_insert_true():
+        actions.auto_insert("true")
+
+    def code_insert_false():
+        actions.auto_insert("false")
+
+    def code_insert_function(text: str, selection: str):
+        text += f"({selection or ''})"
+        actions.user.paste(text)
+        actions.edit.left()
+
+    def code_private_function(text: str):
+        """Inserts private function declaration"""
+        result = "private void {}".format(
+            actions.user.formatted_text(
+                text, settings.get("user.code_private_function_formatter")
+            )
+        )
+        actions.user.code_insert_function(result, None)
+
+    def code_public_function(text: str):
+        result = "public void {}".format(
+            actions.user.formatted_text(
+                text, settings.get("user.code_public_function_formatter")
+            )
+        )
+        actions.user.code_insert_function(result, None)

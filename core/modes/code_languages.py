@@ -40,6 +40,7 @@ code_languages = [
     Language("protobuf", "proto buf", ["proto"]),
     Language("python", "python", ["py"]),
     Language("r", "are language", ["r"]),
+    Language("razor", "razor", ["cshtml"]),
     # Language("racket", "racket", ["rkt"]),
     Language("ruby", "ruby", ["rb"]),
     Language("rust", "rust", ["rs"]),
