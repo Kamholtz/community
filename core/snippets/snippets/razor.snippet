@@ -1,0 +1,353 @@
+language: razor
+---
+
+name: modelDirective
+phrase: model directive
+insertionScope: statement
+-
+@model $0
+---
+
+name: ifBlock
+phrase: if block
+insertionScope: statement
+-
+@if ($1)
+{
+    $0
+}
+---
+
+name: ifElseBlock
+phrase: if else block
+insertionScope: statement
+-
+@if ($1)
+{
+    $2
+}
+else
+{
+    $0
+}
+---
+
+name: foreachLoop
+phrase: for each loop
+insertionScope: statement
+-
+@foreach (var $1 in $2)
+{
+    $0
+}
+---
+
+name: usingBlock
+phrase: using block
+insertionScope: statement
+-
+@using ($1)
+{
+    $0
+}
+---
+
+name: usingStatement
+phrase: using statement
+insertionScope: statement
+-
+@using $0
+---
+
+name: sectionBlock
+phrase: section block
+insertionScope: statement
+-
+@section $1 {
+    $0
+}
+---
+
+name: layoutDirective
+phrase: layout directive
+insertionScope: statement
+-
+@{
+    Layout = "$0";
+}
+---
+
+name: codeBlock
+phrase: code block
+insertionScope: statement
+-
+@{
+    $0
+}
+---
+
+name: htmlBeginForm
+phrase: html begin form
+insertionScope: statement
+-
+@using (Html.BeginForm("$1", "$2"))
+{
+    $0
+}
+---
+
+name: htmlActionLink
+phrase: html action link
+-
+@Html.ActionLink("$1", "$2", "$3")
+---
+
+name: htmlDisplayFor
+phrase: html display for
+-
+@Html.DisplayFor(m => m.$0)
+---
+
+name: htmlEditorFor
+phrase: html editor for
+-
+@Html.EditorFor(m => m.$1, new { htmlAttributes = new { @class = "$0" } })
+---
+
+name: htmlLabelFor
+phrase: html label for
+-
+@Html.LabelFor(m => m.$0)
+---
+
+name: htmlValidationMessageFor
+phrase: html validation message for
+-
+@Html.ValidationMessageFor(m => m.$0)
+---
+
+name: htmlPartial
+phrase: html partial
+-
+@Html.Partial("$1", $0)
+---
+
+name: htmlRenderPartial
+phrase: html render partial
+-
+@{ Html.RenderPartial("$1", $0); }
+---
+
+name: urlAction
+phrase: url action
+-
+@Url.Action("$1", "$0")
+---
+
+name: urlContent
+phrase: url content
+-
+@Url.Content("~/$0")
+---
+
+name: renderBody
+phrase: render body
+-
+@RenderBody()
+---
+
+name: renderSection
+phrase: render section
+-
+@RenderSection("$1", required: $0)
+---
+
+name: viewBagAssignment
+phrase: view bag assignment
+insertionScope: statement
+-
+@{
+    ViewBag.$1 = "$0";
+}
+---
+
+name: viewDataAssignment
+phrase: view data assignment
+insertionScope: statement
+-
+@{
+    ViewData["$1"] = "$0";
+}
+---
+
+name: ajaxBeginForm
+phrase: ajax begin form
+insertionScope: statement
+-
+@using (Ajax.BeginForm("$1", "$2", new AjaxOptions { UpdateTargetId = "$3" }))
+{
+    $0
+}
+---
+
+name: htmlTextBoxFor
+phrase: html text box for
+-
+@Html.TextBoxFor(m => m.$1, new { @class = "$0" })
+---
+
+name: htmlPasswordFor
+phrase: html password for
+-
+@Html.PasswordFor(m => m.$1, new { @class = "$0" })
+---
+
+name: htmlDropDownListFor
+phrase: html drop down list for
+-
+@Html.DropDownListFor(m => m.$1, new SelectList($2, "Value", "Text"), new { @class = "$0" })
+---
+
+name: htmlCheckBoxFor
+phrase: html check box for
+-
+@Html.CheckBoxFor(m => m.$0)
+---
+
+name: htmlRadioButtonFor
+phrase: html radio button for
+-
+@Html.RadioButtonFor(m => m.$1, "$2", new { @class = "$0" })
+---
+
+name: htmlTextAreaFor
+phrase: html text area for
+-
+@Html.TextAreaFor(m => m.$1, new { @class = "$0", rows = "3" })
+---
+
+name: htmlHiddenFor
+phrase: html hidden for
+-
+@Html.HiddenFor(m => m.$0)
+---
+
+name: conditionalClass
+phrase: conditional class
+-
+@(condition ? "class-name" : "")
+---
+
+name: tryBlock
+phrase: try block
+insertionScope: statement
+-
+@try
+{
+    $1
+}
+catch (Exception ex)
+{
+    $0
+}
+---
+
+name: whileLoop
+phrase: while loop
+insertionScope: statement
+-
+@while ($1)
+{
+    $0
+}
+---
+
+name: forLoop
+phrase: for loop
+insertionScope: statement
+-
+@for (int $1 = 0; $1 < $2; $1++)
+{
+    $0
+}
+---
+
+name: switchBlock
+phrase: switch block
+insertionScope: statement
+-
+@switch ($1)
+{
+    case $2:
+        $3
+        break;
+    default:
+        $0
+        break;
+}
+---
+
+name: inheritDirective
+phrase: inherit directive
+insertionScope: statement
+-
+@inherits $0
+---
+
+name: implementDirective
+phrase: implement directive
+insertionScope: statement
+-
+@implements $0
+---
+
+name: injectDirective
+phrase: inject directive
+insertionScope: statement
+-
+@inject $1 $0
+---
+
+name: attributeDirective
+phrase: attribute directive
+insertionScope: statement
+-
+@attribute [$0]
+---
+
+name: functionsBlock
+phrase: functions block
+insertionScope: statement
+-
+@functions {
+    $0
+}
+---
+
+name: pageDirective
+phrase: page directive
+insertionScope: statement
+-
+@page "$0"
+---
+
+name: namespaceDirective
+phrase: namespace directive
+insertionScope: statement
+-
+@namespace $0
+---
+
+name: addTagHelperDirective
+phrase: add tag helper directive
+insertionScope: statement
+-
+@addTagHelper *, $0
+---
+
+name: removeTagHelperDirective
+phrase: remove tag helper directive
+insertionScope: statement
+-
+@removeTagHelper *, $0
+---
