@@ -55,11 +55,13 @@ COPY whisper-mic-repo/ /app/whisper-mic-repo/
 # Install whisper-mic package
 RUN pip install -e /app/whisper-mic-repo/
 
-# Copy run script
+# Copy run script, enhanced wrapper, and debug tools
 COPY whisper-mic/run_whisper_mic.sh /app/
+COPY whisper-mic/whisper_mic_wrapper.py /app/
+COPY whisper-mic/debug_performance.py /app/
 
 # Make scripts executable
-RUN chmod +x /app/*.sh
+RUN chmod +x /app/*.sh /app/*.py
 
 # Create user for running the application (NGC image may have existing UID 1000)
 RUN groupadd -f audio || true
@@ -72,18 +74,18 @@ RUN chown -R transcriber /app 2>/dev/null || chown -R 1001 /app
 # Switch to non-root user
 USER transcriber
 
-# Set environment variables for whisper-mic
-ENV MODEL_SIZE=small
+# Set environment variables for whisper-mic (optimized for responsiveness)
+ENV MODEL_SIZE=tiny
 ENV DEVICE=auto
 ENV ENGLISH_ONLY=true
 ENV USE_FASTER=true
 ENV ENERGY_THRESHOLD=300
 ENV PAUSE_THRESHOLD=0.8
-ENV PHRASE_TIME_LIMIT=None
+ENV PHRASE_TIME_LIMIT=2
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD python3 -c "import torch; print('GPU available:', torch.cuda.is_available())" || exit 1
 
-# Default command with optimized settings for clean transcription
-CMD ["python3", "-m", "whisper_mic.cli", "--loop", "--dictate", "--faster", "--model", "base", "--english", "--energy", "500", "--pause", "1.5", "--dynamic_energy", "--hallucinate_threshold", "600"]
+# Default command with optimized settings for fast, responsive transcription using enhanced wrapper
+CMD ["python3", "/app/whisper_mic_wrapper.py", "--loop", "--dictate", "--faster", "--model", "tiny", "--english", "--energy", "300", "--pause", "0.8", "--dynamic_energy", "--hallucinate_threshold", "400"]

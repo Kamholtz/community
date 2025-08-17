@@ -34,6 +34,8 @@ This repository contains a setup for using [whisper-mic](https://github.com/mall
 - Uses faster-whisper for efficient GPU-accelerated transcription on RTX 3050 mobile
 - Types transcribed speech directly into your currently focused application
 - Uses the tiny model for fastest startup and response times
+- **NEW**: Shows timestamps for transcription timing analysis
+- **NEW**: Displays detected microphones and which one is being used
 
 ## Manual Installation
 
@@ -66,6 +68,7 @@ The Docker setup solves common issues:
 - ✅ Proper audio device access via PulseAudio and ALSA
 - ✅ No conflicts with system libraries
 - ✅ Consistent environment across different systems
+- ✅ Enhanced wrapper with timestamps and microphone detection
 
 ## Troubleshooting
 
@@ -78,6 +81,73 @@ The Docker setup solves common issues:
 - The script will download the tiny whisper model on first run
 - For audio device issues, run: `whisper_mic --list_devices` to see available microphones
 - For library conflicts, use the Docker setup instead
+
+## Enhanced Features
+
+The Docker container now includes an enhanced wrapper (`whisper_mic_wrapper.py`) that provides:
+
+### Timestamps
+- All output includes timestamps in `[HH:MM:SS.mmm]` format
+- Shows initialization time, transcription duration, and other timing metrics
+- Helpful for analyzing transcription performance and latency
+
+### Microphone Detection
+- Automatically detects and displays all available microphones at startup
+- Shows which microphone is being used (default or specified)
+- Use `--list_devices` flag to see all available audio devices
+
+### Example Output
+```
+[14:23:15.123] === Whisper-Mic Enhanced Wrapper Starting ===
+[14:23:15.124] Model: tiny, Device: cuda, Faster: true
+[14:23:15.125] Energy threshold: 300, Pause: 0.8s
+[14:23:15.126] Detecting available microphones...
+[14:23:15.234] Found 3 microphone(s):
+[14:23:15.235]   [0] Default
+[14:23:15.236]   [1] Anker PowerConf C200
+[14:23:15.237]   [2] Built-in Audio
+[14:23:15.238] Default microphone: [1] Anker PowerConf C200
+[14:23:15.239] Initializing Whisper-Mic...
+[14:23:16.123] Whisper-Mic initialized in 0.88s
+[14:23:16.124] Starting continuous transcription loop...
+[14:23:16.125] Audio settings - Energy: 300, Pause: 0.8s, Dynamic energy: true
+[14:23:16.126] Listening for speech... (Ctrl+C to stop)
+```
+
+### Performance Optimizations
+
+The setup has been optimized for responsiveness:
+
+- **Model**: Uses `tiny` model by default (fastest startup and processing)
+- **Energy threshold**: Set to 300 (more sensitive to speech)
+- **Pause threshold**: Reduced to 0.8s (faster response)
+- **Dynamic energy**: Enabled (adapts to ambient noise)
+- **Phrase time limit**: Set to 2s (processes chunks quickly)
+
+### Debug Performance Issues
+
+If experiencing slow startup or responsiveness issues:
+
+1. **Run performance debug tool**:
+   ```bash
+   # In development container
+   python3 /app/debug_performance.py --test-models --test-energy --test-audio
+   ```
+
+2. **Check GPU acceleration**:
+   ```bash
+   # Should show "CUDA available: True"
+   python3 -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+   ```
+
+3. **Test different configurations**:
+   ```bash
+   # Ultra-fast but less accurate
+   python3 /app/whisper_mic_wrapper.py --model tiny --energy 200 --pause 0.5
+   
+   # More accurate but slower
+   python3 /app/whisper_mic_wrapper.py --model base --energy 400 --pause 1.0
+   ```
 
 ## Command Reference
 
