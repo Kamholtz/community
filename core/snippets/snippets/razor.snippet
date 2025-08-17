@@ -10,6 +10,7 @@ insertionScope: statement
 
 name: ifBlock
 phrase: if block
+$0.wrapperPhrase: if block
 insertionScope: statement
 -
 @if ($1)
@@ -20,6 +21,8 @@ insertionScope: statement
 
 name: ifElseBlock
 phrase: if else block
+$0.wrapperPhrase: else block
+$2.wrapperPhrase: if block
 insertionScope: statement
 -
 @if ($1)
@@ -34,6 +37,7 @@ else
 
 name: foreachLoop
 phrase: for each loop
+$0.wrapperPhrase: for each loop
 insertionScope: statement
 -
 @foreach (var $1 in $2)
@@ -44,6 +48,7 @@ insertionScope: statement
 
 name: usingBlock
 phrase: using block
+$0.wrapperPhrase: using block
 insertionScope: statement
 -
 @using ($1)
@@ -61,6 +66,7 @@ insertionScope: statement
 
 name: sectionBlock
 phrase: section block
+$0.wrapperPhrase: section block
 insertionScope: statement
 -
 @section $1 {
@@ -89,6 +95,7 @@ insertionScope: statement
 
 name: htmlBeginForm
 phrase: html begin form
+$0.wrapperPhrase: html begin form
 insertionScope: statement
 -
 @using (Html.BeginForm("$1", "$2"))
@@ -183,6 +190,7 @@ insertionScope: statement
 
 name: ajaxBeginForm
 phrase: ajax begin form
+$0.wrapperPhrase: ajax begin form
 insertionScope: statement
 -
 @using (Ajax.BeginForm("$1", "$2", new AjaxOptions { UpdateTargetId = "$3" }))
@@ -241,6 +249,8 @@ phrase: conditional class
 
 name: tryBlock
 phrase: try block
+$0.wrapperPhrase: catch block
+$1.wrapperPhrase: try block
 insertionScope: statement
 -
 @try
@@ -255,6 +265,7 @@ catch (Exception ex)
 
 name: whileLoop
 phrase: while loop
+$0.wrapperPhrase: while loop
 insertionScope: statement
 -
 @while ($1)
@@ -265,6 +276,7 @@ insertionScope: statement
 
 name: forLoop
 phrase: for loop
+$0.wrapperPhrase: for loop
 insertionScope: statement
 -
 @for (int $1 = 0; $1 < $2; $1++)
@@ -275,6 +287,8 @@ insertionScope: statement
 
 name: switchBlock
 phrase: switch block
+$0.wrapperPhrase: default case
+$3.wrapperPhrase: switch case
 insertionScope: statement
 -
 @switch ($1)
@@ -318,6 +332,7 @@ insertionScope: statement
 
 name: functionsBlock
 phrase: functions block
+$0.wrapperPhrase: functions block
 insertionScope: statement
 -
 @functions {
