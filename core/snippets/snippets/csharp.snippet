@@ -1,0 +1,24 @@
+language: csharp
+---
+
+name: linqToList
+phrase: to list
+insertionScope: statement
+-
+.ToList()$0
+---
+
+name: var
+phrase: var
+insertionScope: statement
+$1.insertionFormatter: PRIVATE_CAMEL_CASE
+-
+var $1 = $0
+---
+
+name: null
+phrase: null
+insertionScope: statement
+-
+null
+---
