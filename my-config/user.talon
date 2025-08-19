@@ -29,6 +29,8 @@ resk: key(ctrl-super-right)
 desk (left|L): key(ctrl-super-left)
 lesk: key(ctrl-super-left)
 
+scrape: key(escape)
+
 # Command to open Talon user directory in VSCode
 open talon config:
     user.open_talon_config_vscode()

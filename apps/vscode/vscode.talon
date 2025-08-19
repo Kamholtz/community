@@ -384,3 +384,6 @@ tab {user.letter} [{user.letter}]:
 # Generate numerical range. Starts from 1 by default
 generate range [from <number_small>]:
     user.run_rpc_command("andreas.generateRange", number_small or 1)
+
+
+quick fix: user.vscode("editor.action.quickFix")
