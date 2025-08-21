@@ -1,11 +1,65 @@
 language: csharp
 ---
 
-name: linqToList
-phrase: to list
+name: dot to list
+phrase: dot to list
 insertionScope: statement
+$1.wrapperPhrase: dot to list
 -
-.ToList()$0
+$1.ToList()$0
+---
+
+name: dot for each
+phrase: dot for each
+insertionScope: statement
+$1.wrapperPhrase: dot for each
+-
+$1.ForEach($0)
+---
+
+name: dot select
+phrase: dot select
+insertionScope: item
+$1.wrapperPhrase: dot select
+-
+$1
+.Select($2 => $2.$3)$0
+---
+
+name: dot where
+phrase: dot where
+insertionScope: item
+$1.wrapperPhrase: dot where
+-
+$1
+.Where($2 => $2.$3)$0
+---
+
+name: dot group by
+phrase: dot group by
+insertionScope: item
+$1.wrapperPhrase: dot group by
+-
+$1
+.GroupBy(g => g.$3)$0
+---
+
+name: dot to dict
+phrase: dot to dict
+insertionScope: item
+$1.wrapperPhrase: dot to dict
+-
+$1
+.ToDictionary($2 => $2.$3, $2 => $2.$4)$0
+---
+
+name: dot try get
+phrase: dot try get
+insertionScope: item
+$1.wrapperPhrase: dot try get
+-
+$1
+.TryGetValue($2 => $2.$3, $2 => $2.$4)$0
 ---
 
 name: var
@@ -21,4 +75,20 @@ phrase: null
 insertionScope: statement
 -
 null
+---
+
+name: is not null
+phrase: is not null
+$0.wrapperPhrase: not null
+insertionScope: statement
+-
+$0 =! null
+---
+
+name: is null
+phrase: is null
+$0.wrapperPhrase: is null
+insertionScope: statement
+-
+$0 == null
 ---
