@@ -9,3 +9,14 @@ $0.insertionFormatter: NOOP
 -
 $0: user.run_rpc_command("$CLIPBOARD")
 ---
+
+name: vscodeCommand
+phrase: vscode command
+insertionScope: command
+$1.wrapperPhrase: vscode command
+$0.wrapperPhrase: vscode command phrase
+
+$0.insertionFormatter: NOOP
+-
+$0: user.vscode("$1")
+---

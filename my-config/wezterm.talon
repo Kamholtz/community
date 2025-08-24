@@ -30,8 +30,12 @@ pane close:               key(ctrl-shift-w)
 # Command palette or launcher (customize if needed)
 command palette:          key(ctrl-shift-p)
 
+# Clipboard operations
+paste:                    key(ctrl-shift-v)
+paste to all:             key(ctrl-u ctrl-shift-v)
+
 # Reverse history search (FZF-style)
-reverse search <user.text>: 
+reverse search <user.text>:
     key(ctrl-r)
     insert(user.text or "")
 

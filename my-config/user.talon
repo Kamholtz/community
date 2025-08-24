@@ -10,6 +10,9 @@ settings():
     speech.timeout = 0.6
     # subtitles_show = true
     user.subtitles_color = "ffffaa"
+    user.model_endpoint = "llm"
+    user.model_default = "gpt-4o-mini"
+    user.model_shell_default = "zsh"
 
 
 # Custom voice commands for undo and redo
