@@ -52,3 +52,7 @@ File extension,Name
 .log,dot log
 .devcontainer,dot devcontainer
 .json,dot jason
+.clj,dot clojure
+.cljs,dot clojure script
+.cljc,dot clojure common
+.edn,dot edn

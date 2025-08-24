@@ -20,6 +20,7 @@ code_languages = [
     Language("batch", "batch", ["bat"]),
     Language("c", "see", ["c", "h"]),
     # Language("cmake", "see make", ["cmake"]),
+    Language("clojure", "clojure", ["clj", "cljs", "cljc", "edn"]),
     Language("csharp", "see sharp", ["cs"]),
     Language("css", "c s s", ["css"]),
     # Language("elisp", "elisp", ["el"]),
