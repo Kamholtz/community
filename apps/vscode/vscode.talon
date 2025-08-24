@@ -384,3 +384,91 @@ tab {user.letter} [{user.letter}]:
 # Generate numerical range. Starts from 1 by default
 generate range [from <number_small>]:
     user.run_rpc_command("andreas.generateRange", number_small or 1)
+
+
+quick fix: user.vscode("editor.action.quickFix")
+
+# =====================================
+# Snippets
+# =====================================
+snip (last | previous): user.vscode("jumpToPrevSnippetPlaceholder")
+snip next: user.vscode("jumpToNextSnippetPlaceholder")
+
+next: user.vscode_and_wait("jumpToNextSnippetPlaceholder")
+snip last: user.vscode("jumpToPrevSnippetPlaceholder")
+skip:
+    key("backspace")
+    user.vscode("jumpToNextSnippetPlaceholder")
+
+
+
+# Bookmarks. Requires Bookmarks plugin
+(<user.show_list> sesh | sesh <user.show_list>) [<user.text>] [halt]:
+    user.vscode("workbench.action.openRecent")
+    sleep(250ms)
+    user.insert_formatted(text or "", "DASH_SEPARATED,ALL_LOWERCASE")
+    sleep(250ms)
+(<user.teleport> sesh | sesh <user.teleport>) [<user.text>] [halt]:
+    user.vscode("workbench.action.openRecent")
+    sleep(250ms)
+    user.insert_formatted(text or "", "DASH_SEPARATED,ALL_LOWERCASE")
+    key(enter)
+    sleep(250ms)
+new sesh [<user.text>]:
+    user.vscode("workbench.action.newWindow")
+    sleep(3s)
+    user.vscode("workbench.action.openRecent")
+    sleep(250ms)
+    insert(text or "")
+    sleep(250ms)
+go edit: user.vscode("workbench.action.navigateToLastEditLocation")
+
+(<user.show_list> win | win <user.show_list> | winless) [<user.text>]:
+    user.vscode("workbench.action.switchWindow")
+    sleep(250ms)
+    insert(text or "")
+    sleep(250ms)
+(<user.teleport> win | win <user.teleport>) [<user.text>]:
+    user.vscode("workbench.action.switchWindow")
+    sleep(50ms)
+    insert(text or "")
+    key(enter)
+    sleep(250ms)
+
+# =====================================
+# Bookmarks. Requires Bookmarks plugin
+# =====================================
+bar marks: user.vscode("workbench.view.extension.bookmarks")
+go marks:
+    user.deprecate_command("2023-06-06", "go marks", "bar marks")
+    user.vscode("workbench.view.extension.bookmarks")
+toggle mark: user.vscode("bookmarks.toggle")
+<user.teleport> next mark: user.vscode("bookmarks.jumpToNext")
+<user.teleport> last mark: user.vscode("bookmarks.jumpToPrevious")
+
+# =====================================
+# Tabs
+# =====================================
+close other tabs: user.vscode("workbench.action.closeOtherEditors")
+close all tabs: user.vscode("workbench.action.closeAllEditors")
+close tabs way right: user.vscode("workbench.action.closeEditorsToTheRight")
+close tabs way left: user.vscode("workbench.action.closeEditorsToTheLeft")
+
+
+# =====================================
+# Folding
+# =====================================
+# fold that: user.vscode("editor.fold")
+# unfold that: user.vscode("editor.unfold")
+fold those: user.vscode("editor.foldAllMarkerRegions")
+unfold those: user.vscode("editor.unfoldRecursively")
+fold all: user.vscode("editor.foldAll")
+unfold all: user.vscode("editor.unfoldAll")
+fold comments: user.vscode("editor.foldAllBlockComments")
+fold one: user.vscode("editor.foldLevel1")
+fold two: user.vscode("editor.foldLevel2")
+fold three: user.vscode("editor.foldLevel3")
+fold four: user.vscode("editor.foldLevel4")
+fold five: user.vscode("editor.foldLevel5")
+fold six: user.vscode("editor.foldLevel6")
+fold seven: user.vscode("editor.foldLevel7")

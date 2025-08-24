@@ -1,5 +1,6 @@
 name: formatString
 phrase: format
+$0.wrapperPhrase: format
 ---
 
 language: cpp
@@ -9,7 +10,7 @@ std::format("$0")
 
 language: csharp
 -
-String.Format("$0")
+$"{$0}"
 ---
 
 language: java

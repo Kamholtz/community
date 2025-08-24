@@ -9,8 +9,9 @@ insertionScope: statement
 ---
 
 name: ifBlock
-phrase: if block
-$0.wrapperPhrase: if block
+phrase: if
+$0.wrapperPhrase: if body
+$1.wrapperPhrase: if cond
 insertionScope: statement
 -
 @if ($1)
