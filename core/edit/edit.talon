@@ -63,8 +63,7 @@ carve that: edit.cut()
 paste match: edit.paste_match_style()
 
 # Duplication
-clone that: edit.selection_clone()
-clone line: edit.line_clone()
+# NOTE: this was moved to the sibling file edit_excl_cursorless.talon
 
 # Insert new line
 new line above: edit.line_insert_up()
@@ -98,4 +97,4 @@ scratch <number_small> times: user.delete_left_n(number_small)
 drill <number_small> times: user.delete_right_n(number_small)
 
 pour: edit.line_insert_down()
-drink: edit.line_insert_up()  
+drink: edit.line_insert_up()
