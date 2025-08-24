@@ -1,0 +1,67 @@
+language: gitcommit
+---
+
+name: feat commit
+phrase: feat commit
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+-
+feat: $1
+
+$0
+---
+
+name: fix commit
+phrase: fix commit
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+-
+fix: $1
+
+$0
+---
+
+name: docs commit
+phrase: docs commit
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+-
+docs: $1
+---
+
+name: style commit
+phrase: style commit
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+-
+style: $1
+---
+
+name: refactor commit
+phrase: refactor commit
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+-
+refactor: $1
+
+$0
+---
+
+name: test commit
+phrase: test commit
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+-
+test: $1
+---
+
+name: chore commit
+phrase: chore commit
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+-
+chore: $1
+---
+
+name: breaking change
+phrase: breaking change
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+-
+feat!: $1
+
+$2
+
+BREAKING CHANGE: $0

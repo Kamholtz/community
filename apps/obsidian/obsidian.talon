@@ -26,3 +26,9 @@ search vault: key(ctrl-shift-f)
 open daily: user.obsidian("Open today's daily note")
 open next daily: user.obsidian("Open next daily note")
 open previous daily: user.obsidian("Open previous daily note")
+
+# Override markdown code block for Obsidian to work with auto-completion
+{user.markdown_code_block_language} block:
+    insert("```{markdown_code_block_language}")
+    key(enter enter)
+    key(up)

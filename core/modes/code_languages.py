@@ -27,6 +27,7 @@ code_languages = [
     Language("elixir", "elixir", ["ex"]),
     # Language("elm", "elm", ["elm"]),
     Language("gdb", "g d b", ["gdb"]),
+    Language("gitcommit", "git commit", []),
     Language("go", ["go lang", "go language"], ["go"]),
     Language("java", "java", ["java"]),
     Language("javascript", "java script", ["js"]),
@@ -79,4 +80,6 @@ code_special_file_map = {
     "PKGBUILD": "pkgbuild",
     ".vimrc": "vimscript",
     "vimrc": "vimscript",
+    "COMMIT_EDITMSG": "gitcommit",
+    ".git/COMMIT_EDITMSG": "gitcommit",
 }
