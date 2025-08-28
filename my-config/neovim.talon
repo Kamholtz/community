@@ -67,6 +67,9 @@ tag(): user.cursorless
     user.vim_run_normal_np("yy")
     user.vim_run_normal_np("p")
 
+change quote:
+    user.vim_run_normal_np("ciq")
+
 change word:
     user.vim_run_normal_np("ciw")
 
@@ -206,6 +209,9 @@ unhighlight that:
 
 (ref|references|reference) find:
     user.vim_run_normal_np(" lr")
+
+code action:
+    user.vim_run_normal_np(" la")
 
 
 # =====================================
@@ -355,6 +361,12 @@ symbols hunt (pace | paste):
 symbols hunt [<user.text>]:
     user.vim_search_lsp_symbols(user.text or "")
 
+(jump|jumps) hunt (pace | paste):
+    user.vim_search_jumps_clipboard()
+
+(jumps) hunt [<user.text>]:
+    user.vim_search_jumps(user.text or "")
+
 # =====================================
 # Next/previous commands
 # =====================================
@@ -422,6 +434,15 @@ nope:
 
 yep:
     key("ctrl-r")
+
+go back: 
+    key("ctrl-o")
+
+go forward: 
+    key("ctrl-i")
+
+take element block: 
+    user.vim_run_normal_np("vatV")
 
 north:
     user.vim_run_normal_np("S")

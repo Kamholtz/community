@@ -224,6 +224,16 @@ class Actions:
         """Open LSP symbols picker"""
         cmd = ":PickLspSymbols " + clip.text() + "\n"
         actions.user.vim_run_normal_np(cmd)
+            
+    def vim_search_jumps(search_text: str):
+        """Open jumps picker"""
+        cmd = ":PickJumps " + search_text + "\n"
+        actions.user.vim_run_normal_np(cmd)
+
+    def vim_search_jumps_clipboard():
+        """Open jumps picker"""
+        cmd = ":PickJumps " + clip.text() + "\n"
+        actions.user.vim_run_normal_np(cmd)
 
     def check_box_tick():
         """Replace [ ] with [x] in Neovim"""
