@@ -26,6 +26,9 @@ git clone clipboard:
     insert("git clone ")
     edit.paste()
     key(enter)
+git merge (clipboard | paste | pace):
+    insert("git merge ")
+    edit.paste()
 git diff highlighted:
     edit.copy()
     insert("git diff ")
