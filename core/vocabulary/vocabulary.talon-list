@@ -141,3 +141,4 @@ restic
 rclone
 death container: devcontainer
 git worktree
+mud: mode
