@@ -29,9 +29,12 @@ def _notify(msg: str) -> None:
         pass
 
 
-def _post(path: str):
+def _post(path: str, json_data=None):
     try:
-        return requests.post(f"{BASE_URL}{path}", timeout=1.5)
+        if json_data:
+            return requests.post(f"{BASE_URL}{path}", json=json_data, timeout=1.5)
+        else:
+            return requests.post(f"{BASE_URL}{path}", timeout=1.5)
     except Exception:
         return None
 
@@ -40,34 +43,54 @@ def _post(path: str):
 class Actions:
     def whisper_start():
         """Enter whisper mode: enable transcription and minimize commands."""
-        # Unmute the transcription daemon first
-        r = _post("/unmute")
-        if r is None or getattr(r, "status_code", 500) != 200:
-            _notify("Whisper: failed to contact daemon")
+        # Set transcription daemon to type mode
+        mode_r = _post("/mode", {"mode": "type"})
+        if mode_r is None or getattr(mode_r, "status_code", 500) != 200:
+            _notify("Whisper: failed to set type mode")
             return
 
-        # Switch Talon modes: turn off command, enable whisper
-        try:
-            actions.mode.disable("command")
-        except Exception:
-            # Some configs auto-manage command mode; proceed regardless
-            pass
+        # Unmute the transcription daemon
+        r = _post("/unmute")
+        if r is None or getattr(r, "status_code", 500) != 200:
+            _notify("Whisper: failed to unmute daemon")
+            return
+
+        # Enable whisper mode alongside command mode
+        # Whisper mode commands will override conflicting command mode commands
         actions.mode.enable("user.whisper")
-        _notify("Whisper mode: ON (say 'talon whisper done' to exit)")
+
+        # Change HUD to green to indicate whisper mode is active
+        try:
+            actions.user.hud_set_theme("green")
+        except Exception:
+            # HUD theme setting not available or failed
+            pass
+
+        _notify("Whisper mode: ON - typing enabled (say 'talon whisper done' to exit)")
 
     def whisper_done():
         """Exit whisper mode: mute transcription and restore command mode."""
+        # Set transcription daemon to print mode (console output)
+        mode_r = _post("/mode", {"mode": "print"})
+        if mode_r is None or getattr(mode_r, "status_code", 500) != 200:
+            _notify("Whisper: failed to set print mode")
+            # Continue anyway, try to mute
+
         # Mute the transcription daemon
         r = _post("/mute")
         if r is None or getattr(r, "status_code", 500) != 200:
-            _notify("Whisper: failed to contact daemon")
+            _notify("Whisper: failed to mute daemon")
             # Still attempt to restore modes
-        
-        # Restore Talon modes
+
+        # Simply disable whisper mode - command mode stays active
         actions.mode.disable("user.whisper")
+
+        # Restore HUD to default theme
         try:
-            actions.mode.enable("command")
+            actions.user.hud_set_theme("default")
         except Exception:
+            # HUD theme setting not available or failed
             pass
-        _notify("Whisper mode: OFF")
+
+        _notify("Whisper mode: OFF - console output restored")
 

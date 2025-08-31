@@ -41,10 +41,10 @@ not speech.engine: dragon
     user.mouse_sleep()
     speech.disable()
 
-# ^talon whisper$:
-#     speech.disable()
-#     key(ctrl-m)
+^talon whisper$:
+    speech.disable()
+    user.whisper_start()
 
-# ^talon whisper done$:
-#     key(ctrl-m)
-#     speech.enable()
+^talon whisper done$:
+    user.whisper_done()
+    speech.enable()
