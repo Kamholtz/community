@@ -37,6 +37,7 @@ state finally: "finally "
 state throw: "throw "
 state do: "do "
 state f n: "fn "
+state deref: "deref "
 
 # Clojure parentheses and data structures
 paren: "()"
