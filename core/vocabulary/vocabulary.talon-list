@@ -77,7 +77,7 @@ sanitisation
 O R M: ORM
 parameterised
 S S H: SSH
-SSH'ing
+SSH-ing
 V M: VM
 W E P: WEP
 initialisation
@@ -142,3 +142,10 @@ rclone
 death container: devcontainer
 git worktree
 mud: mode
+tensorboard
+pip install
+R A M: RAM
+W S L: WSL
+cell heading
+O N N X: ONNX
+work dir

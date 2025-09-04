@@ -41,6 +41,11 @@ list six:
 {user.markdown_code_block_language} block:
     user.insert_snippet("```{markdown_code_block_language}\n$0\n```")
 
+# https://talon.wiki/voice%20coding/snippets/
+{user.markdown_code_block_language} block (paste | pace):
+    user.insert_snippet("```{markdown_code_block_language}\n$0\n```")
+    key(ctrl-v)
+
 link: user.insert_snippet_by_name("link")
 
 

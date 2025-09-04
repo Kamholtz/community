@@ -149,6 +149,13 @@ ctx.lists["user.python_exception"] = {
     for exception in exception_list
 }
 
+# tag: libraries
+ctx.lists["user.code_libraries"] = {
+    "eye oh": "io",
+    "numpy": "numpy as np",
+    "num pie": "numpy as np"
+}
+
 operators = Operators(
     # code_operators_array
     SUBSCRIPT=lambda: actions.user.insert_between("[", "]"),
@@ -260,3 +267,6 @@ class UserActions:
 
     def code_break():
         actions.insert("break")
+
+    def code_insert_library(text: str, selection: str):
+        actions.user.insert_snippet_by_name("importStatement", {"0": text})

@@ -94,3 +94,74 @@ insertionScope: statement
 -
 ($2 for $2 in $1 if $0)
 ---
+
+name: cellBlock
+phrase: cell block
+insertionScope: statement
+-
+# %%
+$0
+---
+
+name: cellHeadingOne
+phrase: cell heading one
+insertionScope: statement
+-
+#%%[markdown]
+# # $1
+$0
+---
+
+name: cellHeadingTwo
+phrase: cell heading two
+insertionScope: statement
+-
+#%%[markdown]
+# ## $1
+$0
+---
+
+name: cellHeadingThree
+phrase: cell heading three
+insertionScope: statement
+-
+#%%[markdown]
+# ### $1
+$0
+---
+
+name: cellHeadingFour
+phrase: cell heading four
+insertionScope: statement
+-
+#%%[markdown]
+# #### $1
+$0
+---
+
+name: cellHeadingFive
+phrase: cell heading five
+insertionScope: statement
+-
+#%%[markdown]
+# ##### $1
+$0
+---
+
+name: magicBash
+phrase: magic bash
+$0.wrapperPhrase: magic bash
+insertionScope: statement
+-
+%%bash
+$0
+---
+
+name: magicEnvironment
+phrase: magic environment
+$0.wrapperPhrase: magic environment
+insertionScope: statement
+-
+%env $1=$$1
+$0
+---

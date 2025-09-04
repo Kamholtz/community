@@ -26,6 +26,7 @@ bar search: user.vscode("workbench.view.search")
 bar source: user.vscode("workbench.view.scm")
 bar test: user.vscode("workbench.view.testing.focus")
 bar switch: user.vscode("workbench.action.toggleSidebarVisibility")
+bar containers: user.vscode("vscode-containers.views.containers.focus")
 
 # Symbol search
 symbol hunt [<user.text>]:
@@ -43,6 +44,7 @@ panel control: user.vscode("workbench.panel.repl.view.focus")
 panel output: user.vscode("workbench.panel.output.focus")
 panel problems: user.vscode("workbench.panel.markers.view.focus")
 panel switch: user.vscode("workbench.action.togglePanel")
+panel jupyter: user.vscode("jupyterViewVariables.focus")
 panel terminal: user.vscode("workbench.action.terminal.focus")
 focus editor: user.vscode("workbench.action.focusActiveEditorGroup")
 
@@ -302,6 +304,7 @@ interact run all: user.vscode("jupyter.runallcells")
 interact run: user.vscode("jupyter.runcurrentcell")
 interact line run: user.vscode("jupyter.execSelectionInteractive")
 interact debug: user.vscode("jupyter.runAndDebugCell")
+interact new window: user.vscode("jupyter.createnewinteractive")
 
 install local: user.vscode("workbench.extensions.action.installVSIX")
 preview markdown: user.vscode("markdown.showPreview")
@@ -359,14 +362,6 @@ build run:
 # =====================================
 # Whisper
 # =====================================
-
-toggle whisper:
-    if speech.enabled():
-        key(ctrl-m)
-        speech.enable()
-    else:
-        speech.disable()
-        key(ctrl-m)
 
 
 # =====================================
@@ -472,3 +467,8 @@ fold four: user.vscode("editor.foldLevel4")
 fold five: user.vscode("editor.foldLevel5")
 fold six: user.vscode("editor.foldLevel6")
 fold seven: user.vscode("editor.foldLevel7")
+
+# =====================================
+# Terminal
+# =====================================
+terminal run: user.vscode("workbench.action.terminal.runSelectedText")

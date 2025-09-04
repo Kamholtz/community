@@ -51,3 +51,8 @@ import <user.code_libraries>:
     key(end enter)
 
 from import: user.insert_snippet_by_name("importFromStatement")
+
+cell heading one: user.insert_snippet_by_name("cellHeadingOne")
+cell heading two: user.insert_snippet_by_name("cellHeadingTwo")
+cell heading three: user.insert_snippet_by_name("cellHeadingThree")
+cell heading four: user.insert_snippet_by_name("cellHeadingFour")
