@@ -8,7 +8,7 @@ eval to cursor: user.vscode("calva.evaluateStartOfFileToCursor")
 
 # form
 eval form: user.vscode("calva.evaluateEnclosingForm")
-eval (top|top form) to cursor: user.vscode("calva.evaluateTopLevelFormToCursor")
+eval (top|top form) down: user.vscode("calva.evaluateTopLevelFormToCursor")
 eval (top|top form): user.vscode("calva.evaluateCurrentTopLevelForm")
 eval (top|top form) as comment: user.vscode("calva.evaluateTopLevelFormAsComment")
 
