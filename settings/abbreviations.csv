@@ -440,3 +440,8 @@ wnd,wind
 win,window
 ntoskrnl,windows kernel
 wip,work in progress
+ml,machine learning
+fp,fair play
+mmpose,open lab pose
+mmdetection,open lab detection
+mmengine,open lab engine
