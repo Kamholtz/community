@@ -16,10 +16,10 @@ settings():
 
 
 # Custom voice commands for undo and redo
-nope:
-    edit.undo()
-yep:
-    edit.redo()
+nope: edit.undo()
+yep: edit.redo()
+
+clap: key(enter)
 
 # list phrase: on_phrase.analyze_phrase
 # (phrase view): user.analyze_phrase()
