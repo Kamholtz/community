@@ -493,3 +493,10 @@ bring terminal copy:
 terminal next scroll: user.vscode("workbench.action.terminal.scrollToNextCommand")
 terminal (previous | prev | last) scroll: user.vscode("workbench.action.terminal.scrollToPreviousCommand")
 toggle sticky (terminal | term): user.vscode("workbench.action.terminal.toggleStickyScroll")
+
+
+# Spoken form, VSCode command
+# git stage block, git.diff.stageHunk
+# git stage file, git.stageFile
+# terminal run, workbench.action.terminal.runSelectedText
+# terminal file run, workbench.action.terminal.runActiveFile
