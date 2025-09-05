@@ -472,3 +472,24 @@ fold seven: user.vscode("editor.foldLevel7")
 # Terminal
 # =====================================
 terminal run: user.vscode("workbench.action.terminal.runSelectedText")
+terminal file run: user.vscode("workbench.action.terminal.runActiveFile")
+terminal last run: user.vscode("workbench.action.terminal.runRecentCommand")
+
+terminal command copy: user.vscode("workbench.action.terminal.copyLastCommand")
+bring terminal command copy: 
+    user.vscode("workbench.action.terminal.copyLastCommand")
+    key(ctrl-v)
+
+terminal output copy: user.vscode("workbench.action.terminal.copyLastCommandOutput")
+bring terminal output copy: 
+    user.vscode("workbench.action.terminal.copyLastCommandOutput")
+    key(ctrl-v)
+
+terminal copy: user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
+bring terminal copy: 
+    user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
+    key(ctrl-v)
+
+terminal next scroll: user.vscode("workbench.action.terminal.scrollToNextCommand")
+terminal (previous | prev | last) scroll: user.vscode("workbench.action.terminal.scrollToPreviousCommand")
+toggle sticky (terminal | term): user.vscode("workbench.action.terminal.toggleStickyScroll")
