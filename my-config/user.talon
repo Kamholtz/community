@@ -13,6 +13,7 @@ settings():
     user.model_endpoint = "llm"
     user.model_default = "gpt-4o-mini"
     user.model_shell_default = "zsh"
+    user.cursorless_settings_directory = "community/my-config/cursorless-settings"
 
 
 # Custom voice commands for undo and redo
