@@ -476,17 +476,17 @@ terminal file run: user.vscode("workbench.action.terminal.runActiveFile")
 terminal last run: user.vscode("workbench.action.terminal.runRecentCommand")
 
 terminal command copy: user.vscode("workbench.action.terminal.copyLastCommand")
-bring terminal command copy: 
+bring terminal command copy:
     user.vscode("workbench.action.terminal.copyLastCommand")
     key(ctrl-v)
 
 terminal output copy: user.vscode("workbench.action.terminal.copyLastCommandOutput")
-bring terminal output copy: 
+bring terminal output copy:
     user.vscode("workbench.action.terminal.copyLastCommandOutput")
     key(ctrl-v)
 
 terminal copy: user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
-bring terminal copy: 
+bring terminal copy:
     user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
     key(ctrl-v)
 
@@ -496,6 +496,11 @@ toggle sticky (terminal | term): user.vscode("workbench.action.terminal.toggleSt
 
 
 # Spoken form, VSCode command
+# eval form, calva.evaluateEnclosingForm
+# eval (top|top form) down, calva.evaluateTopLevelFormToCursor
+# eval (top|top form), calva.evaluateCurrentTopLevelForm
+# eval (top|top form) as comment, calva.evaluateTopLevelFormAsComment
+# format, calva-fmt.formatCurrentForm
 # git stage block, git.diff.stageHunk
 # git stage file, git.stageFile
 # terminal run, workbench.action.terminal.runSelectedText
