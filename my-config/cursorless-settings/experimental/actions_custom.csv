@@ -1,0 +1,10 @@
+Spoken form, VSCode command
+eval form, calva.evaluateEnclosingForm
+eval (top|top form) down, calva.evaluateTopLevelFormToCursor
+eval (top|top form), calva.evaluateCurrentTopLevelForm
+eval (top|top form) as comment, calva.evaluateTopLevelFormAsComment
+format, calva-fmt.formatCurrentForm
+git stage block, git.diff.stageHunk
+git stage file, git.stageFile
+terminal run, workbench.action.terminal.runSelectedText
+terminal file run, workbench.action.terminal.runActiveFile
