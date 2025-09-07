@@ -475,33 +475,15 @@ terminal run: user.vscode("workbench.action.terminal.runSelectedText")
 terminal file run: user.vscode("workbench.action.terminal.runActiveFile")
 terminal last run: user.vscode("workbench.action.terminal.runRecentCommand")
 
-terminal command copy: user.vscode("workbench.action.terminal.copyLastCommand")
-bring terminal command copy:
-    user.vscode("workbench.action.terminal.copyLastCommand")
-    key(ctrl-v)
+copy command terminal: user.vscode("workbench.action.terminal.copyLastCommand")
+bring command terminal: user.vscode_terminal_copy_named("last_command", true)
 
-terminal output copy: user.vscode("workbench.action.terminal.copyLastCommandOutput")
-bring terminal output copy:
-    user.vscode("workbench.action.terminal.copyLastCommandOutput")
-    key(ctrl-v)
+copy output terminal: user.vscode("workbench.action.terminal.copyLastCommandOutput")
+bring output terminal: user.vscode_terminal_copy_named("last_output", true)
 
-terminal copy: user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
-bring terminal copy:
-    user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
-    key(ctrl-v)
+copy terminal: user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
+bring terminal: user.vscode_terminal_copy_named("command_and_output", true)
 
 terminal next scroll: user.vscode("workbench.action.terminal.scrollToNextCommand")
 terminal (previous | prev | last) scroll: user.vscode("workbench.action.terminal.scrollToPreviousCommand")
 toggle sticky (terminal | term): user.vscode("workbench.action.terminal.toggleStickyScroll")
-
-
-# Spoken form, VSCode command
-# eval form, calva.evaluateEnclosingForm
-# eval (top|top form) down, calva.evaluateTopLevelFormToCursor
-# eval (top|top form), calva.evaluateCurrentTopLevelForm
-# eval (top|top form) as comment, calva.evaluateTopLevelFormAsComment
-# format, calva-fmt.formatCurrentForm
-# git stage block, git.diff.stageHunk
-# git stage file, git.stageFile
-# terminal run, workbench.action.terminal.runSelectedText
-# terminal file run, workbench.action.terminal.runActiveFile
