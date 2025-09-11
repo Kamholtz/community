@@ -3,6 +3,7 @@ tag(): user.zoxide
 # tag(): user.gamepad_tester
 
 tag(): user.gamepad
+tag(): user.glazewm
 
 # Example Talon file
 settings():
