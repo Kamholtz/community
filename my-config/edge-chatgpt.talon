@@ -6,3 +6,6 @@ explain paste enter:
     key(shift-enter)
     edit.paste()
     key(enter)
+
+newline: key(shift-enter)
+(slap | slapper): key(shift-enter)
