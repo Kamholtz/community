@@ -51,8 +51,8 @@ workspace next: user.glazewm_workspace_next()
 workspace previous: user.glazewm_workspace_prev()
 workspace recent: user.glazewm_workspace_recent()
 
-(shuffle | move (win | window) [to] port) <number_small>: user.glazewm_move_to_workspace(number_small)
-(shuffle | move (win | window) [to] workspace) <number_small>: user.glazewm_move_to_workspace(number_small)
+(shuffle | move (win | window)) [to] port <number_small>: user.glazewm_move_to_workspace(number_small)
+(shuffle | move (win | window)) [to] workspace <number_small>: user.glazewm_move_to_workspace(number_small)
 
 # Move parent workspace between monitors
 move workspace left: user.glazewm_move_workspace("left")
