@@ -1,5 +1,6 @@
 tag(): user.git
 tag(): user.zoxide
+tag(): user.docker
 # tag(): user.gamepad_tester
 
 tag(): user.gamepad
