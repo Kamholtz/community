@@ -45,14 +45,6 @@ on_project_stop: cd ./user/community && ./tx-exit.sh
 # attach: false
 
 windows:
-  - editor:
-      layout: main-vertical
-      # Synchronize all panes of this window, can be enabled before or after the pane commands run.
-      # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
-      # synchronize: after
-      panes:
-        - nvim -- ./user/community/my-config/user.talon
-  - git: lazygit -p ./user/community
   - talon:
       layout: main-horizontal
       # Synchronize all panes of this window, can be enabled before or after the pane commands run.
@@ -62,3 +54,11 @@ windows:
         - talon 2>&1 | ccze -A -o nolookups
         - sleep 3 && talon repl
         - sleep 3 && echo 'events.tail()' | bin/repl 2>&1 | ccze -A -o nolookups
+  - editor:
+      layout: main-vertical
+      # Synchronize all panes of this window, can be enabled before or after the pane commands run.
+      # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
+      # synchronize: after
+      panes:
+        - nvim -- ./user/community/my-config/user.talon
+  - git: lazygit -p ./user/community
