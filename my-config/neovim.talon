@@ -444,6 +444,16 @@ go forward:
 take element block: 
     user.vim_run_normal_np("vatV")
 
+chuck pair: 
+    user.vim_run_normal_np("dab")
+
+chuck inside pair: 
+    user.vim_run_normal_np("dib")
+
+void repack pair: 
+    user.vim_run_normal_np("dsb")
+
+
 north:
     user.vim_run_normal_np("S")
 
@@ -520,3 +530,14 @@ mini files:
 
 mini files current:
     user.vim_run_normal_np(':lua MiniFiles.open()\n')
+
+
+# =====================================
+# Fold 
+# =====================================
+toggle fold [that]: user.vim_run_normal_np('za')
+toggle (recursive | recur) fold [that]: user.vim_run_normal_np('zA')
+fold [that]: user.vim_run_normal_np('zc')
+(recursive | recur) fold [that]: user.vim_run_normal_np('zC')
+unfold [that]: user.vim_run_normal_np('zo')
+(recursive | recur) unfold [that]: user.vim_run_normal_np('zO')

@@ -4,6 +4,7 @@ tag(): user.docker
 # tag(): user.gamepad_tester
 
 tag(): user.gamepad
+tag(): user.glazewm
 
 # Example Talon file
 settings():

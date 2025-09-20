@@ -34,6 +34,27 @@ insertionScope: statement
 console.time("$0");
 ---
 
+name: info
+phrase: info
+insertionScope: statement
+-
+console.info("$0:", $0);
+---
+
+name: warn
+phrase: warn
+insertionScope: statement
+-
+console.warn("$0:", $0);
+---
+
+name: error
+phrase: error
+insertionScope: statement
+-
+console.error("$0:", $0);
+---
+
 name: constAssignment
 phrase: const
 insertionScope: statement

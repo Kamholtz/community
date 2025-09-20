@@ -156,3 +156,4 @@ deps
 Docling
 toll on: talon
 repel: REPL
+eval

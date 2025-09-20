@@ -9,6 +9,14 @@ $1.wrapperPhrase: dot to list
 $1.ToList()$0
 ---
 
+name: dot to hash
+phrase: dot to hash
+insertionScope: statement
+$1.wrapperPhrase: dot to hash
+-
+$1.ToHashSet()$0
+---
+
 name: dot for each
 phrase: dot for each
 insertionScope: statement
@@ -41,7 +49,16 @@ insertionScope: item
 $1.wrapperPhrase: dot group by
 -
 $1
-.GroupBy(g => g.$3)$0
+.GroupBy(x => x.$3)$0
+---
+
+name: dot order by
+phrase: dot order by
+insertionScope: item
+$1.wrapperPhrase: dot order by
+-
+$1
+.OrderBy(x => x.$3)$0
 ---
 
 name: dot to dict
@@ -58,8 +75,7 @@ phrase: dot try get
 insertionScope: item
 $1.wrapperPhrase: dot try get
 -
-$1
-.TryGetValue($2 => $2.$3, $2 => $2.$4)$0
+$1.TryGetValue($2, out var $3)$0
 ---
 
 name: var
@@ -91,4 +107,21 @@ $0.wrapperPhrase: is null
 insertionScope: statement
 -
 $0 == null
+---
+
+name: new
+phrase: new
+insertionScope: statement
+-
+new $1()$0;
+---
+
+name: var
+phrase: (var)
+$1.wrapperPhrase: (var) name
+$2.wrapperPhrase: (var) value
+insertionScope: statement
+-
+var $1 = $2;
+$0
 ---
