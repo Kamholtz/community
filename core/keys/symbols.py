@@ -78,7 +78,7 @@ symbols = [
     Symbol("/", ["forward slash"], ["slash"]),
     Symbol("\\", None, ["backslash"]),
     Symbol("{", None, ["brace", "L brace", "left brace", "curly bracket", "left curly bracket", "lurly", "lace"],),
-    Symbol("}", None, ["R brace", "right brace","R curly bracket", "right curly bracket", "rurly"]),
+    Symbol("}", None, ["R brace", "right brace","R curly bracket", "right curly bracket", "r curly", "close curly" "rurly"]),
     Symbol("<", None, ["angle", "L Angle", "left angle", "less than"]),
     Symbol(">", None, ["rangle", "R angle", "right angle", "greater than"]),
     Symbol("^", None, ["caret"]),
