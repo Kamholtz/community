@@ -50,4 +50,5 @@ git clone:                insert("git clone ")
 
 # Run command via dictation (requires user.text command below)
 say command <user.text>:
-    insert("{text}") key(enter)
+    insert("{text}")
+    key(enter)
