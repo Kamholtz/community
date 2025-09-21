@@ -45,6 +45,48 @@ https://www.cursorless.org/docs/user/customization/#experimental-cursorless-cust
 - [ ] how to prevent the onscreen keyboard showing up on pop os
 - [ ] hunt this <user.text> search with / in nvim
 
+XDG Open
+2025-09-20 07:37:51.576    IO removing tag firefox_chatgpt
+2025-09-20 07:37:51.576 WARNING tags: skipped because they have no matching declaration: (user.markdown, user.docker)
+2025-09-20 07:37:51.726    IO win_event_handler: window.title=tmux:pop-os
+2025-09-20 07:37:51.726    IO removing tag firefox_chatgpt
+2025-09-20 07:37:51.726 WARNING tags: skipped because they have no matching declaration: (user.markdown, user.docker)
+2025-09-20 07:38:03.763 ERROR    10:                      talon/scripting/talon_script.py:606 |
+    9:                      talon/scripting/talon_script.py:308 |
+    8:                           talon/scripting/actions.py:88  |
+    7: user/community/core/edit_text_file/edit_text_file.py:57  | open_with_subprocess(path, ["xdg-open"..
+    6:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    5: user/community/core/edit_text_file/edit_text_file.py:67  | subprocess.run(args, timeout=0.5, chec..
+    4:                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    3:                         lib/python3.11/subprocess.py:548 |
+    2:                         lib/python3.11/subprocess.py:1026|
+    1:                         lib/python3.11/subprocess.py:1950|
+FileNotFoundError: [Errno 2] No such file or directory: 'xdg-open'
+
+[The below error was raised while handling the above exception(s)]
+2025-09-20 07:38:03.767 ERROR cb error topic="phrase" cb=SpeechSystem.engine_event
+   16:      lib/python3.11/threading.py:995 * # cron thread
+   15:      lib/python3.11/threading.py:1038*
+   14:      lib/python3.11/threading.py:975 *
+   13:                    talon/cron.py:156 |
+   12:                     talon/vad.py:23  |
+   11:                     talon/vad.py:129 |
+   10: talon/scripting/speech_system.py:369 |
+    9:             talon/engines/w2l.py:742 |
+    8:      talon/scripting/dispatch.py:134 | # 'phrase' main:EngineProxy._redispatch()
+    7: talon/scripting/speech_system.py:66  |
+    6: -------------------------------------# [stack splice]
+    5:      talon/scripting/dispatch.py:134 | # 'phrase' main:SpeechSystem.engine_event()
+    4: talon/scripting/speech_system.py:442 |
+    3:      talon/scripting/executor.py:111 |
+    2:  talon/scripting/talon_script.py:707 |
+    1:  talon/scripting/talon_script.py:610 |
+talon.scripting.talon_script.TalonScriptError:
+ in script at /home/carl/.talon/user/community/core/edit_text_file/edit_text_file.talon:2:
+ > user.edit_text_file(edit_text_file)
+FileNotFoundError: [Errno 2] No such file or directory: 'xdg-open'
+
+
 ## Top level config
 
 
