@@ -12,7 +12,7 @@ $1.insertionFormatter: CAPITALIZE_FIRST_WORD
 name: checkbox
 phrase: checkbox
 $0.insertionFormatter: CAPITALIZE_FIRST_WORD
-
+$0.wrapperScope: line
 -
 - [ ] $0
 ---
@@ -20,7 +20,7 @@ $0.insertionFormatter: CAPITALIZE_FIRST_WORD
 name: bullet
 phrase: bullet
 $0.insertionFormatter: CAPITALIZE_FIRST_WORD
-
+$0.wrapperScope: line
 -
 - $0
 ---
@@ -29,6 +29,7 @@ name: heading one
 phrase: heading one
 $0.wrapperPhrase: heading one
 $0.insertionFormatter: CAPITALIZE_ALL_WORDS
+$0.wrapperScope: line
 -
 # $0
 ---
@@ -37,6 +38,7 @@ name: heading two
 phrase: heading two
 $0.wrapperPhrase: heading two
 $0.insertionFormatter: CAPITALIZE_ALL_WORDS
+$0.wrapperScope: line
 -
 ## $0
 ---
@@ -45,6 +47,7 @@ name: heading three
 phrase: heading three
 $0.wrapperPhrase: heading three
 $0.insertionFormatter: CAPITALIZE_ALL_WORDS
+$0.wrapperScope: line
 -
 ### $0
 ---
@@ -53,6 +56,7 @@ name: heading four
 phrase: heading four
 $0.wrapperPhrase: heading four
 $0.insertionFormatter: CAPITALIZE_ALL_WORDS
+$0.wrapperScope: line
 -
 #### $0
 ---
@@ -61,12 +65,14 @@ name: heading five
 phrase: heading five
 $0.wrapperPhrase: heading five
 $0.insertionFormatter: CAPITALIZE_ALL_WORDS
+$0.wrapperScope: line
 -
 ##### $0
 ---
 
 name: divider
 phrase: divider
+insertionScope: line
 -
----
+\---
 ---

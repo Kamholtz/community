@@ -241,17 +241,58 @@ step over: user.vscode("workbench.action.debug.stepOver")
 # Terminal
 # =====================================
 terminal run: user.vscode("workbench.action.terminal.runSelectedText")
+terminal <number_small> run:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode("workbench.action.terminal.runSelectedText")
+
 terminal file run: user.vscode("workbench.action.terminal.runActiveFile")
+terminal <number_small> file run:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode("workbench.action.terminal.runActiveFile")
+
 terminal last run: user.vscode("workbench.action.terminal.runRecentCommand")
+terminal <number_small> last run:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode("workbench.action.terminal.runRecentCommand")
 
 copy command terminal: user.vscode("workbench.action.terminal.copyLastCommand")
+copy command terminal <number_small>:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode("workbench.action.terminal.copyLastCommand")
+
 bring command terminal: user.vscode_terminal_copy_named("last_command", true)
+bring command terminal <number_small>:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode_terminal_copy_named("last_command", true)
 
 copy output terminal: user.vscode("workbench.action.terminal.copyLastCommandOutput")
+copy output terminal <number_small>:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode("workbench.action.terminal.copyLastCommandOutput")
+
 bring output terminal: user.vscode_terminal_copy_named("last_output", true)
+bring output terminal <number_small>:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode_terminal_copy_named("last_output", true)
 
 copy terminal: user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
+copy terminal <number_small>:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
+
 bring terminal: user.vscode_terminal_copy_named("command_and_output", true)
+bring terminal <number_small>:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode_terminal_copy_named("command_and_output", true)
 
 terminal next scroll: user.vscode("workbench.action.terminal.scrollToNextCommand")
 terminal (previous | prev | last) scroll: user.vscode("workbench.action.terminal.scrollToPreviousCommand")
