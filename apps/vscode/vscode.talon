@@ -248,6 +248,11 @@ step over: user.vscode("workbench.action.debug.stepOver")
 (term | terminal) toggle: user.vscode_and_wait("workbench.action.terminal.toggleTerminal")
 (term | terminal) scroll up: user.vscode("workbench.action.terminal.scrollUp")
 (term | terminal) scroll down: user.vscode("workbench.action.terminal.scrollDown")
+(term | terminal) focus hunt [<user.text>]:
+    user.vscode("workbench.action.terminal.focusFind")
+    sleep(50ms)
+    insert(text or "")
+
 (term | terminal) <number_small>: user.vscode_terminal(number_small)
 
 task run [<user.text>]:
