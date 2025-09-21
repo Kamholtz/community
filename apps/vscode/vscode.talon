@@ -237,7 +237,26 @@ step over: user.vscode("workbench.action.debug.stepOver")
 (debug | debugger) console: user.vscode("workbench.debug.action.toggleRepl")
 (debug | debugger) clean: user.vscode("workbench.debug.panel.action.clearReplAction")
 
+# =====================================
 # Terminal
+# =====================================
+terminal run: user.vscode("workbench.action.terminal.runSelectedText")
+terminal file run: user.vscode("workbench.action.terminal.runActiveFile")
+terminal last run: user.vscode("workbench.action.terminal.runRecentCommand")
+
+copy command terminal: user.vscode("workbench.action.terminal.copyLastCommand")
+bring command terminal: user.vscode_terminal_copy_named("last_command", true)
+
+copy output terminal: user.vscode("workbench.action.terminal.copyLastCommandOutput")
+bring output terminal: user.vscode_terminal_copy_named("last_output", true)
+
+copy terminal: user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
+bring terminal: user.vscode_terminal_copy_named("command_and_output", true)
+
+terminal next scroll: user.vscode("workbench.action.terminal.scrollToNextCommand")
+terminal (previous | prev | last) scroll: user.vscode("workbench.action.terminal.scrollToPreviousCommand")
+toggle sticky (terminal | term): user.vscode("workbench.action.terminal.toggleStickyScroll")
+
 (term | terminal) external: user.vscode("workbench.action.terminal.openNativeConsole")
 (term | terminal) new: user.vscode("workbench.action.terminal.new")
 (term | terminal) next: user.vscode("workbench.action.terminal.focusNext")
@@ -255,6 +274,9 @@ step over: user.vscode("workbench.action.debug.stepOver")
 
 (term | terminal) <number_small>: user.vscode_terminal(number_small)
 
+# =====================================
+# Tasks
+# =====================================
 task run [<user.text>]:
     user.vscode("workbench.action.tasks.runTask")
     insert(user.text or "")
@@ -474,22 +496,3 @@ fold five: user.vscode("editor.foldLevel5")
 fold six: user.vscode("editor.foldLevel6")
 fold seven: user.vscode("editor.foldLevel7")
 
-# =====================================
-# Terminal
-# =====================================
-terminal run: user.vscode("workbench.action.terminal.runSelectedText")
-terminal file run: user.vscode("workbench.action.terminal.runActiveFile")
-terminal last run: user.vscode("workbench.action.terminal.runRecentCommand")
-
-copy command terminal: user.vscode("workbench.action.terminal.copyLastCommand")
-bring command terminal: user.vscode_terminal_copy_named("last_command", true)
-
-copy output terminal: user.vscode("workbench.action.terminal.copyLastCommandOutput")
-bring output terminal: user.vscode_terminal_copy_named("last_output", true)
-
-copy terminal: user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
-bring terminal: user.vscode_terminal_copy_named("command_and_output", true)
-
-terminal next scroll: user.vscode("workbench.action.terminal.scrollToNextCommand")
-terminal (previous | prev | last) scroll: user.vscode("workbench.action.terminal.scrollToPreviousCommand")
-toggle sticky (terminal | term): user.vscode("workbench.action.terminal.toggleStickyScroll")
