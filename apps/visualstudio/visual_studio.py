@@ -95,6 +95,12 @@ class WinActions:
 class UserActions:
     def command_server_directory() -> str:
         return "visual-studio-command-server"
+    
+    def command_search(command: str = ""):
+        actions.key("ctrl-q")
+        if command != "":
+            actions.sleep("180ms")
+            actions.insert(command)
 
     # def select_word(verb: str):
     #     actions.key("ctrl-w")

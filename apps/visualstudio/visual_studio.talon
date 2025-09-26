@@ -5,6 +5,7 @@ tag(): user.line_commands
 tag(): user.find_and_replace
 tag(): user.multiple_cursors
 tag(): user.command_client
+tag(): user.command_search
 
 # Panels
 panel solution: key(ctrl-alt-l)

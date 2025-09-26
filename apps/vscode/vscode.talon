@@ -101,6 +101,7 @@ file delete:
 file open folder: user.vscode("revealFileInOS")
 file reveal: user.vscode("workbench.files.action.showActiveFileInExplorer")
 save ugly: user.vscode("workbench.action.files.saveWithoutFormatting")
+file collapse: user.vscode("workbench.files.action.collapseExplorerFolders")
 
 # Language Features
 suggest show: user.vscode("editor.action.triggerSuggest")
@@ -293,6 +294,12 @@ bring terminal <number_small>:
     user.vscode_terminal(number_small)
     user.vscode("workbench.action.focusActiveEditorGroup")
     user.vscode_terminal_copy_named("command_and_output", true)
+
+terminal recent directory: user.vscode("workbench.action.terminal.goToRecentDirectory")
+terminal <number_small> recent directory:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode("workbench.action.terminal.goToRecentDirectory")
 
 terminal next scroll: user.vscode("workbench.action.terminal.scrollToNextCommand")
 terminal (previous | prev | last) scroll: user.vscode("workbench.action.terminal.scrollToPreviousCommand")
