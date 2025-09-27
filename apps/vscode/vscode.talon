@@ -241,6 +241,19 @@ step over: user.vscode("workbench.action.debug.stepOver")
 # =====================================
 # Terminal
 # =====================================
+
+terminal paste: user.vscode("workbench.action.terminal.paste")
+terminal <number_small> paste:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode("workbench.action.terminal.paste")
+
+terminal selection paste: user.vscode("workbench.action.terminal.pasteSelection")
+terminal <number_small> selection paste:
+    user.vscode_terminal(number_small)
+    user.vscode("workbench.action.focusActiveEditorGroup")
+    user.vscode("workbench.action.terminal.pasteSelection")
+
 terminal run: user.vscode("workbench.action.terminal.runSelectedText")
 terminal <number_small> run:
     user.vscode_terminal(number_small)
