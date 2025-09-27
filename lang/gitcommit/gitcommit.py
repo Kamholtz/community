@@ -3,6 +3,19 @@ from talon import Context, Module, actions
 mod = Module()
 ctx = Context()
 
+fallback_ctx = Context()
+fallback_ctx.matches = r"""
+app: vscode
+and win.title: /^COMMIT_EDITMSG\b/
+and win.title: /focus:\[Text Editor\]/
+"""
+
+
+@fallback_ctx.action_class("code")
+class FallbackCodeActions:
+    def language():
+        return "gitcommit"
+
 ctx.matches = r"""
 code.language: gitcommit
 """
@@ -10,7 +23,7 @@ code.language: gitcommit
 ctx.lists["user.code_common_function"] = {
     "add": "add",
     "fix": "fix",
-    "update": "update", 
+    "update": "update",
     "remove": "remove",
     "refactor": "refactor",
     "docs": "docs",
