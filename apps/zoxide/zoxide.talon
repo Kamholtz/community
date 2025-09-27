@@ -2,6 +2,6 @@ tag: terminal
 and tag: user.zoxide
 -
 
-z <user.text>:
+oxide <user.text>:
     insert("z {text}")
     key(enter)
