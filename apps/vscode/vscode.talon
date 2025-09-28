@@ -61,7 +61,6 @@ show snippets: user.vscode("workbench.action.openSnippets")
 
 # VSCode Snippets
 snip (last | previous): user.vscode("jumpToPrevSnippetPlaceholder")
-snip next: user.vscode("jumpToNextSnippetPlaceholder")
 
 # Display
 centered switch: user.vscode("workbench.action.toggleCenteredLayout")
