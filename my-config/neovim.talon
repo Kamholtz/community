@@ -518,8 +518,8 @@ debug log remote arg:
 # =====================================
 # Markdown
 # =====================================
-check box tick: user.check_box_tick
-check box untick: user.check_box_untick
+check box tick: user.check_box_tick()
+check box untick: user.check_box_untick()
 
 
 # =====================================
