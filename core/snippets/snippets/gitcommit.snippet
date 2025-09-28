@@ -24,6 +24,8 @@ phrase: docs commit
 $1.insertionFormatter: CAPITALIZE_FIRST_WORD
 -
 docs: $1
+
+$0
 ---
 
 name: style commit
@@ -31,6 +33,8 @@ phrase: style commit
 $1.insertionFormatter: CAPITALIZE_FIRST_WORD
 -
 style: $1
+
+$0
 ---
 
 name: refactor commit
@@ -47,6 +51,8 @@ phrase: test commit
 $1.insertionFormatter: CAPITALIZE_FIRST_WORD
 -
 test: $1
+
+$2
 ---
 
 name: chore commit
@@ -54,6 +60,8 @@ phrase: chore commit
 $1.insertionFormatter: CAPITALIZE_FIRST_WORD
 -
 chore: $1
+
+$2
 ---
 
 name: breaking change
