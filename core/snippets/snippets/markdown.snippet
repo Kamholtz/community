@@ -9,13 +9,43 @@ $1.insertionFormatter: CAPITALIZE_FIRST_WORD
 [$1]($0)
 ---
 
+name: image
+phrase: image
+-
+![$1]($0)
+---
+
 name: checkbox
-phrase: checkbox
+phrase: to do | check box | tick box | checkbox
 $0.insertionFormatter: CAPITALIZE_FIRST_WORD
 $0.wrapperPhrase: checkbox
 $0.wrapperScope: line
 -
 - [ ] $0
+---
+
+name: bold
+phrase: bold | strong
+-
+**$0**
+---
+
+name: italic
+phrase: italic | emph | emphasis
+-
+*$0*
+---
+
+name: italic bold
+phrase: italic bold | bold italic | strong emphasis | strong emph
+-
+***$0***
+---
+
+name: quote
+phrase: quote
+-
+> $0
 ---
 
 name: bullet
@@ -77,41 +107,4 @@ phrase: divider
 insertionScope: line
 -
 \---
----
-
-name: image
-phrase: image
--
-![$1]($0)
----
-
-
-name: checkbox
-phrase: to do | check box | tick box
--
-* [ ] $0
----
-
-name: bold
-phrase: bold | strong
--
-**$0**
----
-
-name: italic
-phrase: italic | emph | emphasis
--
-*$0*
----
-
-name: italic bold
-phrase: italic bold | bold italic | strong emphasis | strong emph
--
-***$0***
----
-
-name: quote
-phrase: quote
--
-> $0
 ---
