@@ -51,7 +51,7 @@ windows:
       # 'before' represents legacy functionality and will be deprecated in a future release, in favour of 'after'
       # synchronize: after
       panes:
-        - talon 2>&1 | ccze -A -o nolookups
+        - ~/talon/run.sh 2>&1 | ccze -A -o nolookups
         - sleep 3 && talon repl
         - sleep 3 && echo 'events.tail()' | bin/repl 2>&1 | ccze -A -o nolookups
   - editor:
