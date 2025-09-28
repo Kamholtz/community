@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Talon: Open REPL",
+      "type": "shell",
+      "command": "~/.talon/bin/repl",
+      "windows": {
+        "command": "\"%APPDATA%\\talon\\bin\\repl.exe\""
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Talon: Show errors since startup",
+      "type": "shell",
+      "command": "python",
+      "args": ["~/.talon/user/community/my-config/scripts/talon_errors_since_startup.py"],
+      "windows": {
+        "args": ""
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "showReuseMessage": false
+      },
+      "problemMatcher": []
+    }
+  ]
+}
