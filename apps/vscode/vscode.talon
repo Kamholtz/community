@@ -395,7 +395,8 @@ interact debug: user.vscode("jupyter.runAndDebugCell")
 interact new window: user.vscode("jupyter.createnewinteractive")
 
 install local: user.vscode("workbench.extensions.action.installVSIX")
-preview markdown: user.vscode("markdown.showPreview")
+# preview markdown: user.vscode("markdown.showPreview")
+preview markdown: user.vscode("markdown-preview-enhanced.openPreviewToTheSide")
 
 # NOTE: https://github.com/pokey/pokey_talon/blob/0acbc5cc6deac4f9cef4276a4ce0b7571c9770fb/apps/vscode/vscode.talon#L554
 commode:
