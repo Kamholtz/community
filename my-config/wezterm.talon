@@ -41,6 +41,9 @@ reverse search <user.text>:
     key(ctrl-r)
     insert(user.text or "")
 
+reverse search $:
+    key(ctrl-r)
+
 # Git quick commands
 git status: insert("git status\n")
 git commit:
