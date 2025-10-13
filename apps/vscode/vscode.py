@@ -66,6 +66,7 @@ os: windows
 and app.exe: /^positron\.exe$/i
 """
 
+# todo: set the vscode window title format to work in the way expected by the following win.title:
 ctx.matches = r"""
 app: vscode
 """
