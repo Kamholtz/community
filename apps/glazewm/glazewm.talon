@@ -43,7 +43,9 @@ glaze redraw: user.glazewm_redraw()
 
 # Workspaces
 port <number_small>: user.glazewm_workspace_focus(number_small)
+port <user.ordinals_small>: user.glazewm_workspace_focus(ordinals_small)
 workspace <number_small>: user.glazewm_workspace_focus(number_small)
+workspace <user.ordinals_small>: user.glazewm_workspace_focus(ordinals_small)
 port right: user.glazewm_workspace_next()
 port left: user.glazewm_workspace_prev()
 port recent: user.glazewm_workspace_recent()
@@ -52,7 +54,9 @@ workspace previous: user.glazewm_workspace_prev()
 workspace recent: user.glazewm_workspace_recent()
 
 (shuffle | move (win | window)) [to] port <number_small>: user.glazewm_move_to_workspace(number_small)
+(shuffle | move (win | window)) [to] port <user.ordinals_small>: user.glazewm_move_to_workspace(ordinals_small)
 (shuffle | move (win | window)) [to] workspace <number_small>: user.glazewm_move_to_workspace(number_small)
+(shuffle | move (win | window)) [to] workspace <user.ordinals_small>: user.glazewm_move_to_workspace(ordinals_small)
 
 # Move parent workspace between monitors
 move workspace left: user.glazewm_move_workspace("left")
