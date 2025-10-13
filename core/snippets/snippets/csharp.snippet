@@ -1,10 +1,53 @@
 language: csharp
 ---
 
+name: trace
+phrase: trace
+insertionScope: statement
+$1.wrapperPhrase: trace
+$1.insertionFormatter: CAPITALIZE_FIRST_WORD
+-
+Trace.TraceInformation($"$1");$0
+---
+
+name: trace var
+phrase: trace var
+insertionScope: statement
+$1.wrapperPhrase: trace var
+-
+Trace.TraceInformation($"$1={$1}");$0
+---
+
+name: trace indent
+phrase: trace indent
+insertionScope: statement
+$1.wrapperPhrase: trace indent
+-
+Trace.Indent();$0
+---
+
+name: trace unindent
+phrase: trace unindent
+insertionScope: statement
+$1.wrapperPhrase: trace unindent
+-
+Trace.Unindent();$0
+---
+
+name: trace dent
+phrase: trace dent
+insertionScope: statement
+$1.wrapperPhrase: trace dent
+-
+Trace.Indent();
+$1
+Trace.Unindent();
+---
+
 name: dot to list
 phrase: dot to list
 insertionScope: statement
-$1.wrapperPhrase: dot to list
+$.wrapperPhrase: dot to list
 -
 $1.ToList()$0
 ---
