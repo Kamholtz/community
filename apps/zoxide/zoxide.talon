@@ -4,7 +4,7 @@ and tag: user.zoxide
 
 jump <user.text>:
     insert("z ")
-    insert(user.text or "")
+    insert(user.text)
     key(enter)
 
 jump $:
