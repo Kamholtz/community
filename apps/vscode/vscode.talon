@@ -28,7 +28,7 @@ bar test: user.vscode("workbench.view.testing.focus")
 bar switch: user.vscode("workbench.action.toggleSidebarVisibility")
 bar containers: user.vscode("vscode-containers.views.containers.focus")
 
-chat bar switch: user.vscode("workbench.action.toggleAuxiliaryBar")
+chat switch: user.vscode("workbench.action.toggleAuxiliaryBar")
 
 # Symbol search
 symbol hunt [<user.text>]:
