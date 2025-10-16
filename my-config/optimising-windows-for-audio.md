@@ -74,3 +74,8 @@ These notes highlight which Focusrite “Optimising Windows for Audio” style t
 - Wi‑Fi/BT off (if problematic); Game Bar/Mode off; Fast Startup off.
 - Mic device: enhancements off; stable sample rate (e.g., 48 kHz); exclusive mode off if contention.
 - Minimal background apps; pause cloud sync/indexing during long dictation.
+
+
+[optimising windows for audio](https://support.focusrite.com/hc/en-gb/articles/207355205-Optimising-Windows-for-Audio)
+
+[troubleshooting dpc latency](https://support.focusrite.com/hc/en-gb/articles/208360865-Troubleshooting-DPC-latency)
