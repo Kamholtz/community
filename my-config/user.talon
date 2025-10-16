@@ -9,7 +9,7 @@ tag(): user.glazewm
 # Example Talon file
 settings():
     imgui.scale = 3
-    speech.timeout = 0.5
+    speech.timeout = 0.6
     # subtitles_show = true
     user.subtitles_color = "ffffaa"
     user.model_endpoint = "llm"
