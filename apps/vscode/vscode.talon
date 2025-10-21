@@ -359,8 +359,8 @@ maximize: user.vscode("workbench.action.minimizeOtherEditors")
 restore: user.vscode("workbench.action.evenEditorWidths")
 
 #breadcrumb
-select breadcrumb: user.vscode("breadcrumbs.focusAndSelect")
-focus breadcrumb: user.vscode("breadcrumbs.focus")
+breadcrumb select: user.vscode("breadcrumbs.focusAndSelect")
+breadcrumb focus: user.vscode("breadcrumbs.focus")
 # Use `alt-left` and `alt-right` to navigate the bread crumb
 
 replace here:

@@ -98,3 +98,5 @@ drill <number_small> times: user.delete_right_n(number_small)
 
 pour: edit.line_insert_down()
 drink: edit.line_insert_up()
+
+void: key(space)
