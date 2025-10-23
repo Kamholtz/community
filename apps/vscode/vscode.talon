@@ -103,6 +103,7 @@ file open folder: user.vscode("revealFileInOS")
 file reveal: user.vscode("workbench.files.action.showActiveFileInExplorer")
 save ugly: user.vscode("workbench.action.files.saveWithoutFormatting")
 file collapse: user.vscode("workbench.files.action.collapseExplorerFolders")
+search collapse: user.vscode("search.action.collapseSearchResults")
 
 # Language Features
 suggest show: user.vscode("editor.action.triggerSuggest")
@@ -360,7 +361,7 @@ restore: user.vscode("workbench.action.evenEditorWidths")
 
 #breadcrumb
 breadcrumb select: user.vscode("breadcrumbs.focusAndSelect")
-breadcrumb focus: user.vscode("breadcrumbs.focus")
+breadcrumb show: user.vscode("breadcrumbs.focus")
 # Use `alt-left` and `alt-right` to navigate the bread crumb
 
 replace here:
@@ -559,3 +560,11 @@ fold five: user.vscode("editor.foldLevel5")
 fold six: user.vscode("editor.foldLevel6")
 fold seven: user.vscode("editor.foldLevel7")
 
+# =====================================
+# Docker
+# =====================================
+
+compose restart: user.vscode("vscode-containers.compose.restart")
+compose up: user.vscode("vscode-containers.compose.up")
+compose down: user.vscode("vscode-containers.compose.down")
+#todo: vscode-containers.containers.attachShell
