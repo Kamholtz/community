@@ -244,6 +244,8 @@ step over: user.vscode("workbench.action.debug.stepOver")
 # Terminal
 # =====================================
 
+terminal new: user.vscode("workbench.action.terminal.newInActiveWorkspace")
+
 terminal paste: user.vscode("workbench.action.terminal.paste")
 terminal <number_small> paste:
     user.vscode_terminal(number_small)
@@ -570,6 +572,12 @@ compose down: user.vscode("vscode-containers.compose.down")
 container shell: user.vscode("vscode-containers.containers.attachShell")
 container (browse | browser): user.vscode("vscode-containers.containers.browse")
 
+
+# =====================================
+# Dev Container
+# =====================================
+
+devcontainer rebuild: user.vscode("remote-containers.rebuildContainer")
 
 # =====================================
 # Codex
