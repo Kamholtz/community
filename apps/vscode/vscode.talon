@@ -567,4 +567,11 @@ fold seven: user.vscode("editor.foldLevel7")
 compose restart: user.vscode("vscode-containers.compose.restart")
 compose up: user.vscode("vscode-containers.compose.up")
 compose down: user.vscode("vscode-containers.compose.down")
-#todo: vscode-containers.containers.attachShell
+container shell: user.vscode("vscode-containers.containers.attachShell")
+container (browse | browser): user.vscode("vscode-containers.containers.browse")
+
+
+# =====================================
+# Codex
+# =====================================
+codex add thread: user.vscode("chatgpt.addToThread")
