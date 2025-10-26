@@ -1,0 +1,36 @@
+name: printExpressionStatement
+phrase: print expression
+insertionScope: statement
+
+$0.wrapperPhrase: print expression
+---
+
+language: cpp
+-
+std::printf($0);
+---
+
+language: java
+-
+System.out.println($0);
+---
+
+language: javascript | typescript | javascriptreact | typescriptreact
+-
+console.log("$0=", $0);
+---
+
+language: python | talon | r
+-
+print($0)
+---
+
+language: csharp
+-
+Console.WriteLine($0);
+---
+
+language: rust
+-
+println!($0);
+---

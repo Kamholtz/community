@@ -103,6 +103,7 @@ file open folder: user.vscode("revealFileInOS")
 file reveal: user.vscode("workbench.files.action.showActiveFileInExplorer")
 save ugly: user.vscode("workbench.action.files.saveWithoutFormatting")
 file collapse: user.vscode("workbench.files.action.collapseExplorerFolders")
+search collapse: user.vscode("search.action.collapseSearchResults")
 
 # Language Features
 suggest show: user.vscode("editor.action.triggerSuggest")
@@ -243,6 +244,8 @@ step over: user.vscode("workbench.action.debug.stepOver")
 # Terminal
 # =====================================
 
+terminal new: user.vscode("workbench.action.terminal.newInActiveWorkspace")
+
 terminal paste: user.vscode("workbench.action.terminal.paste")
 terminal <number_small> paste:
     user.vscode_terminal(number_small)
@@ -359,8 +362,8 @@ maximize: user.vscode("workbench.action.minimizeOtherEditors")
 restore: user.vscode("workbench.action.evenEditorWidths")
 
 #breadcrumb
-select breadcrumb: user.vscode("breadcrumbs.focusAndSelect")
-focus breadcrumb: user.vscode("breadcrumbs.focus")
+breadcrumb select: user.vscode("breadcrumbs.focusAndSelect")
+breadcrumb show: user.vscode("breadcrumbs.focus")
 # Use `alt-left` and `alt-right` to navigate the bread crumb
 
 replace here:
@@ -559,3 +562,24 @@ fold five: user.vscode("editor.foldLevel5")
 fold six: user.vscode("editor.foldLevel6")
 fold seven: user.vscode("editor.foldLevel7")
 
+# =====================================
+# Docker
+# =====================================
+
+compose restart: user.vscode("vscode-containers.compose.restart")
+compose up: user.vscode("vscode-containers.compose.up")
+compose down: user.vscode("vscode-containers.compose.down")
+container shell: user.vscode("vscode-containers.containers.attachShell")
+container (browse | browser): user.vscode("vscode-containers.containers.browse")
+
+
+# =====================================
+# Dev Container
+# =====================================
+
+devcontainer rebuild: user.vscode("remote-containers.rebuildContainer")
+
+# =====================================
+# Codex
+# =====================================
+codex add thread: user.vscode("chatgpt.addToThread")

@@ -1,5 +1,5 @@
 os: windows
-and app: Outlook
+and app: Microsoft Outlook
 -
 archive: key(alt h o 1)
 new e-mail: key(ctrl-n)
