@@ -1,5 +1,6 @@
 list: user.vocabulary
 -
+
 N map: nmap
 under documented: under-documented
 nmap
@@ -34,7 +35,7 @@ mmengine
 nix
 treesitter
 jq
-brows:browse
+brows: browse
 bitwarden
 ChatGPT
 TryHackMe
@@ -66,7 +67,7 @@ Radare2
 Jsunpack
 Retdec
 analyzing: analysing
-organization:organisation
+organization: organisation
 Nikto
 Netcat
 customise
@@ -168,6 +169,14 @@ gau: GPU
 ags: args
 ad: add
 dataset
+phishing
+phishing attack
+fishing attack
+DDoS
+D D O S: DDoS
+phishing attacks
+cyber security
+anti-malware
 gitignore
 site param
 site params
