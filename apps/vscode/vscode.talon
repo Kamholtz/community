@@ -250,6 +250,7 @@ step over: user.vscode("workbench.action.debug.stepOver")
 # =====================================
 
 terminal new: user.vscode("workbench.action.terminal.newInActiveWorkspace")
+terminal kill: user.vscode("workbench.action.terminal.kill")
 
 terminal paste: user.vscode("workbench.action.terminal.paste")
 terminal <number_small> paste:
