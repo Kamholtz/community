@@ -181,3 +181,12 @@ gitignore
 site param
 site params
 mmdeploy
+git revert
+git commit
+git commit amend
+git merge
+git status
+git diff
+pytorch
+TensorRT
+cuda

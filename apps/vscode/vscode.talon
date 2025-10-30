@@ -104,6 +104,11 @@ file reveal: user.vscode("workbench.files.action.showActiveFileInExplorer")
 save ugly: user.vscode("workbench.action.files.saveWithoutFormatting")
 file collapse: user.vscode("workbench.files.action.collapseExplorerFolders")
 search collapse: user.vscode("search.action.collapseSearchResults")
+search editor: user.vscode("search.action.openEditor")
+search new editor: user.vscode("search.action.openNewEditor")
+search side editor: user.vscode("search.action.openNewEditorToSide")
+search results editor: user.vscode("search.action.openInEditor")
+
 
 # Language Features
 suggest show: user.vscode("editor.action.triggerSuggest")
