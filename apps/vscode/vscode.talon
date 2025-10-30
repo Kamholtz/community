@@ -104,6 +104,11 @@ file reveal: user.vscode("workbench.files.action.showActiveFileInExplorer")
 save ugly: user.vscode("workbench.action.files.saveWithoutFormatting")
 file collapse: user.vscode("workbench.files.action.collapseExplorerFolders")
 search collapse: user.vscode("search.action.collapseSearchResults")
+search editor: user.vscode("search.action.openEditor")
+search new editor: user.vscode("search.action.openNewEditor")
+search side editor: user.vscode("search.action.openNewEditorToSide")
+search results editor: user.vscode("search.action.openInEditor")
+
 
 # Language Features
 suggest show: user.vscode("editor.action.triggerSuggest")
@@ -245,6 +250,7 @@ step over: user.vscode("workbench.action.debug.stepOver")
 # =====================================
 
 terminal new: user.vscode("workbench.action.terminal.newInActiveWorkspace")
+terminal kill: user.vscode("workbench.action.terminal.kill")
 
 terminal paste: user.vscode("workbench.action.terminal.paste")
 terminal <number_small> paste:
@@ -568,6 +574,7 @@ fold seven: user.vscode("editor.foldLevel7")
 
 compose restart: user.vscode("vscode-containers.compose.restart")
 compose up: user.vscode("vscode-containers.compose.up")
+compose service up: user.vscode("vscode-containers.compose.up.subset")
 compose down: user.vscode("vscode-containers.compose.down")
 container shell: user.vscode("vscode-containers.containers.attachShell")
 container (browse | browser): user.vscode("vscode-containers.containers.browse")
@@ -578,8 +585,14 @@ container (browse | browser): user.vscode("vscode-containers.containers.browse")
 # =====================================
 
 devcontainer rebuild: user.vscode("remote-containers.rebuildContainer")
+devcontainer attach: user.vscode("remote-containers.attachToRunningContainer")
+devcontainer [open] config: user.vscode("remote-containers.openAttachDevContainerFile")
+devcontainer reopen: user.vscode("remote-containers.reopenInContainer")
 
 # =====================================
 # Codex
 # =====================================
 codex add thread: user.vscode("chatgpt.addToThread")
+
+
+copy command id: user.copy_command_id()
