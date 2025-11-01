@@ -3,10 +3,10 @@ import talon, subprocess, json, threading
 
 module = Module()
 
-@module.capture(rule="[{user.color}] [{user.hat_shape}] <user.any_alphanumeric_key>")
+@module.capture(rule="[{user.phony_cursorfree_colors}] [{user.phony_cursorfree_shapes}] <user.any_alphanumeric_key>")
 def cursorfree_hat(m) -> list[str]:
-    color = m.color if hasattr(m, "color") else "nil"
-    shape = m.hat_shape if hasattr(m, "hat_shape") else "nil"
+    color = m.phony_cursorfree_colors if hasattr(m, "phony_cursorfree_colors") else "nil"
+    shape = m.phony_cursorfree_shapes if hasattr(m, "phony_cursorfree_shapes") else "nil"
 
     escape = {"\\": "\\\\",
               "(": "\\(",
@@ -29,7 +29,7 @@ def cursorfree_quoted_word(m) -> list[str]:
     return f"(cursorfree--pusher \"{m.word}\")"
 
 @module.capture(rule=
-                "{user.cursorfree_modifier}"
+                "{user.phony_cursorfree_modifiers}"
                 "| <user.cursorfree_hat>"
                 "| <user.cursorfree_quoted_char>"
                 "| <user.cursorfree_quoted_number>"
@@ -46,6 +46,6 @@ def cursorfree_nonterminators(m) -> list[str]:
 
 @module.capture(rule=
                 "<user.cursorfree_nonterminators> "
-                "{user.cursorfree_action}")
+                "{user.phony_cursorfree_actions}")
 def cursorfree_command(m) -> list[str]:
-    return f"(list {m.cursorfree_nonterminators} {m.cursorfree_action})";
+    return f"(list {m.cursorfree_nonterminators} {m.phony_cursorfree_actions})";
