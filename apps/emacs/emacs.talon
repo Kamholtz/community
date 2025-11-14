@@ -159,10 +159,34 @@ describe variable <user.text>$:
     key(enter)
 
 # ----- FILES & BUFFERS -----
+disk: key(ctrl-s)
 file open: user.emacs("find-file")
 file rename: user.emacs("rename-file")
 (file open | find file) at point: user.emacs("ffap")
 other file open: user.emacs("find-file-other-window")
+
+# File hunt commands (VSCode-style quick file picker)
+file hunt [<user.text>]:
+    user.emacs("consult-fd")
+    sleep(50ms)
+    insert(text or "")
+
+file hunt (pace | paste):
+    user.emacs("consult-fd")
+    sleep(50ms)
+    edit.paste()
+
+# File hunt commands (VSCode-style quick file picker)
+buffer hunt [<user.text>]:
+    user.emacs("consult-buffer")
+    sleep(50ms)
+    insert(text or "")
+
+buffer hunt (pace | paste):
+    user.emacs("consult-buffer")
+    sleep(50ms)
+    edit.paste()
+
 (file | buffer) close:
     user.emacs("kill-buffer")
     key(enter)
