@@ -42,9 +42,9 @@ join, joinLines
 move, moveToTarget
 paste, pasteFromClipboard
 phones, nextHomophone
-post, setSelectionAfter
+trough, setSelectionAfter
 pour, editNewLineAfter
-pre, setSelectionBefore
+peak, setSelectionBefore
 puff, insertEmptyLinesAround
 quick fix, showQuickFix
 reference, showReferences
