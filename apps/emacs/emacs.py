@@ -7,8 +7,14 @@ mod = Module()
 mod.setting(
     "emacs_meta",
     type=str,
-    default="esc",
+    default="alt",
     desc="""What to use for the meta key in emacs. Defaults to 'esc', since that should work everywhere. Other options are 'alt' and 'cmd'.""",
+)
+mod.setting(
+    "emacs_evil_mode",
+    type=bool,
+    default=False,
+    desc="""Whether you are using evil-mode in Emacs. When enabled, paste commands will use evil-compatible keybindings (C-r \" in insert state). Set to True if you use evil-mode.""",
 )
 
 mod.apps.emacs = "app.name: Emacs"
@@ -98,6 +104,26 @@ class Actions:
         actions.key("f1")
         if key is not None:
             actions.key(key)
+
+    def emacs_evil_paste():
+        """
+        Pastes in a way that works with evil mode if enabled, otherwise uses standard yank.
+
+        When user.emacs_evil_mode is True:
+        - Uses C-r " which inserts the contents of the unnamed register in evil insert mode
+        - This works best when called from insert state in evil mode
+
+        When user.emacs_evil_mode is False:
+        - Uses the standard emacs yank command
+        """
+        if settings.get("user.emacs_evil_mode"):
+            # Evil mode: use C-r " to paste from unnamed register in insert mode
+            actions.key('ctrl-r')
+            actions.sleep("50ms")
+            actions.key('"')
+        else:
+            # Regular emacs: use yank
+            actions.user.emacs("yank")
 
 
 @ctx.action_class("user")
@@ -196,7 +222,8 @@ class EditActions:
         actions.user.emacs("undo")
 
     def paste():
-        actions.user.emacs("yank")
+        # Use evil-aware paste that works in both regular emacs and evil mode
+        actions.user.emacs_evil_paste()
 
     def delete():
         actions.user.emacs("kill-region")
