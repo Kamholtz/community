@@ -109,16 +109,15 @@ search new editor: user.vscode("search.action.openNewEditor")
 search side editor: user.vscode("search.action.openNewEditorToSide")
 search results editor: user.vscode("search.action.openInEditor")
 
-
 # Language Features
 suggest show: user.vscode("editor.action.triggerSuggest")
 hint show: user.vscode("editor.action.triggerParameterHints")
 definition show: user.vscode("editor.action.revealDefinition")
 definition peek: user.vscode("editor.action.peekDefinition")
 definition side: user.vscode("editor.action.revealDefinitionAside")
-(ref|refs|references|reference) show: user.vscode("editor.action.goToReferences")
+(ref | refs | references | reference) show: user.vscode("editor.action.goToReferences")
 hierarchy peek: user.vscode("editor.showCallHierarchy")
-(ref|refs|references|reference) find: user.vscode("references-view.find")
+(ref | refs | references | reference) find: user.vscode("references-view.find")
 format that: user.vscode("editor.action.formatDocument")
 format selection: user.vscode("editor.action.formatSelection")
 imports fix: user.vscode("editor.action.organizeImports")
@@ -421,7 +420,6 @@ voice mode:
     key(i)
     sleep(25ms)
 
-
 tab pin:
     user.vscode_and_wait("workbench.action.pinEditor")
 
@@ -455,14 +453,12 @@ chat prompt answers:
 chat accept:
     key(ctrl-shift-y)
 
-
 build run:
     user.vscode("workbench.action.tasks.build")
 
 # =====================================
 # Whisper
 # =====================================
-
 
 # =====================================
 # Andreas talon - VSCode extension
@@ -471,7 +467,6 @@ build run:
 # Show the tabs pane for changing the currently selected tab
 bar tabs: user.run_rpc_command("andreas.tabs.focus")
 
-
 # Switch to a specific tab by its letter
 tab {user.letter} [{user.letter}]:
     user.run_rpc_command("andreas.focusTab", "{letter_1}{letter_2 or ''}")
@@ -479,7 +474,6 @@ tab {user.letter} [{user.letter}]:
 # Generate numerical range. Starts from 1 by default
 generate range [from <number_small>]:
     user.run_rpc_command("andreas.generateRange", number_small or 1)
-
 
 quick fix: user.vscode("editor.action.quickFix")
 
@@ -494,8 +488,6 @@ snip last: user.vscode("jumpToPrevSnippetPlaceholder")
 skip:
     key("backspace")
     user.vscode("jumpToNextSnippetPlaceholder")
-
-
 
 # Bookmarks. Requires Bookmarks plugin
 (<user.show_list> sesh | sesh <user.show_list>) [<user.text>] [halt]:
@@ -549,7 +541,6 @@ close all tabs: user.vscode("workbench.action.closeAllEditors")
 close tabs way right: user.vscode("workbench.action.closeEditorsToTheRight")
 close tabs way left: user.vscode("workbench.action.closeEditorsToTheLeft")
 
-
 # =====================================
 # Folding
 # =====================================
@@ -579,7 +570,6 @@ compose down: user.vscode("vscode-containers.compose.down")
 container shell: user.vscode("vscode-containers.containers.attachShell")
 container (browse | browser): user.vscode("vscode-containers.containers.browse")
 
-
 # =====================================
 # Dev Container
 # =====================================
@@ -593,6 +583,6 @@ devcontainer reopen: user.vscode("remote-containers.reopenInContainer")
 # Codex
 # =====================================
 codex add thread: user.vscode("chatgpt.addToThread")
-
+codex focus: user.vscode("chatgpt.sidebarView.focus")
 
 copy command id: user.copy_command_id()
