@@ -180,6 +180,16 @@ file hunt (pace | paste):
     user.emacs("kill-buffer")
     key(enter)
 
+please [<user.text>]:
+    user.emacs("execute-extended-command")
+    sleep(50ms)
+    insert(text or "")
+
+please (pace | paste):
+    user.emacs("execute-extended-command")
+    sleep(50ms)
+    edit.paste()
+
 # Buffer hunt commands (VSCode-style quick buffer picker)
 buffer hunt [<user.text>]:
     user.emacs("consult-buffer")
