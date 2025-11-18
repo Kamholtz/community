@@ -176,7 +176,11 @@ file hunt (pace | paste):
     sleep(50ms)
     edit.paste()
 
-# File hunt commands (VSCode-style quick file picker)
+(file | buffer) close:
+    user.emacs("kill-buffer")
+    key(enter)
+
+# Buffer hunt commands (VSCode-style quick buffer picker)
 buffer hunt [<user.text>]:
     user.emacs("consult-buffer")
     sleep(50ms)
@@ -187,9 +191,27 @@ buffer hunt (pace | paste):
     sleep(50ms)
     edit.paste()
 
-(file | buffer) close:
-    user.emacs("kill-buffer")
-    key(enter)
+# Buffer hunt commands (VSCode-style quick buffer picker)
+symbol hunt [<user.text>]:
+    user.emacs("core-lsp-document-symbols")
+    sleep(50ms)
+    insert(text or "")
+
+symbol hunt (pace | paste):
+    user.emacs("core-lsp-document-symbols")
+    sleep(50ms)
+    edit.paste()
+
+# Buffer hunt commands (VSCode-style quick buffer picker)
+symbol hunt all [<user.text>]:
+    user.emacs("core-lsp-workspace-symbols")
+    sleep(50ms)
+    insert(text or "")
+
+symbol hunt all (pace | paste):
+    user.emacs("core-lsp-workspace-symbols")
+    sleep(50ms)
+    edit.paste()
 
 buffer kill: user.emacs("kill-buffer")
 buffer bury: user.emacs("bury-buffer")
