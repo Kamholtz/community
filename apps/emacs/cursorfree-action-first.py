@@ -2,18 +2,16 @@
 
 This module implements the action-first grammar:
     <action> [<modifiers>] <target>
-
+    
 Examples:
     "chuck gust"              -> chuck (action) + gust (hat target)
     "chuck line gust"         -> chuck + line (modifier) + gust
     "chuck inside line gust"  -> chuck + inside + line + gust
     "bring gust to bat"       -> bring + gust (source) + bat (destination)
     "chuck gust and bat"      -> chuck + list(gust, bat)
-
-MIGRATION NOTE: Old target-first grammar backed up to cursorfree-old-grammar.py.backup
 """
 
-from talon import Context, Module, actions
+from talon import Context, Module
 
 module = Module()
 
@@ -26,11 +24,11 @@ def cursorfree_target_hat_raw(m) -> str:
     """Hat target: [color] [shape] letter -> IR structure."""
     color = f"'{m.phony_cursorfree_colors}" if hasattr(m, "phony_cursorfree_colors") else "nil"
     shape = f"'{m.phony_cursorfree_shapes}" if hasattr(m, "phony_cursorfree_shapes") else "nil"
-
+    
     # Escape special elisp characters
     escape = {"\\": "\\\\", "(": "\\(", ")": "\\)", "[": "\\[", "]": "\\]"}
     character = escape.get(m.any_alphanumeric_key, m.any_alphanumeric_key)
-
+    
     return f"(cursorfree-ir-make-hat-target :character ?{character} :color {color} :shape {shape})"
 
 @module.capture(rule="car <user.any_alphanumeric_key>")
@@ -97,10 +95,9 @@ def cursorfree_target_composite(m) -> str:
 @module.capture(rule="{user.phony_cursorfree_modifiers}+ <user.cursorfree_target_composite>")
 def cursorfree_target_with_modifiers(m) -> str:
     """Target with modifiers: modifier+ target."""
-    # phony_cursorfree_modifiers_list contains elisp function objects
-    # Pass them directly to the IR - cursorfree-migration.el will normalize them
-    modifiers_elisp = " ".join(str(mod) for mod in m.phony_cursorfree_modifiers_list)
-    return f"(cursorfree-ir-target-add-modifiers {m.cursorfree_target_composite} (list {modifiers_elisp}))"
+    # Build modifier list: '("modifier1" "modifier2" ...)
+    modifiers = " ".join(f'"{mod}"' for mod in m.phony_cursorfree_modifiers_list)
+    return f"(cursorfree-ir-target-add-modifiers {m.cursorfree_target_composite} '({modifiers}))"
 
 @module.capture(rule=
                 "<user.cursorfree_target_with_modifiers>"
@@ -117,19 +114,17 @@ def cursorfree_target(m) -> str:
 @module.capture(rule="{user.phony_cursorfree_actions} <user.cursorfree_target>")
 def cursorfree_command_simple(m) -> str:
     """Simple action-first command: action target."""
-    # phony_cursorfree_actions returns an elisp function object
-    # Pass it directly to the IR - cursorfree-migration.el will normalize it
-    return f'(cursorfree-ir-make-command :action {m.phony_cursorfree_actions} :targets (list {m.cursorfree_target}))'
+    return f'(cursorfree-ir-make-command :action "{m.phony_cursorfree_actions}" :targets (list {m.cursorfree_target}))'
 
 @module.capture(rule="{user.phony_cursorfree_actions} <user.cursorfree_target> to <user.cursorfree_target>")
 def cursorfree_command_bring(m) -> str:
     """Bring/move command: action source to destination."""
-    return f'(cursorfree-ir-make-command :action {m.phony_cursorfree_actions} :targets (list {m.cursorfree_target_1}) :destination {m.cursorfree_target_2})'
+    return f'(cursorfree-ir-make-command :action "{m.phony_cursorfree_actions}" :targets (list {m.cursorfree_target_1}) :destination {m.cursorfree_target_2})'
 
 @module.capture(rule="{user.phony_cursorfree_actions} <user.cursorfree_target> <user.cursorfree_target>")
 def cursorfree_command_swap(m) -> str:
     """Swap command: action target1 target2."""
-    return f'(cursorfree-ir-make-command :action {m.phony_cursorfree_actions} :targets (list {m.cursorfree_target_1} {m.cursorfree_target_2}))'
+    return f'(cursorfree-ir-make-command :action "{m.phony_cursorfree_actions}" :targets (list {m.cursorfree_target_1} {m.cursorfree_target_2}))'
 
 @module.capture(rule=
                 "<user.cursorfree_command_bring>"
