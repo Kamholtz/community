@@ -18,7 +18,9 @@
       "label": "Talon: Show errors since startup",
       "type": "shell",
       "command": "python",
-      "args": ["~/.talon/user/community/my-config/scripts/talon_errors_since_startup.py"],
+      "args": [
+        "~/.talon/user/community/my-config/scripts/talon_errors_since_startup.py"
+      ],
       "windows": {
         "args": ""
       },
