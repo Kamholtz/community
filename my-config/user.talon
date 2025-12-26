@@ -16,24 +16,17 @@ settings():
     user.model_default = "gpt-4o-mini"
     user.model_shell_default = "zsh"
     user.cursorless_settings_directory = "community/my-config/cursorless-settings"
-
+    # Enable evil-mode support in Emacs (uses C-r " for paste in insert mode)
+    user.emacs_evil_mode = true
 
 # Custom voice commands for undo and redo
 nope: edit.undo()
 yep: edit.redo()
 
-clap: key(enter)
+# clap: key(enter)
 
 # list phrase: on_phrase.analyze_phrase
 # (phrase view): user.analyze_phrase()
-
-(right|R) desk: key(ctrl-super-right)
-desk (right|R): key(ctrl-super-right)
-resk: key(ctrl-super-right)
-
-(left|L) desk: key(ctrl-super-left)
-desk (left|L): key(ctrl-super-left)
-lesk: key(ctrl-super-left)
 
 scrape: key(escape)
 
