@@ -14,7 +14,6 @@ dub arrow: "=>"
 # Wrap selection with delimiter pairs
 <user.delimiter_pair> that: user.delimiter_pair_wrap_selection(delimiter_pair)
 
-new line: "\n"
 # double dash: "--"
 # triple quote: "'''"
 pebbles: "..."
@@ -27,9 +26,7 @@ patch {user.symbol_key}:
 spam: ", "
 pipe gap | wide pipe: " | "
 big stack: ": "
-boom|boomer: ". "
-arrow: "->"
-dub arrow: "=>"
+boom | boomer: ". "
 empty round: "()"
 empty square: "[]"
 empty curly: "{}"
