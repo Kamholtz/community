@@ -1,0 +1,212 @@
+language: docker
+---
+
+name: dockerFromUbuntu
+phrase: from ubuntu
+insertionScope: statement
+-
+FROM ubuntu:$1
+$0
+---
+
+name: dockerFromAlpine
+phrase: from alpine
+insertionScope: statement
+-
+FROM alpine:$1
+$0
+---
+
+name: dockerFromNode
+phrase: from node
+insertionScope: statement
+-
+FROM node:$1
+$0
+---
+
+name: dockerFromPython
+phrase: from python
+insertionScope: statement
+-
+FROM python:$1
+$0
+---
+
+name: dockerRunAptInstall
+phrase: run apt install
+insertionScope: statement
+-
+RUN apt-get update && apt-get install -y \
+    $1 \
+    && rm -rf /var/lib/apt/lists/*
+$0
+---
+
+name: dockerRunApkAdd
+phrase: run apk add
+insertionScope: statement
+-
+RUN apk add --no-cache \
+    $1
+$0
+---
+
+name: dockerCopyWithChown
+phrase: copy chown
+insertionScope: statement
+-
+COPY --chown=$1:$2 $3 $4
+$0
+---
+
+name: dockerMultiStageFrom
+phrase: multi stage from
+insertionScope: statement
+-
+FROM $1 AS $2
+$0
+---
+
+name: dockerCopyFromStage
+phrase: copy from stage
+insertionScope: statement
+-
+COPY --from=$1 $2 $3
+$0
+---
+
+name: dockerHealthcheck
+phrase: health check
+insertionScope: statement
+-
+HEALTHCHECK --interval=$1s --timeout=$2s --start-period=$3s --retries=$4 \
+  CMD $0
+---
+
+name: dockerHealthcheckCurl
+phrase: health check curl
+insertionScope: statement
+-
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:$1/ || exit 1
+$0
+---
+
+name: dockerEntrypointExec
+phrase: entry point exec
+insertionScope: statement
+-
+ENTRYPOINT ["$1"]
+$0
+---
+
+name: dockerCmdExec
+phrase: cmd exec
+insertionScope: statement
+-
+CMD ["$1"]
+$0
+---
+
+name: dockerExposePort
+phrase: expose port
+insertionScope: statement
+-
+EXPOSE $1
+$0
+---
+
+name: dockerEnvVariable
+phrase: env variable
+insertionScope: statement
+-
+ENV $1=$2
+$0
+---
+
+name: dockerArgVariable
+phrase: arg variable
+insertionScope: statement
+-
+ARG $1=$2
+$0
+---
+
+name: dockerWorkdir
+phrase: work dir
+insertionScope: statement
+-
+WORKDIR $1
+$0
+---
+
+name: dockerVolume
+phrase: volume
+insertionScope: statement
+-
+VOLUME ["$1"]
+$0
+---
+
+name: dockerUser
+phrase: user
+insertionScope: statement
+-
+USER $1
+$0
+---
+
+name: dockerLabel
+phrase: label
+insertionScope: statement
+-
+LABEL $1="$2"
+$0
+---
+
+name: dockerMultiStageTemplate
+phrase: multi stage template
+insertionScope: statement
+-
+# Build stage
+FROM $1:$2 AS builder
+WORKDIR /app
+COPY $3 .
+RUN $4
+
+# Runtime stage
+FROM $1:$2-slim
+WORKDIR /app
+COPY --from=builder /app/$5 .
+CMD ["$6"]
+$0
+---
+
+name: dockerNodeTemplate
+phrase: node template
+insertionScope: statement
+-
+FROM node:$1-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+EXPOSE $2
+CMD ["node", "$3"]
+$0
+---
+
+name: dockerPythonTemplate
+phrase: python template
+insertionScope: statement
+-
+FROM python:$1-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE $2
+CMD ["python", "$3"]
+$0
+---

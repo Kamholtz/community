@@ -1,0 +1,155 @@
+language: dockercompose
+---
+
+name: dockerComposeVersion
+phrase: compose version
+insertionScope: statement
+-
+version: '$1'
+
+services:
+  $0
+---
+
+name: dockerComposeService
+phrase: compose service
+insertionScope: statement
+-
+$1:
+  image: $2
+  $0
+---
+
+name: dockerComposeServiceBuild
+phrase: compose service build
+insertionScope: statement
+-
+$1:
+  build:
+    context: $2
+    dockerfile: Dockerfile
+  $0
+---
+
+name: dockerComposePorts
+phrase: compose ports
+insertionScope: statement
+-
+ports:
+  - "$1:$2"
+$0
+---
+
+name: dockerComposeVolumes
+phrase: compose volumes
+insertionScope: statement
+-
+volumes:
+  - $1:$2
+$0
+---
+
+name: dockerComposeEnvironment
+phrase: compose environment
+insertionScope: statement
+-
+environment:
+  - $1=$2
+$0
+---
+
+name: dockerComposeDependsOn
+phrase: compose depends on
+insertionScope: statement
+-
+depends_on:
+  - $1
+$0
+---
+
+name: dockerComposeNetworks
+phrase: compose networks
+insertionScope: statement
+-
+networks:
+  - $1
+$0
+---
+
+name: dockerComposeRestart
+phrase: compose restart
+insertionScope: statement
+-
+restart: $1
+$0
+---
+
+name: dockerComposeHealthcheck
+phrase: compose health check
+insertionScope: statement
+-
+healthcheck:
+  test: ["CMD", "$1"]
+  interval: $2s
+  timeout: $3s
+  retries: $4
+$0
+---
+
+name: dockerComposeWebService
+phrase: compose web service
+insertionScope: statement
+-
+$1:
+  build: .
+  ports:
+    - "$2:$3"
+  environment:
+    - NODE_ENV=production
+  restart: unless-stopped
+$0
+---
+
+name: dockerComposeDbService
+phrase: compose database service
+insertionScope: statement
+-
+$1:
+  image: $2:$3
+  environment:
+    - POSTGRES_PASSWORD=$4
+  volumes:
+    - $1-data:/var/lib/$2/data
+  restart: unless-stopped
+$0
+---
+
+name: dockerComposeFullStack
+phrase: compose full stack
+insertionScope: statement
+-
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "$1:$2"
+    environment:
+      - DATABASE_URL=$3
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:$4
+    environment:
+      - POSTGRES_PASSWORD=$5
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  db-data:
+$0
+---
