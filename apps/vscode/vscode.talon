@@ -154,7 +154,9 @@ go recent [<user.text>]:
     sleep(250ms)
 go edit: user.vscode("workbench.action.navigateToLastEditLocation")
 
+# =====================================
 # Bookmarks. Requires Bookmarks plugin
+# =====================================
 bar marks: user.vscode("workbench.view.extension.bookmarks")
 go marks:
     user.deprecate_command("2023-06-06", "go marks", "bar marks")
@@ -162,7 +164,12 @@ go marks:
 toggle mark: user.vscode("bookmarks.toggle")
 go next mark: user.vscode("bookmarks.jumpToNext")
 go last mark: user.vscode("bookmarks.jumpToPrevious")
+<user.teleport> next mark: user.vscode("bookmarks.jumpToNext")
+<user.teleport> last mark: user.vscode("bookmarks.jumpToPrevious")
 
+# =====================================
+# Tabs
+# =====================================
 close other tabs: user.vscode("workbench.action.closeOtherEditors")
 close all tabs: user.vscode("workbench.action.closeAllEditors")
 close tabs way right: user.vscode("workbench.action.closeEditorsToTheRight")
@@ -507,7 +514,6 @@ new sesh [<user.text>]:
     sleep(250ms)
     insert(text or "")
     sleep(250ms)
-go edit: user.vscode("workbench.action.navigateToLastEditLocation")
 
 (<user.show_list> win | win <user.show_list> | winless) [<user.text>]:
     user.vscode("workbench.action.switchWindow")
@@ -520,25 +526,6 @@ go edit: user.vscode("workbench.action.navigateToLastEditLocation")
     insert(text or "")
     key(enter)
     sleep(250ms)
-
-# =====================================
-# Bookmarks. Requires Bookmarks plugin
-# =====================================
-bar marks: user.vscode("workbench.view.extension.bookmarks")
-go marks:
-    user.deprecate_command("2023-06-06", "go marks", "bar marks")
-    user.vscode("workbench.view.extension.bookmarks")
-toggle mark: user.vscode("bookmarks.toggle")
-<user.teleport> next mark: user.vscode("bookmarks.jumpToNext")
-<user.teleport> last mark: user.vscode("bookmarks.jumpToPrevious")
-
-# =====================================
-# Tabs
-# =====================================
-close other tabs: user.vscode("workbench.action.closeOtherEditors")
-close all tabs: user.vscode("workbench.action.closeAllEditors")
-close tabs way right: user.vscode("workbench.action.closeEditorsToTheRight")
-close tabs way left: user.vscode("workbench.action.closeEditorsToTheLeft")
 
 # =====================================
 # Docker

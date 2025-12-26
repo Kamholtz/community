@@ -1,6 +1,6 @@
 tag: user.vim_mode_insert
 tag: user.vim_mode_normal
--  
+-
 
 tag(): user.cursorless
 
@@ -63,17 +63,13 @@ tag(): user.cursorless
 #     # Adds debug output to the talon log
 #     user.vim_debug = 0
 
-(dup | duplicate) line:
-    user.vim_run_normal_np("yy")
-    user.vim_run_normal_np("p")
-
 change quote:
     user.vim_run_normal_np("ciq")
 
 change word:
     user.vim_run_normal_np("ciw")
 
-change (nibble|inner word):
+change (nibble | inner word):
     user.vim_run_normal_np("civ")
 
 change para:
@@ -85,9 +81,6 @@ toggle comment:
 # =====================================
 # Git
 # =====================================
-
-(G | git) status:
-    user.vim_normal_mode(" gg")
 
 (G | git) status:
     user.vim_run_normal_np(" gg")
@@ -125,7 +118,7 @@ toggle comment:
 (G | git) commit format:
     user.vim_run_normal_np(":GitCommitFormat\n")
 
-(G | git) verbose commit (feature|feat):
+(G | git) verbose commit (feature | feat):
     user.vim_run_normal_np(":GitVerboseCommit feat\n")
 
 (G | git) verbose commit fix:
@@ -140,7 +133,7 @@ toggle comment:
 (G | git) verbose commit format:
     user.vim_run_normal_np(":GitVerboseCommit format\n")
 
-fugitive (close|hide|kill):
+fugitive (close | hide | kill):
     user.vim_run_normal_np(":CloseFugitive\n")
 
 copy git branch:
@@ -163,16 +156,15 @@ tab only:
 # Window
 # =====================================
 
-(win|window) only:
+(win | window) only:
     user.vim_run_normal_np(":only\n")
 
-(win|window) split (h|horizontal):
+(win | window) split (h | horizontal):
     user.vim_run_normal_np(":split\n")
 
-(win|window) split (v|vertical):
+(win | window) split (v | vertical):
     user.vim_run_normal_np(":vsplit\n")
 
-    
 # =====================================
 # Report
 # =====================================
@@ -194,25 +186,24 @@ unhighlight that:
 # LSP
 # =====================================
 
-(definition|def) show:
+(definition | def) show:
     user.vim_run_normal_np("gd")
 
-(quick|quick fix) show:
+(quick | quick fix) show:
     user.vim_run_normal_np("xq")
 
-(loc|loc fix) show:
+(loc | loc fix) show:
     user.vim_run_normal_np("xl")
 
-(definition|def) split:
+(definition | def) split:
     key("ctrl-w")
     key("]")
 
-(ref|references|reference) find:
+(ref | references | reference) find:
     user.vim_run_normal_np(" lr")
 
 code action:
     user.vim_run_normal_np(" la")
-
 
 # =====================================
 # Please commands
@@ -331,16 +322,16 @@ quickfix hunt (pace | paste):
 quickfix hunt [<user.text>]:
     user.vim_search_qf_list(user.text or "")
 
-(definitions|definition|def) hunt (pace | paste):
+(definitions | definition | def) hunt (pace | paste):
     user.vim_search_lsp_definitions_clipboard()
 
-(definitions|definition|def) hunt [<user.text>]:
+(definitions | definition | def) hunt [<user.text>]:
     user.vim_search_lsp_definitions(user.text or "")
 
-(references|reference|ref) hunt (pace | paste):
+(references | reference | ref) hunt (pace | paste):
     user.vim_search_lsp_references_clipboard()
 
-(references|reference|ref) hunt [<user.text>]:
+(references | reference | ref) hunt [<user.text>]:
     user.vim_search_lsp_references(user.text or "")
 
 implementations hunt (pace | paste):
@@ -361,7 +352,7 @@ symbols hunt (pace | paste):
 symbols hunt [<user.text>]:
     user.vim_search_lsp_symbols(user.text or "")
 
-(jump|jumps) hunt (pace | paste):
+(jump | jumps) hunt (pace | paste):
     user.vim_search_jumps_clipboard()
 
 (jumps) hunt [<user.text>]:
@@ -371,15 +362,14 @@ symbols hunt [<user.text>]:
 # Next/previous commands
 # =====================================
 
-(niff|next change):
+(niff | next change):
     user.vim_run_normal_np("]c")
 
-(piff|prev change):
+(piff | prev change):
     user.vim_run_normal_np("[c")
 
 sig show:
     user.vim_run_normal_np(" lh")
-
 
 # =====================================
 # Cusorless line commands
@@ -426,7 +416,7 @@ push it:
 source file:
     user.vim_run_normal_np(":source %")
 
-(disk|save file):
+(disk | save file):
     user.vim_run_normal_np(":w\n")
 
 nope:
@@ -435,24 +425,23 @@ nope:
 yep:
     key("ctrl-r")
 
-go back: 
+go back:
     key("ctrl-o")
 
-go forward: 
+go forward:
     key("ctrl-i")
 
-take element block: 
+take element block:
     user.vim_run_normal_np("vatV")
 
-chuck pair: 
+chuck pair:
     user.vim_run_normal_np("dab")
 
-chuck inside pair: 
+chuck inside pair:
     user.vim_run_normal_np("dib")
 
-void repack pair: 
+void repack pair:
     user.vim_run_normal_np("dsb")
-
 
 north:
     user.vim_run_normal_np("S")
@@ -481,7 +470,7 @@ bring remote arg:
 clone next arg:
     user.vim_run_normal_np('gmana')
 
-clone (prev|previous) arg:
+clone (prev | previous) arg:
     user.vim_run_normal_np('gmala')
 
 # Delete remote text objects
@@ -514,13 +503,11 @@ debug log remote funk:
 debug log remote arg:
     user.vim_run_normal_np('cara')
 
-
 # =====================================
 # Markdown
 # =====================================
 check box tick: user.check_box_tick()
 check box untick: user.check_box_untick()
-
 
 # =====================================
 # Mini files
@@ -531,9 +518,8 @@ mini files:
 mini files current:
     user.vim_run_normal_np(':lua MiniFiles.open()\n')
 
-
 # =====================================
-# Fold 
+# Fold
 # =====================================
 toggle fold [that]: user.vim_run_normal_np('za')
 toggle (recursive | recur) fold [that]: user.vim_run_normal_np('zA')
