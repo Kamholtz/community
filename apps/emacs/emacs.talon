@@ -4,6 +4,13 @@ tag(): user.tabs
 tag(): user.splits
 tag(): user.line_commands
 
+# VSCode hunt commands to port (replace TODO_* with emacs commands)
+# symbol hunt [<user.text>]: user.emacs("TODO_SYMBOL_HUNT")
+# symbol hunt all [<user.text>]: user.emacs("TODO_SYMBOL_HUNT_ALL")
+# file hunt [<user.text>]: user.emacs("TODO_FILE_HUNT")
+# file hunt (pace | paste): user.emacs("TODO_FILE_HUNT_PASTE")
+# (term | terminal) focus hunt [<user.text>]: user.emacs("TODO_TERMINAL_FOCUS_HUNT")
+
 # ----- GENERAL ----- #
 #suplex: key(ctrl-x)
 cancel: user.emacs("keyboard-quit")
