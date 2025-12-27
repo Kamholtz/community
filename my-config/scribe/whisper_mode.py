@@ -10,15 +10,17 @@ On exit: mute the daemon and re-enable `command` mode.
 """
 
 from talon import actions, Context, Module
-import requests
+from pathlib import Path
+import subprocess
 
 mod = Module()
 mod.mode("whisper", desc="Transcription mode for Whisper daemon")
 
 ctx = Context()
 
-# Base URL for transcription daemon HTTP API
-BASE_URL = "http://localhost:8080"
+REALITIME_DIR = Path("~/repos/realtimestt-cli").expanduser()
+REALITIME_CMD = ["./venv/bin/python3", "./realtime_test.py"]
+_whisper_proc = None
 
 
 def _notify(msg: str) -> None:
@@ -29,30 +31,51 @@ def _notify(msg: str) -> None:
         pass
 
 
-def _post(path: str, json_data=None):
+def _proc_is_running() -> bool:
+    return _whisper_proc is not None and _whisper_proc.poll() is None
+
+
+def _start_proc() -> bool:
+    global _whisper_proc
+    if _proc_is_running():
+        return True
+
+    if not REALITIME_DIR.exists():
+        _notify(f"Whisper: missing dir {REALITIME_DIR}")
+        return False
+
     try:
-        if json_data:
-            return requests.post(f"{BASE_URL}{path}", json=json_data, timeout=1.5)
-        else:
-            return requests.post(f"{BASE_URL}{path}", timeout=1.5)
+        _whisper_proc = subprocess.Popen(REALITIME_CMD, cwd=str(REALITIME_DIR))
+        return True
     except Exception:
-        return None
+        _notify("Whisper: failed to start subprocess")
+        _whisper_proc = None
+        return False
+
+
+def _stop_proc() -> None:
+    global _whisper_proc
+    if not _proc_is_running():
+        _whisper_proc = None
+        return
+
+    try:
+        _whisper_proc.terminate()
+        _whisper_proc.wait(timeout=2.0)
+    except subprocess.TimeoutExpired:
+        _whisper_proc.kill()
+        _whisper_proc.wait(timeout=2.0)
+    except Exception:
+        _notify("Whisper: failed to stop subprocess")
+    finally:
+        _whisper_proc = None
 
 
 @mod.action_class
 class Actions:
     def whisper_start():
         """Enter whisper mode: enable transcription and minimize commands."""
-        # Set transcription daemon to type mode
-        mode_r = _post("/mode", {"mode": "type"})
-        if mode_r is None or getattr(mode_r, "status_code", 500) != 200:
-            _notify("Whisper: failed to set type mode")
-            return
-
-        # Unmute the transcription daemon
-        r = _post("/unmute")
-        if r is None or getattr(r, "status_code", 500) != 200:
-            _notify("Whisper: failed to unmute daemon")
+        if not _start_proc():
             return
 
         # Enable whisper mode alongside command mode
@@ -70,17 +93,7 @@ class Actions:
 
     def whisper_done():
         """Exit whisper mode: mute transcription and restore command mode."""
-        # Set transcription daemon to print mode (console output)
-        mode_r = _post("/mode", {"mode": "print"})
-        if mode_r is None or getattr(mode_r, "status_code", 500) != 200:
-            _notify("Whisper: failed to set print mode")
-            # Continue anyway, try to mute
-
-        # Mute the transcription daemon
-        r = _post("/mute")
-        if r is None or getattr(r, "status_code", 500) != 200:
-            _notify("Whisper: failed to mute daemon")
-            # Still attempt to restore modes
+        _stop_proc()
 
         # Simply disable whisper mode - command mode stays active
         actions.mode.disable("user.whisper")
@@ -93,4 +106,3 @@ class Actions:
             pass
 
         _notify("Whisper mode: OFF - console output restored")
-
