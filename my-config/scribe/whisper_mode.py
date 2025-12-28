@@ -21,6 +21,11 @@ ctx = Context()
 REALITIME_DIR = Path("~/repos/realtimestt-cli").expanduser()
 REALITIME_CMD = ["./venv/bin/python3", "./realtime_test.py"]
 _whisper_proc = None
+_whisper_prev_theme = None
+_whisper_theme_map = {
+    "dark": "dark_whisper",
+    "light": "light_whisper",
+}
 
 
 def _notify(msg: str) -> None:
@@ -71,6 +76,14 @@ def _stop_proc() -> None:
         _whisper_proc = None
 
 
+def _switch_hud_theme(theme_name: str) -> None:
+    try:
+        actions.user.hud_switch_theme(theme_name)
+    except Exception:
+        # HUD theme setting not available or failed
+        pass
+
+
 @mod.action_class
 class Actions:
     def whisper_start():
@@ -82,12 +95,19 @@ class Actions:
         # Whisper mode commands will override conflicting command mode commands
         actions.mode.enable("user.whisper")
 
-        # Change HUD to green to indicate whisper mode is active
-        try:
-            actions.user.hud_set_theme("green")
-        except Exception:
-            # HUD theme setting not available or failed
-            pass
+        # Switch to a whisper-capable theme if we have one registered.
+        global _whisper_prev_theme
+        if _whisper_prev_theme is None:
+            try:
+                current_theme = actions.user.hud_get_theme()
+                _whisper_prev_theme = getattr(current_theme, "name", None)
+            except Exception:
+                _whisper_prev_theme = None
+
+        if _whisper_prev_theme:
+            whisper_theme = _whisper_theme_map.get(_whisper_prev_theme)
+            if whisper_theme:
+                _switch_hud_theme(whisper_theme)
 
         _notify("Whisper mode: ON - typing enabled (say 'talon whisper done' to exit)")
 
@@ -98,11 +118,10 @@ class Actions:
         # Simply disable whisper mode - command mode stays active
         actions.mode.disable("user.whisper")
 
-        # Restore HUD to default theme
-        try:
-            actions.user.hud_set_theme("default")
-        except Exception:
-            # HUD theme setting not available or failed
-            pass
+        # Restore the previous HUD theme if we switched it.
+        global _whisper_prev_theme
+        if _whisper_prev_theme:
+            _switch_hud_theme(_whisper_prev_theme)
+        _whisper_prev_theme = None
 
         _notify("Whisper mode: OFF - console output restored")

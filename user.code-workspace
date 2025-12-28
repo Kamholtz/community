@@ -1,7 +1,13 @@
 {
-    "folders": [
+	"folders": [
 		{
-			"path": ".."
+			"path": "."
+		},
+		{
+			"path": "../phony-generated-rules"
+		},
+		{
+			"path": "../talon_hud"
 		}
 	],
 	"settings": {
