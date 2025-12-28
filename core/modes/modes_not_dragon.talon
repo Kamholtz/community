@@ -38,6 +38,6 @@ not speech.engine: dragon
     speech.disable()
     user.whisper_start()
 
-^talon whisper done$:
+^whisper done$:
     user.whisper_done()
     speech.enable()
