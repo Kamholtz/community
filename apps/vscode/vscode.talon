@@ -24,7 +24,7 @@ bar outline: user.vscode("outline.focus")
 bar run: user.vscode("workbench.view.debug")
 bar search: user.vscode("workbench.view.search")
 bar source: user.vscode("workbench.view.scm")
-bar test: user.vscode("workbench.view.testing.focus")
+bar tester: user.vscode("workbench.view.testing.focus")
 bar switch: user.vscode("workbench.action.toggleSidebarVisibility")
 bar containers: user.vscode("vscode-containers.views.containers.focus")
 
@@ -233,19 +233,19 @@ change next: key(alt-f5)
 change last: key(shift-alt-f5)
 
 # Testing
-test run: user.vscode("testing.runAtCursor")
-test run file: user.vscode("testing.runCurrentFile")
-test run all: user.vscode("testing.runAll")
-test run failed: user.vscode("testing.reRunFailTests")
-test run last: user.vscode("testing.reRunLastRun")
+tester run: user.vscode("testing.runAtCursor")
+tester run file: user.vscode("testing.runCurrentFile")
+tester run all: user.vscode("testing.runAll")
+tester run failed: user.vscode("testing.reRunFailTests")
+tester run last: user.vscode("testing.reRunLastRun")
 
-test debug: user.vscode("testing.debugAtCursor")
-test debug file: user.vscode("testing.debugCurrentFile")
-test debug all: user.vscode("testing.debugAll")
-test debug failed: user.vscode("testing.debugFailTests")
-test debug last: user.vscode("testing.debugLastRun")
+tester debug: user.vscode("testing.debugAtCursor")
+tester debug file: user.vscode("testing.debugCurrentFile")
+tester debug all: user.vscode("testing.debugAll")
+tester debug failed: user.vscode("testing.debugFailTests")
+tester debug last: user.vscode("testing.debugLastRun")
 
-test cancel: user.vscode("testing.cancelRun")
+tester cancel: user.vscode("testing.cancelRun")
 
 # Debugging
 break point: user.vscode("editor.debug.action.toggleBreakpoint")
@@ -371,6 +371,15 @@ task run [<user.text>]:
 
 task rerun:
     user.vscode("workbench.action.tasks.reRunTask")
+
+task rerun all:
+    user.vscode("workbench.action.tasks.rerunAllRunningTasks")
+
+task restart:
+    user.vscode("workbench.action.tasks.restartTask")
+
+task terminate:
+    user.vscode("workbench.action.tasks.terminate")
 
 #TODO: should this be added to linecommands?
 copy line down: user.vscode("editor.action.copyLinesDownAction")
