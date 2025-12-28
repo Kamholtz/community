@@ -1,6 +1,6 @@
 # Commands to START whisper mode (available globally)
-mode: command
-mode: dictation
+# mode: command
+# mode: dictation
 mode: sleep
 not speech.engine: dragon
 -
