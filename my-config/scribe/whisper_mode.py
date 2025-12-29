@@ -32,6 +32,7 @@ _whisper_enabled = False
 _whisper_last_realtime = None
 _whisper_last_full = None
 _whisper_prev_theme = None
+_whisper_theme_switched = False
 _whisper_theme_map = {
     "dark": "dark_whisper",
     "light": "light_whisper",
@@ -83,12 +84,27 @@ def _drain_event_queue() -> None:
 
 def _handle_ws_event(event: dict) -> None:
     global _whisper_last_realtime, _whisper_last_full
+    global _whisper_prev_theme, _whisper_theme_switched
     event_type = event.get("type")
     if not event_type or not _whisper_enabled:
         return
 
     if event_type == "vad_start":
         _whisper_last_realtime = None
+        if not _whisper_theme_switched:
+            if _whisper_prev_theme is None:
+                try:
+                    current_theme = actions.user.hud_get_theme()
+                    _whisper_prev_theme = getattr(current_theme, "name", None)
+                except Exception:
+                    _whisper_prev_theme = None
+
+            if _whisper_prev_theme:
+                whisper_theme = _whisper_theme_map.get(_whisper_prev_theme)
+                if whisper_theme:
+                    _switch_hud_theme(whisper_theme)
+                    _whisper_theme_switched = True
+
         _queue_ui_action(lambda: _show_subtitle(_WHISPER_VAD_SUBTITLE))
         return
 
@@ -229,7 +245,7 @@ def _switch_hud_theme(theme_name: str) -> None:
 class Actions:
     def whisper_start():
         """Enter whisper mode: enable transcription and minimize commands."""
-        global _whisper_enabled
+        global _whisper_enabled, _whisper_theme_switched, _whisper_prev_theme
         if not _start_proc():
             return
 
@@ -239,7 +255,7 @@ class Actions:
         actions.mode.enable("user.whisper")
 
         # Switch to a whisper-capable theme if we have one registered.
-        global _whisper_prev_theme
+        _whisper_theme_switched = False
         if _whisper_prev_theme is None:
             try:
                 current_theme = actions.user.hud_get_theme()
@@ -247,16 +263,12 @@ class Actions:
             except Exception:
                 _whisper_prev_theme = None
 
-        if _whisper_prev_theme:
-            whisper_theme = _whisper_theme_map.get(_whisper_prev_theme)
-            if whisper_theme:
-                _switch_hud_theme(whisper_theme)
-
         _notify("Whisper mode: ON - typing enabled (say 'talon whisper done' to exit)")
 
     def whisper_done():
         """Exit whisper mode: mute transcription and restore command mode."""
         global _whisper_enabled, _whisper_last_realtime, _whisper_last_full
+        global _whisper_prev_theme, _whisper_theme_switched
         _stop_proc()
         _whisper_enabled = False
         _whisper_last_realtime = None
@@ -266,9 +278,9 @@ class Actions:
         actions.mode.disable("user.whisper")
 
         # Restore the previous HUD theme if we switched it.
-        global _whisper_prev_theme
-        if _whisper_prev_theme:
+        if _whisper_prev_theme and _whisper_theme_switched:
             _switch_hud_theme(_whisper_prev_theme)
         _whisper_prev_theme = None
+        _whisper_theme_switched = False
 
         _notify("Whisper mode: OFF - console output restored")
