@@ -61,4 +61,7 @@ windows:
       # synchronize: after
       panes:
         - nvim -- ./user/community/my-config/user.talon
+  - stt-server:
+      panes:
+        - cd /home/carl/repos/realtimestt-cli && bash -lc 'source venv/bin/activate && trap "exit 0" INT TERM; while true; do python -u webserver/server.py; code=$?; if [ $code -eq 0 ] || [ $code -eq 130 ]; then echo "server stopped ($code)"; break; fi; echo "server crashed ($code), restarting in 1s..."; sleep 1; done'
   - git: lazygit -p ./user/community
