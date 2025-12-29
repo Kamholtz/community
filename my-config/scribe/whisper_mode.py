@@ -12,9 +12,9 @@ On exit: mute the daemon and re-enable `command` mode.
 from talon import actions, Context, Module, cron
 from pathlib import Path
 import json
+import os
 import queue
 import subprocess
-import threading
 
 mod = Module()
 mod.mode("whisper", desc="Transcription mode for Whisper daemon")
@@ -24,9 +24,8 @@ ctx = Context()
 REALITIME_DIR = Path("~/repos/realtimestt-cli").expanduser()
 REALITIME_CMD = ["./venv/bin/python3", "./webserver/client.py", "--json-lines"]
 _whisper_proc = None
-_whisper_reader_thread = None
-_whisper_stop_event = None
-_whisper_queue_job = None
+_whisper_poll_job = None
+_whisper_stdout_buffer = ""
 _whisper_event_queue = queue.Queue()
 _whisper_enabled = False
 _whisper_last_realtime = None
@@ -38,6 +37,7 @@ _whisper_theme_map = {
     "light": "light_whisper",
 }
 _WHISPER_VAD_SUBTITLE = "Listening..."
+_WHISPER_READ_SIZE = 4096
 
 
 def _notify(msg: str) -> None:
@@ -128,68 +128,71 @@ def _handle_ws_event(event: dict) -> None:
         _queue_ui_action(lambda text=content: _show_subtitle(text))
 
 
-def _read_proc_output(proc: subprocess.Popen, stop_event: threading.Event) -> None:
-    if proc.stdout is None:
-        return
-
-    for raw_line in proc.stdout:
-        if stop_event.is_set():
-            break
-
-        line = raw_line.strip()
-        if not line:
-            continue
-
-        try:
-            event = json.loads(line)
-        except Exception:
-            continue
-
-        if isinstance(event, dict):
-            _handle_ws_event(event)
-
-
-def _start_reader() -> None:
-    global _whisper_reader_thread, _whisper_stop_event, _whisper_queue_job
+def _read_proc_output() -> None:
+    global _whisper_stdout_buffer
     if _whisper_proc is None or _whisper_proc.stdout is None:
         return
 
-    if _whisper_reader_thread is not None and _whisper_reader_thread.is_alive():
+    for _ in range(5):
+        try:
+            chunk = _whisper_proc.stdout.read(_WHISPER_READ_SIZE)
+        except BlockingIOError:
+            break
+        except Exception:
+            break
+
+        if not chunk:
+            if _whisper_proc.poll() is not None:
+                _stop_proc()
+                return
+            break
+
+        _whisper_stdout_buffer += chunk
+        while True:
+            newline_idx = _whisper_stdout_buffer.find("\n")
+            if newline_idx == -1:
+                break
+            line = _whisper_stdout_buffer[:newline_idx].strip()
+            _whisper_stdout_buffer = _whisper_stdout_buffer[newline_idx + 1 :]
+            if not line:
+                continue
+
+            try:
+                event = json.loads(line)
+            except Exception:
+                continue
+
+            if isinstance(event, dict):
+                _handle_ws_event(event)
+
+
+def _poll_proc_output() -> None:
+    _read_proc_output()
+    _drain_event_queue()
+
+
+def _start_polling() -> None:
+    global _whisper_poll_job
+    if _whisper_proc is None or _whisper_proc.stdout is None:
         return
 
-    _whisper_stop_event = threading.Event()
-    _whisper_reader_thread = threading.Thread(
-        target=_read_proc_output,
-        args=(_whisper_proc, _whisper_stop_event),
-        daemon=True,
-    )
-    _whisper_reader_thread.start()
-
-    if _whisper_queue_job is None:
-        _whisper_queue_job = cron.interval("100ms", _drain_event_queue)
+    if _whisper_poll_job is None:
+        _whisper_poll_job = cron.interval("100ms", _poll_proc_output)
 
 
-def _stop_reader() -> None:
-    global _whisper_reader_thread, _whisper_stop_event, _whisper_queue_job
-    if _whisper_stop_event is not None:
-        _whisper_stop_event.set()
-
-    if _whisper_reader_thread is not None:
-        _whisper_reader_thread.join(timeout=1.0)
-    _whisper_reader_thread = None
-    _whisper_stop_event = None
-
-    if _whisper_queue_job is not None:
-        cron.cancel(_whisper_queue_job)
-        _whisper_queue_job = None
-
+def _stop_polling() -> None:
+    global _whisper_poll_job, _whisper_stdout_buffer
+    if _whisper_poll_job is not None:
+        cron.cancel(_whisper_poll_job)
+        _whisper_poll_job = None
+    _whisper_stdout_buffer = ""
     _drain_event_queue()
 
 
 def _start_proc() -> bool:
     global _whisper_proc
     if _proc_is_running():
-        _start_reader()
+        _start_polling()
         return True
 
     if not REALITIME_DIR.exists():
@@ -205,7 +208,19 @@ def _start_proc() -> bool:
             text=True,
             bufsize=1,
         )
-        _start_reader()
+        if _whisper_proc.stdout is None:
+            _notify("Whisper: missing stdout pipe")
+            _stop_proc()
+            return False
+
+        try:
+            os.set_blocking(_whisper_proc.stdout.fileno(), False)
+        except Exception:
+            _notify("Whisper: failed to configure non-blocking stdout")
+            _stop_proc()
+            return False
+
+        _start_polling()
         return True
     except Exception:
         _notify("Whisper: failed to start subprocess")
@@ -216,8 +231,13 @@ def _start_proc() -> bool:
 def _stop_proc() -> None:
     global _whisper_proc
     if not _proc_is_running():
+        if _whisper_proc is not None and _whisper_proc.stdout is not None:
+            try:
+                _whisper_proc.stdout.close()
+            except Exception:
+                pass
         _whisper_proc = None
-        _stop_reader()
+        _stop_polling()
         return
 
     try:
@@ -229,8 +249,13 @@ def _stop_proc() -> None:
     except Exception:
         _notify("Whisper: failed to stop subprocess")
     finally:
+        if _whisper_proc is not None and _whisper_proc.stdout is not None:
+            try:
+                _whisper_proc.stdout.close()
+            except Exception:
+                pass
         _whisper_proc = None
-        _stop_reader()
+        _stop_polling()
 
 
 def _switch_hud_theme(theme_name: str) -> None:
