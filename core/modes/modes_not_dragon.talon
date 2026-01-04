@@ -26,7 +26,7 @@ not speech.engine: dragon
     speech.disable()
     user.deprecate_command("2025-06-25", "talon sleep (without dragon)", "go to sleep")
 
-^sleep all [<phrase>$:
+^sleep all [<phrase>]$:
     user.switcher_hide_running()
     user.history_disable()
     user.homophones_hide()
@@ -34,10 +34,10 @@ not speech.engine: dragon
     user.mouse_sleep()
     speech.disable()
 
-^talon whisper$:
+^porcupine$:
     speech.disable()
     user.whisper_start()
 
-^whisper done$:
+^grasshopper$:
     user.whisper_done()
     speech.enable()
