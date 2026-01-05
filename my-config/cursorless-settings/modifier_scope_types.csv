@@ -59,3 +59,7 @@ token, token
 type, type
 unit, unit
 value, value
+
+
+# 2026-01-05 17:00:53 - New entries automatically added by cursorless
+full line, fullLine
