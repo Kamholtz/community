@@ -79,6 +79,8 @@ op reduce: "(reduce "
 op take: "(take "
 op drop: "(drop "
 op count: "(count "
+op or: "(or "
+op and: "(and "
 
 # Clojure predicates
 is nil: "nil?"
