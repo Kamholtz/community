@@ -227,6 +227,27 @@ git sync: user.vscode("git.sync")
 git unstage: user.vscode("git.unstage")
 git unstage all: user.vscode("git.unstageAll")
 pull request: user.vscode("pr.create")
+
+git message (feature | feat) [<user.text>]:
+    insert("feat: ")
+    insert(text or "")
+
+git message (work in progress | wip) [<user.text>]:
+    insert("wip: ")
+    insert(text or "")
+
+git message fix [<user.text>]:
+    insert("fix: ")
+    insert(text or "")
+
+git message format [<user.text>]:
+    insert("format: ")
+    insert(text or "")
+
+git message refactor [<user.text>]:
+    insert("refactor: ")
+    insert(text or "")
+
 # Use keyboard shortcuts because VSCode relies on when clause contexts to choose the appropriate
 # action: https://code.visualstudio.com/api/references/when-clause-contexts
 change next: key(alt-f5)
@@ -562,4 +583,22 @@ devcontainer reopen: user.vscode("remote-containers.reopenInContainer")
 codex add thread: user.vscode("chatgpt.addToThread")
 codex focus: user.vscode("chatgpt.sidebarView.focus")
 
+codex copy paste:
+    edit.copy()
+    user.vscode("chatgpt.sidebarView.focus")
+    edit.paste()
+    user.vscode("workbench.action.focusActiveEditorGroup")
+
+codex paste:
+    user.vscode("chatgpt.sidebarView.focus")
+    edit.paste()
+    user.vscode("workbench.action.focusActiveEditorGroup")
+
 copy command id: user.copy_command_id()
+
+# =====================================
+# Calva
+# =====================================
+
+Calva jack in: user.vscode("calva.jackIn")
+Calva load file: user.vscode("calva.loadFile")
