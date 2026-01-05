@@ -34,24 +34,10 @@ not speech.engine: dragon
     speech.disable()
 
 ^porcupine$:
-    speech.disable()
-    mode.enable("user.whisper")
-    user.whisper_start()
+    user.whisper_toggle()
 
-^grasshopper$:
-    user.whisper_done()
-    mode.disable("user.whisper")
-    speech.enable()
+key(f1):
+    user.whisper_toggle()
 
-# key(alt-m:down):
-#     speech.disable()
-#     user.whisper_start()
-
-# key(alt-m:up):
-#     user.whisper_done()
-#     speech.enable()
-
-# key(alt-m):
-#     mode.enable("user.whisper")
-#     speech.disable()
-#     user.whisper_start()
+key(alt-m):
+    user.whisper_toggle()

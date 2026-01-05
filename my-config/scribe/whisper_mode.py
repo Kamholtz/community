@@ -17,7 +17,7 @@ import queue
 import subprocess
 
 mod = Module()
-mod.mode("whisper", desc="Transcription mode for Whisper daemon")
+# mod.mode("whisper", desc="Transcription mode for Whisper daemon")
 
 ctx = Context()
 
@@ -266,46 +266,53 @@ def _switch_hud_theme(theme_name: str) -> None:
         pass
 
 
+def _enable_whisper() -> bool:
+    """Mark Whisper as enabled and start the real-time process."""
+    global _whisper_enabled, _whisper_last_realtime, _whisper_last_full
+    if _whisper_enabled:
+        return True
+
+    _whisper_last_realtime = None
+    _whisper_last_full = None
+    _whisper_enabled = True
+
+    started = _start_proc()
+    if not started:
+        _whisper_enabled = False
+
+    return started
+
+
+def _disable_whisper() -> None:
+    """Ensure the Whisper process is stopped and reset the tracked state."""
+    global _whisper_enabled, _whisper_prev_theme, _whisper_theme_switched
+    if not _whisper_enabled and not _proc_is_running():
+        return
+
+    _whisper_enabled = False
+    _whisper_prev_theme = None
+    _whisper_theme_switched = False
+    _stop_proc()
+
+
 @mod.action_class
 class Actions:
-    def whisper_start():
-        """Enter whisper mode: enable transcription and minimize commands."""
-        global _whisper_enabled, _whisper_theme_switched, _whisper_prev_theme
-        if not _start_proc():
-            return
+    def whisper_start() -> bool:
+        """Begin transcription by enabling Whisper and starting the daemon."""
+        return _enable_whisper()
 
-        # Enable whisper mode alongside command mode
-        # Whisper mode commands will override conflicting command mode commands
-        _whisper_enabled = True
-        actions.mode.enable("user.whisper")
+    def whisper_done() -> None:
+        """Stop transcription by disabling Whisper and stopping the daemon."""
+        _disable_whisper()
 
-        # Switch to a whisper-capable theme if we have one registered.
-        _whisper_theme_switched = False
-        if _whisper_prev_theme is None:
-            try:
-                current_theme = actions.user.hud_get_theme()
-                _whisper_prev_theme = getattr(current_theme, "name", None)
-            except Exception:
-                _whisper_prev_theme = None
-
-        _notify("Whisper mode: ON - typing enabled (say 'talon whisper done' to exit)")
-
-    def whisper_done():
-        """Exit whisper mode: mute transcription and restore command mode."""
-        global _whisper_enabled, _whisper_last_realtime, _whisper_last_full
-        global _whisper_prev_theme, _whisper_theme_switched
-        _stop_proc()
-        _whisper_enabled = False
-        _whisper_last_realtime = None
-        _whisper_last_full = None
-
-        # Simply disable whisper mode - command mode stays active
-        actions.mode.disable("user.whisper")
-
-        # Restore the previous HUD theme if we switched it.
-        if _whisper_prev_theme and _whisper_theme_switched:
-            _switch_hud_theme(_whisper_prev_theme)
-        _whisper_prev_theme = None
-        _whisper_theme_switched = False
-
-        _notify("Whisper mode: OFF - console output restored")
+    def whisper_toggle() -> None:
+        """Toggle the Whisper daemon on/off based on the current state."""
+        print("toggle")
+        if _whisper_enabled or _proc_is_running():
+            print("enable")
+            _disable_whisper()
+            actions.speech.enable()
+        else:
+            print("stop")
+            actions.speech.disable()
+            _enable_whisper()
