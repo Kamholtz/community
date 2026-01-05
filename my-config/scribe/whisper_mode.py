@@ -307,12 +307,9 @@ class Actions:
 
     def whisper_toggle() -> None:
         """Toggle the Whisper daemon on/off based on the current state."""
-        print("toggle")
         if _whisper_enabled or _proc_is_running():
-            print("enable")
             _disable_whisper()
             actions.speech.enable()
         else:
-            print("stop")
             actions.speech.disable()
             _enable_whisper()
