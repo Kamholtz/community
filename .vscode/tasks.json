@@ -28,7 +28,11 @@
         "panel": "dedicated",
         "showReuseMessage": false
       },
-      "problemMatcher": []
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ]
 }
