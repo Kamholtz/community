@@ -28,7 +28,19 @@
         "panel": "dedicated",
         "showReuseMessage": false
       },
-      "problemMatcher": [],
+      "problemMatcher": {
+        "owner": "talon",
+        "severity": "error",
+        "fileLocation": [
+          "absolute"
+        ],
+        "pattern": {
+          "regexp": "^TALON-ERROR: (.+?):(\\d+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        }
+      },
       "group": {
         "kind": "build",
         "isDefault": true
