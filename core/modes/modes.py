@@ -20,9 +20,9 @@ ctx_awake.matches = r"""
 not mode: sleep
 """
 
-ctx_whisper.matches = r"""
-mode: sleep
-"""
+# ctx_whisper.matches = r"""
+# mode: sleep
+# """
 
 
 @ctx_sleep.action_class("speech")

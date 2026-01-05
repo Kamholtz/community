@@ -1,7 +1,6 @@
 mode: command
 mode: dictation
 mode: sleep
-mode: whisper
 not speech.engine: dragon
 -
 # The optional <phrase> afterwards allows these to match even if you say arbitrary text
@@ -36,8 +35,23 @@ not speech.engine: dragon
 
 ^porcupine$:
     speech.disable()
+    mode.enable("user.whisper")
     user.whisper_start()
 
 ^grasshopper$:
     user.whisper_done()
+    mode.disable("user.whisper")
     speech.enable()
+
+# key(alt-m:down):
+#     speech.disable()
+#     user.whisper_start()
+
+# key(alt-m:up):
+#     user.whisper_done()
+#     speech.enable()
+
+# key(alt-m):
+#     mode.enable("user.whisper")
+#     speech.disable()
+#     user.whisper_start()
