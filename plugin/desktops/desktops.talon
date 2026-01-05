@@ -1,6 +1,6 @@
 desk <user.number_key>: user.desktop(number_key)
-desk next: user.desktop_next()
-desk last: user.desktop_last()
+desk (next | right): user.desktop_next()
+desk (last | left): user.desktop_last()
 desk show: user.desktop_show()
 window move desk <user.number_key>: user.window_move_desktop(number_key)
 window move desk left: user.window_move_desktop_left()
