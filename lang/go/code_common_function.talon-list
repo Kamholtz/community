@@ -5,22 +5,102 @@ code.language: go
 # golang builtin functions
 append
 length: len
+cap
+copy
+delete
 make
+new
+panic
+recover
+close
+print
+print line: println
+
 # formatting
 format print: fmt.Printf
 format print eff: fmt.Printf
 format sprint: fmt.Sprintf
 format es print eff: fmt.Sprintf
-format print line: fmt.Println
-# time
+complex number: complex
+real part: real
+imag part: imag
+
+# fmt helpers
+
+format error: fmt.Errorf
+
+# log helpers
+log print: log.Print
+log print line: log.Println
+log fatal: log.Fatal
+log fatal line: log.Fatalln
+log fatal f: log.Fatalf
+log panic: log.Panic
+log panic line: log.Panicln
+log panic f: log.Panicf
+
+# strings helpers
+string join: strings.Join
+string split: strings.Split
+string trim: strings.TrimSpace
+string to lower: strings.ToLower
+string to upper: strings.ToUpper
+string contains: strings.Contains
+string has prefix: strings.HasPrefix
+string has suffix: strings.HasSuffix
+string repeat: strings.Repeat
+
+# strconv helpers
+string convert to int: strconv.Atoi
+string convert to float: strconv.ParseFloat
+string convert to bool: strconv.ParseBool
+int to string: strconv.Itoa
+
+# encoding helpers
+json marshal: json.Marshal
+json unmarshal: json.Unmarshal
+base64 encode: base64.StdEncoding.EncodeToString
+base64 decode: base64.StdEncoding.DecodeString
+
+# context helpers
+context background: context.Background
+context todo: context.TODO
+context with cancel: context.WithCancel
+context with deadline: context.WithDeadline
+context with timeout: context.WithTimeout
+
+# http helpers
+http get: http.Get
+http post: http.Post
+http new request: http.NewRequest
+http listen and serve: http.ListenAndServe
+http handle func: http.HandleFunc
+
+# bufio / io helpers
+bufio new scanner: bufio.NewScanner
+bufio new reader: bufio.NewReader
+i o copy: io.Copy
+i o read all: io.ReadAll
+
+# math rand helpers
+math random int: rand.Intn
+math random float: rand.Float64
+math random seed: rand.Seed
+
+# errors
+errors new: errors.New
+
+# time helpers
+time now: time.Now
+time since: time.Since
+time until: time.Until
 time hour: time.Hour
 time minute: time.Minute
 time second: time.Second
 time millisecond: time.Millisecond
 time microsecond: time.Microsecond
 time nanosecond: time.Nanosecond
-# IO
-buf I O: bufio.
-# strings
-string convert: strconv.
-string convert to int: strconv.AtoI
+time duration: time.Duration
+time tick: time.Tick
+time new ticker: time.NewTicker
+time new timer: time.NewTimer
