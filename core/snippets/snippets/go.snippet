@@ -1,0 +1,199 @@
+language: go
+---
+
+name: goPackageMain
+phrase: go package main
+description: insert the main package declaration block
+insertionScope: statement
+-
+package main
+---
+
+name: goPackageDeclaration
+phrase: go package
+description: declare a named Go package
+insertionScope: statement
+-
+package $0
+---
+
+name: goImportBlock
+phrase: go imports
+description: create a grouped import block
+insertionScope: statement
+-
+import (
+    $0
+)
+---
+
+name: goImportSingle
+phrase: go import
+description: import a single package
+insertionScope: statement
+-
+import "$0"
+---
+
+name: goMainFunction
+phrase: go main
+description: stub out the canonical main function
+insertionScope: namedFunction
+-
+func main() {
+    $0
+}
+---
+
+name: goFunctionDeclaration
+phrase: go func
+description: declare a named function
+insertionScope: namedFunction
+-
+func $1($2) $3 {
+    $0
+}
+---
+
+name: goMethodDeclaration
+phrase: go method
+description: declare a method with a pointer receiver
+insertionScope: namedFunction
+-
+func ($1 *$2) $3($4) $5 {
+    $0
+}
+---
+
+name: goStructDeclaration
+phrase: go struct
+description: declare a struct type
+insertionScope: statement
+-
+type $1 struct {
+    $0
+}
+---
+
+name: goInterfaceDeclaration
+phrase: go interface
+description: declare an interface
+insertionScope: statement
+-
+type $1 interface {
+    $0
+}
+---
+
+name: goIfStatement
+phrase: go if
+description: insert a simple if statement
+insertionScope: statement
+-
+if $1 {
+    $0
+}
+---
+
+name: goIfElseStatement
+phrase: go if else
+description: insert an if/else block
+insertionScope: statement
+-
+if $1 {
+    $2
+} else {
+    $0
+}
+---
+
+name: goForLoop
+phrase: go for
+description: insert a flexible for loop
+insertionScope: statement
+-
+for $1 {
+    $0
+}
+---
+
+name: goRangeLoop
+phrase: go range
+description: iterate over a collection with range
+insertionScope: statement
+-
+for $1, $2 := range $3 {
+    $0
+}
+---
+
+name: goSwitchStatement
+phrase: go switch
+description: insert a switch statement with a default case
+insertionScope: statement
+-
+switch $1 {
+case $2:
+    $3
+default:
+    $0
+}
+---
+
+name: goSelectStatement
+phrase: go select
+description: build a select statement with a default case
+insertionScope: statement
+-
+select {
+case $1 <- $2:
+    $3
+default:
+    $0
+}
+---
+
+name: goGoRoutine
+phrase: go routine
+description: spawn a goroutine with an anonymous function
+insertionScope: statement
+-
+go func() {
+    $0
+}()
+---
+
+name: goDeferStatement
+phrase: go defer
+description: defer a function call
+insertionScope: statement
+-
+defer $0
+---
+
+name: goFmtPrintln
+phrase: go println
+description: emit a fmt.Println call
+insertionScope: statement
+-
+fmt.Println($0)
+---
+
+name: goErrorCheck
+phrase: go err
+description: guard against a non-nil error
+insertionScope: statement
+-
+if err != nil {
+    return $0
+}
+---
+
+name: goMapLiteral
+phrase: go map
+description: define a map literal
+insertionScope: statement
+-
+map[$1]$2{
+    $0
+}
