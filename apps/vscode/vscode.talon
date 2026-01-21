@@ -49,6 +49,10 @@ panel switch: user.vscode("workbench.action.togglePanel")
 panel jupyter: user.vscode("jupyterViewVariables.focus")
 panel terminal: user.vscode("workbench.action.terminal.focus")
 focus editor: user.vscode("workbench.action.focusActiveEditorGroup")
+focus editor left: user.vscode("workbench.action.focusLeftGroup")
+focus editor right: user.vscode("workbench.action.focusRightGroup")
+focus editor up: user.vscode("workbench.action.focusAboveGroup")
+focus editor down: user.vscode("workbench.action.focusBelowGroup")
 
 # Settings
 show settings: user.vscode("workbench.action.openGlobalSettings")
