@@ -11,3 +11,12 @@ $1($2) {
     $0
 }
 ---
+
+language: go
+
+$1.insertionFormatter: PRIVATE_CAMEL_CASE
+-
+func ($2 *$3) $1($4) $5 {
+    $0
+}
+---

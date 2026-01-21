@@ -15,6 +15,15 @@ void $1($2) {
 }
 ---
 
+language: go
+
+$1.insertionFormatter: PRIVATE_CAMEL_CASE
+-
+func $1($2) $3 {
+    $0
+}
+---
+
 language: javascript | typescript | javascriptreact | typescriptreact
 
 $1.insertionFormatter: PRIVATE_CAMEL_CASE

@@ -1,24 +1,24 @@
 language: go
 ---
 
-name: goPackageMain
-phrase: go package main
+name: packageMainDeclaration
+phrase: package main
 description: insert the main package declaration block
 insertionScope: statement
 -
 package main
 ---
 
-name: goPackageDeclaration
-phrase: go package
+name: packageDeclaration
+phrase: package declaration
 description: declare a named Go package
 insertionScope: statement
 -
 package $0
 ---
 
-name: goImportBlock
-phrase: go imports
+name: importBlock
+phrase: import block
 description: create a grouped import block
 insertionScope: statement
 -
@@ -27,16 +27,16 @@ import (
 )
 ---
 
-name: goImportSingle
-phrase: go import
+name: singleImport
+phrase: import statement
 description: import a single package
 insertionScope: statement
 -
 import "$0"
 ---
 
-name: goMainFunction
-phrase: go main
+name: mainFunction
+phrase: main function
 description: stub out the canonical main function
 insertionScope: namedFunction
 -
@@ -45,8 +45,8 @@ func main() {
 }
 ---
 
-name: goFunctionDeclaration
-phrase: go func
+name: functionDeclaration
+phrase: function declaration
 description: declare a named function
 insertionScope: namedFunction
 -
@@ -55,8 +55,8 @@ func $1($2) $3 {
 }
 ---
 
-name: goMethodDeclaration
-phrase: go method
+name: methodDeclaration
+phrase: method declaration
 description: declare a method with a pointer receiver
 insertionScope: namedFunction
 -
@@ -65,8 +65,8 @@ func ($1 *$2) $3($4) $5 {
 }
 ---
 
-name: goStructDeclaration
-phrase: go struct
+name: structDeclaration
+phrase: struct declaration
 description: declare a struct type
 insertionScope: statement
 -
@@ -75,8 +75,8 @@ type $1 struct {
 }
 ---
 
-name: goInterfaceDeclaration
-phrase: go interface
+name: interfaceDeclaration
+phrase: interface declaration
 description: declare an interface
 insertionScope: statement
 -
@@ -85,8 +85,8 @@ type $1 interface {
 }
 ---
 
-name: goIfStatement
-phrase: go if
+name: ifStatement
+phrase: if statement
 description: insert a simple if statement
 insertionScope: statement
 -
@@ -95,8 +95,8 @@ if $1 {
 }
 ---
 
-name: goIfElseStatement
-phrase: go if else
+name: ifElseStatement
+phrase: if else block
 description: insert an if/else block
 insertionScope: statement
 -
@@ -107,8 +107,8 @@ if $1 {
 }
 ---
 
-name: goForLoop
-phrase: go for
+name: forLoop
+phrase: for loop
 description: insert a flexible for loop
 insertionScope: statement
 -
@@ -117,8 +117,8 @@ for $1 {
 }
 ---
 
-name: goRangeLoop
-phrase: go range
+name: rangeLoop
+phrase: range loop
 description: iterate over a collection with range
 insertionScope: statement
 -
@@ -127,8 +127,8 @@ for $1, $2 := range $3 {
 }
 ---
 
-name: goSwitchStatement
-phrase: go switch
+name: switchStatement
+phrase: switch statement
 description: insert a switch statement with a default case
 insertionScope: statement
 -
@@ -140,8 +140,8 @@ default:
 }
 ---
 
-name: goSelectStatement
-phrase: go select
+name: selectStatement
+phrase: select statement
 description: build a select statement with a default case
 insertionScope: statement
 -
@@ -153,8 +153,8 @@ default:
 }
 ---
 
-name: goGoRoutine
-phrase: go routine
+name: backgroundRoutine
+phrase: background routine
 description: spawn a goroutine with an anonymous function
 insertionScope: statement
 -
@@ -163,24 +163,24 @@ go func() {
 }()
 ---
 
-name: goDeferStatement
-phrase: go defer
+name: deferStatement
+phrase: defer statement
 description: defer a function call
 insertionScope: statement
 -
 defer $0
 ---
 
-name: goFmtPrintln
-phrase: go println
+name: printlnCall
+phrase: println call
 description: emit a fmt.Println call
 insertionScope: statement
 -
 fmt.Println($0)
 ---
 
-name: goErrorCheck
-phrase: go err
+name: errorCheckGuard
+phrase: error check
 description: guard against a non-nil error
 insertionScope: statement
 -
@@ -189,8 +189,8 @@ if err != nil {
 }
 ---
 
-name: goMapLiteral
-phrase: go map
+name: mapLiteral
+phrase: map literal
 description: define a map literal
 insertionScope: statement
 -
