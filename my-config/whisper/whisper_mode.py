@@ -11,13 +11,15 @@ On exit: mute the daemon and re-enable `command` mode.
 
 from talon import actions, Context, Module, cron
 from pathlib import Path
+from typing import Optional
+
 import json
 import os
 import queue
 import subprocess
 
 mod = Module()
-# mod.mode("whisper", desc="Transcription mode for Whisper daemon")
+mod.mode("whisper", desc="Transcription mode for Whisper daemon")
 
 ctx = Context()
 
@@ -84,27 +86,13 @@ def _drain_event_queue() -> None:
 
 def _handle_ws_event(event: dict) -> None:
     global _whisper_last_realtime, _whisper_last_full
-    global _whisper_prev_theme, _whisper_theme_switched
     event_type = event.get("type")
     if not event_type or not _whisper_enabled:
         return
 
     if event_type == "vad_start":
         _whisper_last_realtime = None
-        if not _whisper_theme_switched:
-            if _whisper_prev_theme is None:
-                try:
-                    current_theme = actions.user.hud_get_theme()
-                    _whisper_prev_theme = getattr(current_theme, "name", None)
-                except Exception:
-                    _whisper_prev_theme = None
-
-            if _whisper_prev_theme:
-                whisper_theme = _whisper_theme_map.get(_whisper_prev_theme)
-                if whisper_theme:
-                    _switch_hud_theme(whisper_theme)
-                    _whisper_theme_switched = True
-
+        _apply_whisper_theme()
         _queue_ui_action(lambda: _show_subtitle(_WHISPER_VAD_SUBTITLE))
         return
 
@@ -266,6 +254,72 @@ def _switch_hud_theme(theme_name: str) -> None:
         pass
 
 
+def _get_current_theme_name() -> Optional[str]:
+    try:
+        current_theme = actions.user.hud_get_theme()
+    except Exception:
+        return None
+
+    return getattr(current_theme, "name", None)
+
+
+def _apply_whisper_theme() -> None:
+    global _whisper_prev_theme, _whisper_theme_switched
+
+    if _whisper_theme_switched:
+        return
+
+    theme_name = _whisper_prev_theme or _get_current_theme_name()
+    if not theme_name:
+        return
+
+    if _whisper_prev_theme is None:
+        _whisper_prev_theme = theme_name
+
+    whisper_theme = _whisper_theme_map.get(theme_name)
+    if not whisper_theme:
+        return
+
+    _switch_hud_theme(whisper_theme)
+    _whisper_theme_switched = True
+
+
+def _restore_hud_theme() -> None:
+    global _whisper_prev_theme, _whisper_theme_switched
+
+    if _whisper_theme_switched and _whisper_prev_theme:
+        _switch_hud_theme(_whisper_prev_theme)
+
+    _whisper_prev_theme = None
+    _whisper_theme_switched = False
+
+
+def _enter_whisper_mode() -> None:
+    """Activate whisper mode and suppress command mode while transcribing."""
+    try:
+        actions.mode.disable("command")
+    except Exception:
+        pass
+
+    try:
+        actions.mode.enable("user.whisper")
+    except Exception:
+        pass
+
+
+def _exit_whisper_mode() -> None:
+    """Reset mode state when whisper transcription stops."""
+    try:
+        actions.mode.disable("user.whisper")
+    except Exception:
+        pass
+
+    try:
+        actions.mode.enable("command")
+    except Exception:
+        pass
+
+
 def _enable_whisper() -> bool:
     """Mark Whisper as enabled and start the real-time process."""
     global _whisper_enabled, _whisper_last_realtime, _whisper_last_full
@@ -275,23 +329,29 @@ def _enable_whisper() -> bool:
     _whisper_last_realtime = None
     _whisper_last_full = None
     _whisper_enabled = True
+    _enter_whisper_mode()
+    _apply_whisper_theme()
 
     started = _start_proc()
     if not started:
         _whisper_enabled = False
+        _exit_whisper_mode()
+        _restore_hud_theme()
 
     return started
 
 
 def _disable_whisper() -> None:
     """Ensure the Whisper process is stopped and reset the tracked state."""
-    global _whisper_enabled, _whisper_prev_theme, _whisper_theme_switched
+    global _whisper_enabled
     if not _whisper_enabled and not _proc_is_running():
+        _exit_whisper_mode()
+        _restore_hud_theme()
         return
 
     _whisper_enabled = False
-    _whisper_prev_theme = None
-    _whisper_theme_switched = False
+    _exit_whisper_mode()
+    _restore_hud_theme()
     _stop_proc()
 
 
