@@ -584,7 +584,8 @@ devcontainer reopen: user.vscode("remote-containers.reopenInContainer")
 # =====================================
 # Codex
 # =====================================
-codex add thread: user.vscode("chatgpt.addToThread")
+codex thread: user.vscode("chatgpt.addToThread")
+codex file: user.vscode("chatgpt.addFileToThread")
 codex focus: user.vscode("chatgpt.sidebarView.focus")
 
 codex copy paste:
