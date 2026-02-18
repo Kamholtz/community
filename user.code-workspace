@@ -8,6 +8,12 @@
 		},
 		{
 			"path": "../talon_hud"
+		},
+		{
+			"path": "../talon-ai-tools"
+		},
+		{
+			"path": "../../../repos/acp-wrapper"
 		}
 	],
 	"settings": {
@@ -30,6 +36,31 @@
 			"titleBar.inactiveBackground": "#e9bd3699",
 			"titleBar.inactiveForeground": "#15202b99"
 		},
-		"peacock.color": "#e9bd36"
+		"peacock.color": "#e9bd36",
+		"chat.tools.terminal.autoApprove": {
+			"/home/carl/repos/acp-wrapper/.venv/bin/python": true,
+			"test": true
+		}
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "acp-wrapper: pytest",
+				"type": "shell",
+				"command": "/home/carl/repos/acp-wrapper/.venv/bin/python -m pytest",
+				"options": {
+					"cwd": "/home/carl/repos/acp-wrapper"
+				},
+				"group": {
+					"kind": "test",
+					"isDefault": true
+				},
+				"presentation": {
+					"reveal": "always"
+				},
+				"problemMatcher": []
+			}
+		]
 	}
 }
