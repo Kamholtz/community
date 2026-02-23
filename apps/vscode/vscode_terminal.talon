@@ -8,4 +8,4 @@ tag(): terminal
 
 # Use VS Code terminal paste binding.
 (pace | paste) (that | it): key(ctrl-shift-v)
-key(control v): key(ctrl-shift-v)
+key(ctrl-v): key(ctrl-shift-v)
