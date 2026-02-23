@@ -34,6 +34,16 @@ This is particularly useful for:
 - Executing Talon commands from shell scripts
 - Automating Talon state changes
 - Testing actions quickly from the terminal
+- Binding Talon commands to terminal shortcuts or launcher menus
+
+Common piped commands:
+```bash
+# Toggle speech recognition
+echo "actions.speech.toggle()" | ~/.talon/bin/repl
+
+# Monitor Talon events (useful for debugging)
+echo "events.tail()" | ~/.talon/bin/repl
+```
 
 ### Multiple Commands
 Execute multiple statements by piping multi-line input:
@@ -53,12 +63,24 @@ EOF
 ## Common Use Cases
 
 ### Testing Actions
-```python
-# In REPL or piped
-actions.speech.enable()
-actions.speech.disable()
-actions.insert("Hello from Talon!")
-actions.key("ctrl-s")
+```bash
+# Toggle speech recognition on/off
+echo "actions.speech.toggle()" | ~/.talon/bin/repl
+
+# Disable speech recognition
+echo "actions.speech.disable()" | ~/.talon/bin/repl
+
+# Enable speech recognition
+echo "actions.speech.enable()" | ~/.talon/bin/repl
+
+# Watch Talon events in real-time (blocking, use Ctrl+C to stop)
+echo "events.tail()" | ~/.talon/bin/repl
+
+# Insert text
+echo "actions.insert('Hello from Talon!')" | ~/.talon/bin/repl
+
+# Simulate keypress
+echo "actions.key('ctrl-s')" | ~/.talon/bin/repl
 ```
 
 ### Inspecting State

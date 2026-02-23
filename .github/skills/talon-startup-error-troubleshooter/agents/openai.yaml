@@ -1,0 +1,3 @@
+interface:
+  display_name: "Talon Startup Error Troubleshooter"
+  short_description: "Investigate recent Talon startup errors"
