@@ -41,15 +41,15 @@ key(f13:up):
 
 # F14 — L2
 key(f14:up):
-    key(end)
+    key(home)
 
 # F15 — R2
 key(f15:up):
-    key(home)
+    user.mouse_scroll_up()
 
 # F16 — R
 key(f16:up):
-    user.mouse_scroll_up()
+    key(end)
 
 # F17 — - (minus)
 key(f17:up):
