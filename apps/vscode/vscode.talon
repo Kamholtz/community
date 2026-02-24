@@ -502,6 +502,11 @@ chat prompt answers:
     insert("answers")
     key(enter)
 
+chat prompt (mind map | mind | map):
+    user.vscode("workbench.action.chat.run.prompt")
+    insert("mind-map")
+    key(enter)
+
 chat accept:
     key(ctrl-shift-y)
 
@@ -584,7 +589,7 @@ devcontainer reopen: user.vscode("remote-containers.reopenInContainer")
 # =====================================
 # Codex
 # =====================================
-codex thread: user.vscode("chatgpt.addToThread")
+codex this: user.vscode("chatgpt.addToThread")
 codex file: user.vscode("chatgpt.addFileToThread")
 codex focus: user.vscode("chatgpt.sidebarView.focus")
 
@@ -600,6 +605,12 @@ codex paste:
     user.vscode("workbench.action.focusActiveEditorGroup")
 
 copy command id: user.copy_command_id()
+
+chat focus: user.vscode("workbench.panel.chat.view.copilot.focus")
+
+chat file: user.vscode("workbench.action.chat.attachFile")
+
+chat this: user.vscode("workbench.action.chat.attachSelection")
 
 # =====================================
 # Calva
