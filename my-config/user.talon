@@ -34,60 +34,61 @@ scrape: key(escape)
 open talon config:
     user.open_talon_config_vscode()
 
-# key(ctrl-f12):
-#     core.repeat_command(1)
+# F13 — L
+key(f13:up):
+    user.mouse_scroll_down()
 
-# key(f12): "hello"
-# key(F20): "hello"
-# key(ctrl-F3): "hello"
-# key(f3): "hello"
-
-# key(ctrl-1): "hello"
-# key(ctrl-shift-1): "hello"
-# key(ctrl-shift-alt-1): "hello"
-# key(ctrl-alt-w): "hello"
-# key(alt-1): "hello"
-# key(ctrl-1): "hello"
-# key(ctrl-w): insert("hello")
-
-# key(f20):
-#     # close zoom if open
-#     tracking.zoom_cancel()
-#     mouse_click(1)
-#     # close the mouse grid if open
-#     user.grid_close()
-
-key(f13):
-    mouse_click(1)
-
-# key(f14):
-#     core.repeat_command(1)
-
-# key(f14):
-#     core.repeat_partial_phrase()
-
-# key(f14):
-#     core.repeat_partial_phrase(1)
-
-# key(f14):
-#     print("pressed F14")
-
-# key(f14):
-#     mimic("again")
-
+# F14 — L2
 key(f14:up):
-    print("start")
+    key(end)
+
+# F15 — R2
+key(f15:up):
+    key(home)
+
+# F16 — R
+key(f16:up):
+    user.mouse_scroll_up()
+
+# F17 — - (minus)
+key(f17:up):
+    key(ctrl-backspace)
+
+# F18 — + (plus)
+key(f18:up):
+    key(space)
+
+# F19 — * (star)
+key(f19:up):
+    key(tab)
+
+# F20 — M-shaped symbol (go flag)
+key(f20:up):
+    key(super)
+
+# F21 —
+key(f21:up):
+    print("repeat start")
     core.repeat_phrase()
     print("end")
 
-key(f15:up):
-    mouse_click(0)
+# F22 — X
+key(f22:down):
+    user.mouse_drag(0)
+key(f22:up):
+    user.mouse_drag_end()
 
-key(f20:up):
-    mouse_click(1)
+# F23 — A
+key(f23:down):
+    user.mouse_drag(2)
+key(f23:up):
+    user.mouse_drag_end()
 
-# (repeat phrase | again) [<number_small> times]:
-#     core.repeat_partial_phrase(number_small or 1)
+# F24 — B
+key(f24:down):
+    user.mouse_drag(1)
+key(f24:up):
+    user.mouse_drag_end()
 
 toggle hiss scroll:
     user.toggle_hiss_scroll()
