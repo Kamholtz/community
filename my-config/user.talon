@@ -34,4 +34,62 @@ scrape: key(escape)
 open talon config:
     user.open_talon_config_vscode()
 
+# key(ctrl-f12):
+#     core.repeat_command(1)
+
+# key(f12): "hello"
+# key(F20): "hello"
+# key(ctrl-F3): "hello"
+# key(f3): "hello"
+
+# key(ctrl-1): "hello"
+# key(ctrl-shift-1): "hello"
+# key(ctrl-shift-alt-1): "hello"
+# key(ctrl-alt-w): "hello"
+# key(alt-1): "hello"
+# key(ctrl-1): "hello"
+# key(ctrl-w): insert("hello")
+
+# key(f20):
+#     # close zoom if open
+#     tracking.zoom_cancel()
+#     mouse_click(1)
+#     # close the mouse grid if open
+#     user.grid_close()
+
+key(f13):
+    mouse_click(1)
+
+# key(f14):
+#     core.repeat_command(1)
+
+# key(f14):
+#     core.repeat_partial_phrase()
+
+# key(f14):
+#     core.repeat_partial_phrase(1)
+
+# key(f14):
+#     print("pressed F14")
+
+# key(f14):
+#     mimic("again")
+
+key(f14:up):
+    print("start")
+    core.repeat_phrase()
+    print("end")
+
+key(f15:up):
+    mouse_click(0)
+
+key(f20:up):
+    mouse_click(1)
+
+# (repeat phrase | again) [<number_small> times]:
+#     core.repeat_partial_phrase(number_small or 1)
+
+toggle hiss scroll:
+    user.toggle_hiss_scroll()
+
 # (vest one|word term|weston|western): "wezterm"
