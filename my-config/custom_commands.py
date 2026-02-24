@@ -1,6 +1,6 @@
 
 import os
-from talon import actions, app, Module
+from talon import actions, app, Module, settings
 
 mod = Module()
 
@@ -17,3 +17,10 @@ class Actions:
             app.notify("Opened Talon config in VSCode")
         else:
             app.notify(f"Failed to open Talon config in VSCode {config_path}")
+
+    def toggle_hiss_scroll():
+        """Toggle hiss scrolling on/off."""
+        setting_name = "user.mouse_enable_hiss_scroll"
+        enabled = bool(settings.get(setting_name))
+        settings.set(setting_name, not enabled)
+        app.notify(f"Hiss scroll {'enabled' if not enabled else 'disabled'}")
