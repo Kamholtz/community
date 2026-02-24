@@ -47,6 +47,7 @@ class EyeTrackingState:
 
 
 eye_tracking_state: EyeTrackingState
+dragged_buttons: set[int] = set()
 
 
 def on_ready():
@@ -92,22 +93,27 @@ class Actions:
 
         # Start drag
         actions.mouse_drag(button)
+        dragged_buttons.add(button)
 
     def mouse_drag_end() -> bool:
         """Releases any held mouse buttons"""
-        buttons = ctrl.mouse_buttons_down()
+        buttons = set(ctrl.mouse_buttons_down()) | dragged_buttons
         if buttons:
             for button in buttons:
                 actions.mouse_release(button)
+            dragged_buttons.clear()
             return True
         return False
 
     def mouse_drag_toggle(button: int):
         """If the button is held down, release the button, else start dragging"""
-        if button in ctrl.mouse_buttons_down():
+        buttons_down = set(ctrl.mouse_buttons_down()) | dragged_buttons
+        if button in buttons_down:
             actions.mouse_release(button)
+            dragged_buttons.discard(button)
         else:
             actions.mouse_drag(button)
+            dragged_buttons.add(button)
 
     def mouse_sleep():
         """Disables control mouse, zoom mouse, and re-enables cursor"""
