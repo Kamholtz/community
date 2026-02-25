@@ -37,7 +37,7 @@ open talon config:
 
 # F13 — L
 key(f13:up):
-    user.mouse_scroll_down()
+    user.mouse_scroll_down(2)
 
 # F14 — L2
 key(f14:up):
@@ -45,7 +45,7 @@ key(f14:up):
 
 # F15 — R2
 key(f15:up):
-    user.mouse_scroll_up()
+    user.mouse_scroll_up(2)
 
 # F16 — R
 key(f16:up):
