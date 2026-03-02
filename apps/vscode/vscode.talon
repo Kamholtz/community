@@ -503,17 +503,26 @@ magit status: user.vscode("magit.status")
 
 chat prompt grammar:
     user.vscode("workbench.action.chat.run.prompt")
+    sleep(150ms)
     insert("grammar")
     key(enter)
 
 chat prompt answers:
     user.vscode("workbench.action.chat.run.prompt")
+    sleep(150ms)
     insert("answers")
     key(enter)
 
 chat prompt (mind map | mind | map):
     user.vscode("workbench.action.chat.run.prompt")
+    sleep(150ms)
     insert("mind-map")
+    key(enter)
+
+chat prompt (describe | security | describe security):
+    user.vscode("workbench.action.chat.run.prompt")
+    sleep(150ms)
+    insert("briefly-describe-in-a-security-context")
     key(enter)
 
 chat accept:
