@@ -526,7 +526,15 @@ chat prompt (describe | security | describe security):
     key(enter)
 
 chat accept:
-    key(ctrl-shift-y)
+    user.vscode("workbench.panel.chat.view.copilot.focus")
+    key(ctrl-enter)
+
+chat new:
+    user.vscode("workbench.panel.chat.view.copilot.focus")
+    key(ctrl-n)
+
+chat (sessions | session):
+    user.vscode("workbench.action.chat.focusAgentSessionsViewer")
 
 build run:
     user.vscode("workbench.action.tasks.build")
