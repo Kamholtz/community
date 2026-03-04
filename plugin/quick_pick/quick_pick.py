@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional
 import math
 
-FONT_FAMILY = "Maple Mono NF"
+FONT_FAMILY = "DejaVu Sans"  # Has ASCII + symbol support
 BACKGROUND_COLOR = "fffafa"  # Snow
 HOVER_COLOR = "6495ed"  # CornflowerBlue
 BORDER_COLOR = "000000"  # Black
@@ -74,15 +74,15 @@ repeater_callback: Callable[[], None] = None
 buttons: list[Button] = []
 
 circle_options = [
-    CircleOption("🖑", -90, actions.mouse_drag, True),
-    CircleOption("🖖", -140, lambda: actions.user.mouse_click("control"), True),
-    CircleOption("🖙", -40, lambda: actions.user.mouse_click("right"), True),
-    CircleOption("🡨", -170, actions.user.go_back),
-    CircleOption("🡪", -10, actions.user.go_forward),
-    CircleOption("╳", 13, actions.app.tab_close),
-    CircleOption("🖳", 140, lambda: actions.key("ctrl-shift-escape")),
-    CircleOption("🗗", 40, lambda: actions.user.window_switcher_menu()),
-    CircleOption("🔍", 90, actions.user.browser_search_selected),
+    CircleOption("DRAG", -90, actions.mouse_drag, True),
+    CircleOption("CTRL", -140, lambda: actions.user.mouse_click("control"), True),
+    CircleOption("RIGHT", -40, lambda: actions.user.mouse_click("right"), True),
+    CircleOption("←", -170, actions.user.go_back),
+    CircleOption("→", -10, actions.user.go_forward),
+    CircleOption("X", 13, actions.app.tab_close),
+    CircleOption("TASK", 140, lambda: actions.key("ctrl-shift-escape")),
+    CircleOption("WIN", 40, lambda: actions.user.window_switcher_menu()),
+    CircleOption("SEARCH", 90, actions.user.browser_search_selected),
 ]
 
 media_options = [
