@@ -502,15 +502,27 @@ disk gentle: edit.save()
 magit status: user.vscode("magit.status")
 
 chat prompt grammar:
+    user.vscode("workbench.panel.chat.view.copilot.focus")
+    key(ctrl-n)
+    sleep(150ms)
     user.vscode("workbench.action.chat.run.prompt")
     sleep(150ms)
-    insert("grammar")
+    insert("spelling-grammar-correction")
     key(enter)
 
 chat prompt answers:
     user.vscode("workbench.action.chat.run.prompt")
     sleep(150ms)
     insert("answers")
+    key(enter)
+
+chat prompt (reference | references):
+    user.vscode("workbench.panel.chat.view.copilot.focus")
+    key(ctrl-n)
+    sleep(150ms)
+    user.vscode("workbench.action.chat.run.prompt")
+    sleep(150ms)
+    insert("search-aws-documentation")
     key(enter)
 
 chat prompt (mind map | mind | map):
@@ -531,6 +543,7 @@ chat accept:
 
 chat new:
     user.vscode("workbench.panel.chat.view.copilot.focus")
+    sleep(150ms)
     key(ctrl-n)
 
 chat (sessions | session):
@@ -644,3 +657,4 @@ chat this: user.vscode("workbench.action.chat.attachSelection")
 
 Calva jack in: user.vscode("calva.jackIn")
 Calva load file: user.vscode("calva.loadFile")
+Calva refresh: user.vscode("calva.refreshAll")
