@@ -2,6 +2,26 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Talon tmux restart",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "tmuxinator stop && tmuxinator start --no-attach"
+      ],
+      "options": {
+        "cwd": "${env:HOME}/.talon/user/community/"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Talon: Open REPL",
       "type": "shell",
       "command": "~/.talon/bin/repl",
