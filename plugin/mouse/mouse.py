@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from time import perf_counter
 
 from talon import Context, Module, actions, app, ctrl, settings, ui
 
@@ -8,6 +9,12 @@ ctx = Context()
 mod.list(
     "mouse_button",
     desc="List of mouse button words to mouse_click index parameter",
+)
+mod.setting(
+    "mouse_click_or_drag_hold_threshold_ms",
+    type=int,
+    default=180,
+    desc="Milliseconds threshold for click-or-drag behavior. Presses shorter than this are converted to a click at the key-down cursor position.",
 )
 mod.setting(
     "mouse_enable_pop_click",
@@ -48,6 +55,16 @@ class EyeTrackingState:
 
 eye_tracking_state: EyeTrackingState
 dragged_buttons: set[int] = set()
+
+
+@dataclass(slots=True)
+class ClickOrDragState:
+    start_time: float
+    start_x: int
+    start_y: int
+
+
+click_or_drag_state: dict[int, ClickOrDragState] = {}
 
 
 def on_ready():
@@ -114,6 +131,36 @@ class Actions:
         else:
             actions.mouse_drag(button)
             dragged_buttons.add(button)
+
+    def mouse_click_or_drag_start(button: int = 0):
+        """Start a click-or-drag interaction on key/button down.
+
+        Presses begin with mouse-down so dragging can happen while held.
+        Pair with user.mouse_click_or_drag_end(button) on key/button up.
+        """
+        actions.mouse_drag_end()
+        start_x, start_y = ctrl.mouse_pos()
+        click_or_drag_state[button] = ClickOrDragState(perf_counter(), start_x, start_y)
+        ctrl.mouse_click(button=button, down=True)
+
+    def mouse_click_or_drag_end(button: int = 0):
+        """Finish a click-or-drag interaction on key/button up.
+
+        Short presses are forced to click at the original mouse-down position.
+        Longer presses preserve drag behavior and release at mouse-up position.
+        """
+        state = click_or_drag_state.pop(button, None)
+        if not state:
+            ctrl.mouse_click(button=button, up=True)
+            return
+
+        threshold_s = settings.get("user.mouse_click_or_drag_hold_threshold_ms") / 1000
+        elapsed_s = perf_counter() - state.start_time
+
+        if elapsed_s < threshold_s:
+            ctrl.mouse_move(state.start_x, state.start_y)
+
+        ctrl.mouse_click(button=button, up=True)
 
     def mouse_sleep():
         """Disables control mouse, zoom mouse, and re-enables cursor"""
