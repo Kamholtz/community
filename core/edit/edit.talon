@@ -62,6 +62,10 @@ carve that: edit.cut()
     key(enter)
 paste match: edit.paste_match_style()
 
+paste insert:
+    text = clip.text()
+    insert(text)
+
 # Duplication
 # NOTE: this was moved to the sibling file edit_excl_cursorless.talon
 
@@ -85,8 +89,6 @@ file save: edit.save()
 file save all: edit.save_all()
 
 [go] line mid: user.line_middle()
-
-
 
 tug: edit.left()
 tug <number_small> times: user.left_n(number_small)
