@@ -14,5 +14,4 @@ space: space
 tab: tab
 insert: insert
 wipe: backspace
-delete: backspace
 forward delete: delete
