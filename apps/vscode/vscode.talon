@@ -11,12 +11,10 @@ tag(): user.cursorless_use_community_snippets
 
 # https://github.com/talonvoice/talon/issues/330
 # F13 — L
-key(f13:up):
-    mouse_scroll(5, 0, true)
+key(f13:up): mouse_scroll(5, 0, true)
 
 # F15 — R2
-key(f15:up):
-    mouse_scroll(-5, 0, true)
+key(f15:up): mouse_scroll(-5, 0, true)
 
 window reload: user.vscode("workbench.action.reloadWindow")
 window close: user.vscode("workbench.action.closeWindow")
@@ -154,7 +152,7 @@ refactor rename: user.vscode("editor.action.rename")
 refactor this: user.vscode("editor.action.refactor")
 
 #code navigation
-(go declaration | follow): user.vscode("editor.action.revealDefinition")
+go declaration | follow: user.vscode("editor.action.revealDefinition")
 go back: user.vscode("workbench.action.navigateBack")
 go forward: user.vscode("workbench.action.navigateForward")
 go implementation: user.vscode("editor.action.goToImplementation")
@@ -357,7 +355,8 @@ bring output terminal <number_small>:
     user.vscode("workbench.action.focusActiveEditorGroup")
     user.vscode_terminal_copy_named("last_output", true)
 
-copy terminal: user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
+copy terminal:
+    user.vscode("workbench.action.terminal.copyLastCommandAndLastCommandOutput")
 copy terminal <number_small>:
     user.vscode_terminal(number_small)
     user.vscode("workbench.action.focusActiveEditorGroup")
@@ -376,8 +375,10 @@ terminal <number_small> recent directory:
     user.vscode("workbench.action.terminal.goToRecentDirectory")
 
 terminal next scroll: user.vscode("workbench.action.terminal.scrollToNextCommand")
-terminal (previous | prev | last) scroll: user.vscode("workbench.action.terminal.scrollToPreviousCommand")
-toggle sticky (terminal | term): user.vscode("workbench.action.terminal.toggleStickyScroll")
+terminal (previous | prev | last) scroll:
+    user.vscode("workbench.action.terminal.scrollToPreviousCommand")
+toggle sticky (terminal | term):
+    user.vscode("workbench.action.terminal.toggleStickyScroll")
 
 (term | terminal) external: user.vscode("workbench.action.terminal.openNativeConsole")
 (term | terminal) new: user.vscode("workbench.action.terminal.new")
@@ -386,7 +387,8 @@ toggle sticky (terminal | term): user.vscode("workbench.action.terminal.toggleSt
 (term | terminal) split: user.vscode("workbench.action.terminal.split")
 (term | terminal) zoom: user.vscode("workbench.action.toggleMaximizedPanel")
 (term | terminal) trash: user.vscode("workbench.action.terminal.kill")
-(term | terminal) toggle: user.vscode_and_wait("workbench.action.terminal.toggleTerminal")
+(term | terminal) toggle:
+    user.vscode_and_wait("workbench.action.terminal.toggleTerminal")
 (term | terminal) scroll up: user.vscode("workbench.action.terminal.scrollUp")
 (term | terminal) scroll down: user.vscode("workbench.action.terminal.scrollDown")
 (term | terminal) focus hunt [<user.text>]:
@@ -403,17 +405,13 @@ task run [<user.text>]:
     user.vscode("workbench.action.tasks.runTask")
     insert(user.text or "")
 
-task rerun:
-    user.vscode("workbench.action.tasks.reRunTask")
+task rerun: user.vscode("workbench.action.tasks.reRunTask")
 
-task rerun all:
-    user.vscode("workbench.action.tasks.rerunAllRunningTasks")
+task rerun all: user.vscode("workbench.action.tasks.rerunAllRunningTasks")
 
-task restart:
-    user.vscode("workbench.action.tasks.restartTask")
+task restart: user.vscode("workbench.action.tasks.restartTask")
 
-task terminate:
-    user.vscode("workbench.action.tasks.terminate")
+task terminate: user.vscode("workbench.action.tasks.terminate")
 
 #TODO: should this be added to linecommands?
 copy line down: user.vscode("editor.action.copyLinesDownAction")
@@ -481,8 +479,7 @@ voice mode:
     key(i)
     sleep(25ms)
 
-tab pin:
-    user.vscode_and_wait("workbench.action.pinEditor")
+tab pin: user.vscode_and_wait("workbench.action.pinEditor")
 
 # TODO: Go up and down the callstack
 
@@ -546,11 +543,9 @@ chat new:
     sleep(150ms)
     key(ctrl-n)
 
-chat (sessions | session):
-    user.vscode("workbench.action.chat.focusAgentSessionsViewer")
+chat (sessions | session): user.vscode("workbench.action.chat.focusAgentSessionsViewer")
 
-build run:
-    user.vscode("workbench.action.tasks.build")
+build run: user.vscode("workbench.action.tasks.build")
 
 # =====================================
 # Whisper
