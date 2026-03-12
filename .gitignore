@@ -17,3 +17,6 @@ __pycache__
 [._]*.swp
 my-config/priv/**/*
 my-config/liveview-talon
+.clj-kondo
+.calva
+.lsp
