@@ -649,7 +649,9 @@ chat focus: user.vscode("workbench.panel.chat.view.copilot.focus")
 
 chat file: user.vscode("workbench.action.chat.attachFile")
 
-chat this: user.vscode("workbench.action.chat.attachSelection")
+chat pinned: user.vscode("workbench.action.chat.attachPinnedEditors")
+
+chat this: user.vscode()
 
 # =====================================
 # Calva

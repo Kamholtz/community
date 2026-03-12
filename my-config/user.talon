@@ -31,6 +31,8 @@ yep: edit.redo()
 
 scrape: key(escape)
 
+# quick pick: user.quick_pick_show()
+
 # Command to open Talon user directory in VSCode
 open talon config:
     user.open_talon_config_vscode()
@@ -65,7 +67,8 @@ key(f19:up):
 
 # F20 — M-shaped symbol (go flag)
 key(f20:up):
-    key(super)
+    key(super-~)
+    # user.quick_pick_show()
 
 # F21 —
 key(f21:up):
@@ -93,5 +96,3 @@ key(f24:up):
 
 toggle hiss scroll:
     user.toggle_hiss_scroll()
-
-# (vest one|word term|weston|western): "wezterm"
