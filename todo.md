@@ -26,6 +26,7 @@ https://www.cursorless.org/docs/user/customization/#experimental-cursorless-cust
 
 ## Howto
 
+- [ ] Add a file with the context of status.magit as the title
 - [ ] make a vscode task for running commands in talon repl and getting recent logs or getting a recent error
 - [ ] select a digit in Cursorless
 - [ ] Howto trigger commands in neovim: next/- [ ] prev tab, find command OR find :, find command history
