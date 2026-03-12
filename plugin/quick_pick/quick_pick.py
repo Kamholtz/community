@@ -214,7 +214,14 @@ def draw_snap_positions(
 
 
 def get_running_options() -> list[Option]:
-    running = actions.user.get_running_applications()
+    try:
+        running = actions.user.get_running_applications()
+    except Exception:
+        return []
+
+    if not isinstance(running, dict):
+        return []
+
     return [
         Option(key, lambda key=key: actions.user.window_focus_name(running[key]))
         for key in sorted(running)
@@ -263,6 +270,14 @@ def get_button_for_position(pos: Point2d):
     return None
 
 
+def run_callback(callback: Callable[[], None]) -> bool:
+    try:
+        callback()
+        return True
+    except Exception:
+        return False
+
+
 def on_mouse(e: MouseEvent):
     global repeater_callback, hover_rect
     button = get_button_for_position(e.gpos)
@@ -279,8 +294,8 @@ def on_mouse(e: MouseEvent):
             if button.move_mouse:
                 actions.mouse_move(mouse_pos.x, mouse_pos.y)
             actions.sleep("150ms")
-            button.callback()
-            repeater_callback = button.callback
+            if run_callback(button.callback):
+                repeater_callback = button.callback
 
 
 def show():
@@ -308,7 +323,7 @@ class UserActions:
     def noise_cluck():
         # If available the repeat noise repeats the last quick pick callback
         if repeater_callback:
-            repeater_callback()
+            run_callback(repeater_callback)
         else:
             actions.next()
 
