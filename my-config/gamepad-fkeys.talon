@@ -6,6 +6,13 @@ tag(): user.docker
 tag(): user.gamepad
 tag(): user.glazewm
 
+
+
+
+
+# F1
+key(f1:up): user.toggle_command_dictation_mode()
+
 # F13 — L
 key(f13:up): user.mouse_scroll_down(2)
 
@@ -25,7 +32,7 @@ key(f17:up): key(ctrl-backspace)
 key(f18:up): key(space)
 
 # F19 — * (star)
-key(f19:up): key(tab)
+# key(f19:up): key(tab)
 
 # F20 — M-shaped symbol (go flag)
 key(f20:up):
