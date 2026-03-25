@@ -9,6 +9,9 @@ tag(): user.tabs
 tag(): user.command_search
 tag(): user.cursorless_use_community_snippets
 
+settings():
+    user.paste_to_insert_threshold = 0
+
 # https://github.com/talonvoice/talon/issues/330
 # F13 — L
 key(f13:up): mouse_scroll(5, 0, true)
@@ -499,12 +502,15 @@ disk gentle: edit.save()
 magit status: user.vscode("magit.status")
 
 chat prompt grammar:
-    user.vscode("workbench.panel.chat.view.copilot.focus")
-    key(ctrl-n)
-    sleep(150ms)
+    # user.vscode("workbench.panel.chat.view.copilot.focus")
+    # sleep(500ms)
+    # key(ctrl-n)
+    # user.vscode("workbench.action.focusActiveEditorGroup")
+    # sleep(100ms)
+    user.vscode("workbench.action.chat.attachFile")
     user.vscode("workbench.action.chat.run.prompt")
-    sleep(150ms)
-    insert("spelling-grammar-correction")
+    sleep(500ms)
+    insert("spelling-formatting-grammar-correction")
     key(enter)
 
 chat prompt answers:

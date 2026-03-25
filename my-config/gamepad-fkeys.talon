@@ -11,7 +11,7 @@ tag(): user.glazewm
 
 
 # F1
-key(f1:up): user.toggle_command_dictation_mode()
+# key(f1:up): user.toggle_command_dictation_mode()
 
 # F13 — L
 key(f13:up): user.mouse_scroll_down(2)

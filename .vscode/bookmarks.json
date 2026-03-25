@@ -19,6 +19,16 @@
 					"label": ""
 				}
 			]
+		},
+		{
+			"path": "my-config/whisper/whisper_mode.py",
+			"bookmarks": [
+				{
+					"line": 104,
+					"column": 12,
+					"label": ""
+				}
+			]
 		}
 	]
 }
