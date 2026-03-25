@@ -17,6 +17,9 @@
 		},
 		{
 			"path": "../../../repos/vim-config/config/home-manager"
+		},
+		{
+			"path": "../../../repos/realtimestt-cli"
 		}
 	],
 	"settings": {
