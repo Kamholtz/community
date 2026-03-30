@@ -1,5 +1,6 @@
 app: emacs
 -
+
 tag(): user.tabs
 tag(): user.splits
 tag(): user.line_commands
@@ -34,6 +35,7 @@ other scroll up: user.emacs("scroll-other-window-down")
 package autoremove: user.emacs("package-autoremove")
 package list | [package] list packages: user.emacs("list-packages")
 reverse (lines | region): user.emacs("reverse-region")
+disk: user.emacs("save-buffer")
 save buffers kill emacs: user.emacs("save-buffers-kill-emacs")
 save some buffers: user.emacs("save-some-buffers")
 sort lines: user.emacs("sort-lines")
@@ -166,7 +168,6 @@ describe variable <user.text>$:
     key(enter)
 
 # ----- FILES & BUFFERS -----
-disk: key(ctrl-s)
 file open: user.emacs("find-file")
 file rename: user.emacs("rename-file")
 (file open | find file) at point: user.emacs("ffap")
@@ -256,7 +257,7 @@ auto indent: user.emacs("indent-region")
 indent <user.number_signed_small>: user.emacs("indent-rigidly", number_signed_small)
 
 search back: user.emacs("isearch-backward")
-(search regex | regex search): user.emacs("isearch-forward-regexp")
+search regex | regex search: user.emacs("isearch-forward-regexp")
 (search regex | regex search) back: user.emacs("isearch-backward-regexp")
 replace: user.emacs("query-replace")
 replace regex | regex replace: user.emacs("query-replace-regexp")
@@ -428,3 +429,9 @@ outline demote: user.emacs("outline-demote")
 outline move [subtree] down: user.emacs("outline-move-subtree-down")
 outline move [subtree] up: user.emacs("outline-move-subtree-up")
 outline mark [subtree]: user.emacs("outline-mark-subtree")
+
+# ----- WINDOW MOVEMENT (windmove) ----- #
+(win | window) right: user.emacs("windmove-right")
+(win | window) left: user.emacs("windmove-left")
+(win | window) up: user.emacs("windmove-up")
+(win | window) down: user.emacs("windmove-down")
