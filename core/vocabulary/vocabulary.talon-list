@@ -12,7 +12,7 @@ DNS
 Minecraft
 WezTerm
 devcontainer
-Cursorless
+cursorless
 nswag
 Brisbane
 OpenAPI
@@ -244,3 +244,4 @@ emacs config
 org mode
 doom emacs
 doom emacs config
+git message
