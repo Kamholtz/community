@@ -102,7 +102,8 @@ class Actions:
     def emacs_help(key: str = None):
         "Runs the emacs help command prefix, optionally followed by some keys."
         # NB. f1 works in ansi-term mode; C-h doesn't.
-        actions.key("f1")
+        # actions.key("f1")
+        actions.key("ctrl-h")
         if key is not None:
             actions.key(key)
 

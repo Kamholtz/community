@@ -65,6 +65,15 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "Talon: Restart then show startup errors",
+      "dependsOn": [
+        "Talon tmux restart",
+        "Talon: Show errors since startup"
+      ],
+      "dependsOrder": "sequence",
+      "group": "build"
     }
   ]
 }

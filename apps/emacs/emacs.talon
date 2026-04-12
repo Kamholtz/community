@@ -3,7 +3,7 @@ app: emacs
 
 tag(): user.tabs
 tag(): user.splits
-tag(): user.line_commands
+# tag(): user.line_commands
 
 # VSCode hunt commands to port (replace TODO_* with emacs commands)
 # symbol hunt [<user.text>]: user.emacs("TODO_SYMBOL_HUNT")
@@ -175,12 +175,12 @@ other file open: user.emacs("find-file-other-window")
 
 # File hunt commands (VSCode-style quick file picker)
 file hunt [<user.text>]:
-    user.emacs("consult-fd")
+    user.emacs("project-find-file")
     sleep(50ms)
     insert(text or "")
 
 file hunt (pace | paste):
-    user.emacs("consult-fd")
+    user.emacs("project-find-file")
     sleep(50ms)
     edit.paste()
 
@@ -418,6 +418,12 @@ magit status: user.emacs("magit-status")
 git status: user.emacs("magit-status")
 
 # ----- MAJOR & MINOR MODES ----- #
+# org-mode #
+tangle file: user.emacs("org-babel-tangle")
+tangle this:
+    user.emacs_prefix()
+    user.emacs("org-babel-tangle")
+
 # python-mode #
 python mode: user.emacs("python-mode")
 run python: user.emacs("run-python")
@@ -604,6 +610,8 @@ chat yank dwim: user.emacs("agent-shell-yank-dwim")
 # =====================================
 # Hunt
 # =====================================
+
+doom reload: user.emacs("doom/reload")
 
 private config hunt [<user.text>]:
     user.emacs("doom/find-file-in-private-config")
