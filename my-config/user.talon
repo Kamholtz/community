@@ -21,8 +21,6 @@ settings():
     user.emacs_evil_mode = true
     # user.subtitles_size = 500
 
-
-
 # Custom voice commands for undo and redo
 nope: edit.undo()
 yep: edit.redo()
