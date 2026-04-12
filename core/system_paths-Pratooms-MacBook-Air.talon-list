@@ -1,0 +1,16 @@
+list: user.system_paths
+hostname: Pratooms-MacBook-Air
+-
+user: /Users/carl
+desktop: /Users/carl/Desktop
+desk: /Users/carl/Desktop
+documents: /Users/carl/Documents
+docks: /Users/carl/Documents
+downloads: /Users/carl/Downloads
+music: /Users/carl/Music
+pictures: /Users/carl/Pictures
+videos: /Users/carl/Videos
+talon home: /Users/carl/.talon
+talon recordings: /Users/carl/.talon/recordings
+talon user: /Users/carl/.talon/user
+home: /Users/carl
