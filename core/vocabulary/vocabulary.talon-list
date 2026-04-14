@@ -259,3 +259,4 @@ error
 treesitter grammar
 grammar
 cursorless implementation
+cursorless command
