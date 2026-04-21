@@ -631,3 +631,12 @@ tab rename: user.emacs("tab-bar-rename-tab")
 tab move left: user.emacs("tab-bar-move-tab-backward")
 tab move right: user.emacs("tab-bar-move-tab")
 tab switch <number_small>: user.emacs("tab-bar-select-tab", number_small)
+
+# Undo/Redo (evil mode)
+undo: user.emacs("evil-undo")
+redo: user.emacs("evil-redo")
+
+# Key remaps for undo/redo (evil mode)
+key(ctrl-z:up): user.emacs("evil-undo")
+key(ctrl-shift-z:up): user.emacs("evil-redo")
+key(ctrl-y:up): user.emacs("evil-redo")
