@@ -7,8 +7,8 @@ focus$: key(super-a)
 
 # Cycle windows of the same application while keeping Alt held down.
 window same next:
-	key(alt:down)
-	key(`)
+    key(alt:down)
+    key(`)
 
 window same stop: key(alt:up)
 
