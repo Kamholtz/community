@@ -5,6 +5,13 @@ hostname: pop-os
 # Application switcher (fixes 'focus' command that doesn't work on Linux)
 focus$: key(super-a)
 
+# Cycle windows of the same application while keeping Alt held down.
+window same next:
+	key(alt:down)
+	key(`)
+
+window same stop: key(alt:up)
+
 # Window state management
 # Note: window minimize is not currently enabled in Pop!OS configuration
 window minimize: key(super-h)
