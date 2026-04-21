@@ -1,4 +1,4 @@
-#custom vscode commands go here
+''#custom vscode commands go here
 app: vscode
 -
 tag(): user.find_and_replace
@@ -14,10 +14,10 @@ settings():
 
 # https://github.com/talonvoice/talon/issues/330
 # F13 — L
-key(f13:up): mouse_scroll(5, 0, true)
+key(f13:up): mouse_scroll(3, 0, true)
 
 # F15 — R2
-key(f15:up): mouse_scroll(-5, 0, true)
+key(f15:up): mouse_scroll(-3, 0, true)
 
 window reload: user.vscode("workbench.action.reloadWindow")
 window close: user.vscode("workbench.action.closeWindow")
