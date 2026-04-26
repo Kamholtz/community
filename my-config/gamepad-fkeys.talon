@@ -6,10 +6,6 @@ tag(): user.docker
 tag(): user.gamepad
 tag(): user.glazewm
 
-
-
-
-
 # F1
 # key(f1:up): user.toggle_command_dictation_mode()
 
