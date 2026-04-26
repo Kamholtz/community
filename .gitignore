@@ -20,3 +20,4 @@ my-config/liveview-talon
 .clj-kondo
 .calva
 .lsp
+/.agent-shell/

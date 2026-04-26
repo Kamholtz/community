@@ -43,7 +43,6 @@ def _set_window_pos(window, x, y, width, height):
         actions.sleep("100ms")
         window.rect = ui.Rect(round(x), round(y), round(width), round(height))
 
-
 def _bring_forward(window):
     current_window = ui.active_window()
     try:

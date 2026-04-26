@@ -99,7 +99,7 @@ snap_positions = [
     ["center"],
     ["right large"],
     ["top left large", "bottom left large"],
-    ["top center", "bottom center"],
+    ["top center third", "bottom center third"],
     ["top right large", "bottom right large"],
     ["left small", "center small", "right small"],
     ["top left", "top right", "bottom left", "bottom right"],
@@ -112,7 +112,7 @@ snap_positions = [
         "bottom right small",
     ],
     [],
-    ["middle"],
+    ["center"],
 ]
 
 
