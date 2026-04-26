@@ -18,6 +18,7 @@ tag(): user.code_operators_bitwise
 tag(): user.code_operators_lambda
 tag(): user.code_operators_math
 tag(): user.code_operators_pointer
+tag(): user.code_keywords
 
 settings():
     user.code_private_function_formatter = "PRIVATE_CAMEL_CASE"
@@ -27,9 +28,9 @@ settings():
     user.code_protected_variable_formatter = "PRIVATE_CAMEL_CASE"
     user.code_public_variable_formatter = "PRIVATE_CAMEL_CASE"
 
-(variadic | spread): "..."
+variadic | spread: "..."
 declare: " := "
-channel (receive | send): " <- "
+channel (receive | send) | op channel: " <- "
 
 [state] if (err | error):
     insert("if err != nil {")
@@ -77,3 +78,5 @@ state select: user.insert_between("select {\n\t", "\n}")
 state panic: user.insert_between("panic(", ")")
 
 state recover: user.insert_between("recover(", ")")
+cast to <user.code_type>: user.insert_between(user.code_type + "(", ")")
+cast wrap <user.code_type>: user.go_cast_wrap(user.code_type)

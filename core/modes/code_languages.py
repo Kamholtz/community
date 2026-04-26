@@ -41,7 +41,7 @@ code_languages = [
     Language("php", "p h p", ["php"]),
     # Language("powershell", "power shell", ["ps1"]),
     Language("protobuf", "proto buf", ["proto"]),
-    Language("python", "python", ["py"]),
+    Language("python", "python", ["py", "ipynb"]),
     Language("r", "are language", ["r"]),
     Language("razor", "razor", ["cshtml"]),
     # Language("racket", "racket", ["rkt"]),

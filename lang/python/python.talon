@@ -1,5 +1,6 @@
 code.language: python
 -
+
 tag(): user.code_imperative
 tag(): user.code_object_oriented
 
@@ -56,3 +57,22 @@ cell heading one: user.insert_snippet_by_name("cellHeadingOne")
 cell heading two: user.insert_snippet_by_name("cellHeadingTwo")
 cell heading three: user.insert_snippet_by_name("cellHeadingThree")
 cell heading four: user.insert_snippet_by_name("cellHeadingFour")
+# the generic type commands are currently unstable and may be subject to change
+
+# examples of using the <user.python_generic_type> capture:
+# "list of string" -> list[str]
+# "list of string or integer" -> list[str | int]
+# types can be nested with `of`:
+# "list of optional of integer" -> list[Optional[int]]
+# `and` can be used for multiple arguments:
+# "tuple of integer and float" -> tuple[int, float]
+# `done` can be used to exit a nesting:
+# "tuple of optional of integer done string" -> tuple[Optional[int], str]
+# user defined type names are capitalized
+# "list of custom type" -> list[CustomType]
+# saying `type` first refers to a custom type
+# "type list of type integer" -> List[Integer]
+
+type <user.python_generic_type>: insert(python_generic_type)
+returns <user.python_generic_type>: insert(" -> {python_generic_type}")
+is type <user.python_generic_type>: insert(": {python_generic_type}")

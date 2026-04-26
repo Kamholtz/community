@@ -1,6 +1,7 @@
 ''#custom vscode commands go here
 app: vscode
 -
+
 tag(): user.find_and_replace
 tag(): user.line_commands
 tag(): user.multiple_cursors
@@ -407,15 +408,6 @@ toggle sticky (terminal | term):
 task run [<user.text>]:
     user.vscode("workbench.action.tasks.runTask")
     insert(user.text or "")
-
-task rerun: user.vscode("workbench.action.tasks.reRunTask")
-
-task rerun all: user.vscode("workbench.action.tasks.rerunAllRunningTasks")
-
-task restart: user.vscode("workbench.action.tasks.restartTask")
-
-task terminate: user.vscode("workbench.action.tasks.terminate")
-
 #TODO: should this be added to linecommands?
 copy line down: user.vscode("editor.action.copyLinesDownAction")
 copy line up: user.vscode("editor.action.copyLinesUpAction")

@@ -29,7 +29,6 @@ language: r
 function($1){ $0 }
 ---
 
-
 language: go
 -
 func($1) {
@@ -37,10 +36,16 @@ func($1) {
 }
 ---
 
-
 language: cpp
 -
 [$1]($2) {
+    $0
+}
+---
+
+language: go
+-
+func($1) $2 {
     $0
 }
 ---
