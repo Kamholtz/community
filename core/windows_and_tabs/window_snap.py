@@ -8,6 +8,7 @@ import logging
 from typing import Optional
 
 from talon import Context, Module, actions, app, registry, settings, ui
+from talon.types import Rect
 from talon.ui import Window
 
 mod = Module()
@@ -202,6 +203,25 @@ def _snap_window_helper(window, pos):
     )
 
 
+def _snap_position_from_name(position_name: str, deprecate_spoken_form: bool = False):
+    if position_name in _snap_positions:
+        return _snap_positions[position_name]
+
+    # Some callers still pass spoken forms like "left large" instead of
+    # constant identifiers like "LEFT_LARGE".
+    new_key = actions.user.formatted_text(position_name, "ALL_CAPS,SNAKE_CASE")
+    if new_key in _snap_positions:
+        if deprecate_spoken_form:
+            actions.user.deprecate_action(
+                "2024-12-02",
+                f"snap_window_to_position('{position_name}')",
+                f"snap_window_to_position('{new_key}')",
+            )
+        return _snap_positions[new_key]
+
+    raise KeyError(position_name)
+
+
 class RelativeScreenPos:
     """Represents a window position as a fraction of the screen."""
 
@@ -302,24 +322,23 @@ class Actions:
         position_name: str, window: Optional[Window] = None
     ) -> None:
         """Move a window (defaults to the active window) to a specifically named position on its current screen, using a key from `_snap_positions`."""
-        position: Optional[RelativeScreenPos] = None
-        if position_name in _snap_positions:
-            position = _snap_positions[position_name]
-            actions.user.snap_window(position, window)
-        else:
-            # Previously this function took a spoken form, but we now have constant identifiers in `_snap_positions`.
-            # If the user passed a previous spoken form instead, see if we can convert it to the new identifier.
-            new_key = actions.user.formatted_text(position_name, "ALL_CAPS,SNAKE_CASE")
-            if new_key in _snap_positions:
-                actions.user.deprecate_action(
-                    "2024-12-02",
-                    f"snap_window_to_position('{position_name}')",
-                    f"snap_window_to_position('{new_key}')",
-                )
-                position = _snap_positions[new_key]
-                actions.user.snap_window(position, window)
-            else:
-                raise KeyError(position_name)
+        actions.user.snap_window(
+            _snap_position_from_name(position_name, deprecate_spoken_form=True), window
+        )
+
+    def snap_active_window_to_position(position_name: str) -> None:
+        """Move the active window to a specifically named position on its current screen."""
+        actions.user.snap_window(_snap_position_from_name(position_name))
+
+    def snap_apply_position_to_rect(rect: Rect, position_name: str) -> Rect:
+        """Return the sub-rectangle for a named snap position within an arbitrary rectangle."""
+        position = _snap_position_from_name(position_name)
+        return rect.__class__(
+            rect.x + rect.width * position.left,
+            rect.y + rect.height * position.top,
+            rect.width * (position.right - position.left),
+            rect.height * (position.bottom - position.top),
+        )
 
     def move_window_next_screen() -> None:
         """Move the active window to a specific screen."""
