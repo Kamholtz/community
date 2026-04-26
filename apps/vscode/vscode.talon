@@ -1,4 +1,3 @@
-''#custom vscode commands go here
 app: vscode
 -
 
