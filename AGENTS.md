@@ -106,7 +106,7 @@ Use the **talon-event-monitoring** skill to:
 - Run test suite: `python -m pytest test/`
 - Use Talon REPL to execute and test actions interactively
 - Leverage **talon-repl** skill for programmatic testing
-- Check recent startup errors with error troubleshooter task
+- Check recent reload/startup errors with the **talon-startup-error-troubleshooter** skill
 
 ### Tracking Changes
 
@@ -157,10 +157,29 @@ Use the **talon-event-monitoring** skill to:
 3. Confirm voice recognition detected the phrase
 4. Use REPL to test action execution directly
 
-### Startup Errors
+### Recent Reload & Startup Errors
 
-Use **talon-startup-error-troubleshooter** task to:
-- Extract recent startup failures
+Use the **talon-startup-error-troubleshooter** skill whenever you need to find the latest Talon errors. Prefer the latest file-change mode after editing Talon files because it shows the `DEBUG [~]` line that triggered the reload:
+
+```bash
+python3 .agents/skills/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py --since-last-file-change
+```
+
+The skill wraps [my-config/scripts/talon_errors_since_startup.py](my-config/scripts/talon_errors_since_startup.py). You can run the script directly when you need raw log blocks or VS Code problem matcher output:
+
+```bash
+python3 my-config/scripts/talon_errors_since_startup.py --since-last-file-change
+```
+
+Use the startup mode only when investigating full Talon launch failures:
+
+```bash
+python3 .agents/skills/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py
+```
+
+Use this workflow to:
+- Extract recent reload or startup failures
+- Identify the latest changed file that triggered a reload
 - View stack traces and exceptions
 - Debug initialization issues
 

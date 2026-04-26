@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Talon startup-error scan and print a triage summary."""
+"""Run Talon error scan and print a triage summary."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ class Triage:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run Talon startup scan and summarize likely first troubleshooting steps.",
+        description="Run Talon error scan and summarize likely first troubleshooting steps.",
     )
     parser.add_argument(
         "--log-path",
@@ -43,6 +43,14 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Also print raw error blocks from the scanner output.",
     )
+    parser.add_argument(
+        "--since-last-file-change",
+        action="store_true",
+        help=(
+            "Scan only errors recorded after the latest Talon file-change "
+            "reload marker, logged as 'DEBUG [~] /path/to/file'."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -54,10 +62,12 @@ def find_repo_root() -> Path:
     raise SystemExit("Could not locate repo root containing my-config/scripts/")
 
 
-def run_scanner(scanner_path: Path, log_path: Path | None) -> str:
+def run_scanner(scanner_path: Path, log_path: Path | None, since_last_file_change: bool) -> str:
     cmd = [sys.executable, str(scanner_path)]
     if log_path is not None:
         cmd.extend(["--log-path", str(log_path)])
+    if since_last_file_change:
+        cmd.append("--since-last-file-change")
     proc = subprocess.run(cmd, capture_output=True, text=True)
     if proc.returncode != 0:
         if proc.stdout.strip():
@@ -173,12 +183,22 @@ def triage_block(block: ErrorBlock) -> Triage:
     )
 
 
-def print_summary(blocks: list[ErrorBlock], show_raw: bool) -> None:
+def detect_scan_period(raw: str) -> tuple[str, str | None]:
+    for line in raw.splitlines():
+        if line.startswith("TALON-CHANGE: "):
+            return "the latest Talon file-change marker", line.removeprefix("TALON-CHANGE: ")
+    return "the latest Talon startup marker", None
+
+
+def print_summary(blocks: list[ErrorBlock], show_raw: bool, period_description: str, change_line: str | None) -> None:
+    if change_line:
+        print(f"Latest file change: {change_line}")
+        print()
     if not blocks:
-        print("No startup errors found since the most recent Talon startup marker.")
+        print(f"No errors found since {period_description}.")
         return
 
-    print(f"Found {len(blocks)} startup error(s) since the latest Talon startup marker.")
+    print(f"Found {len(blocks)} error(s) since {period_description}.")
     print()
     for index, block in enumerate(blocks, start=1):
         triage = triage_block(block)
@@ -199,12 +219,16 @@ def main() -> None:
     args = parse_args()
     repo_root = find_repo_root()
     scanner_path = repo_root / "my-config/scripts/talon_errors_since_startup.py"
-    raw_output = run_scanner(scanner_path, args.log_path)
-    if "No errors recorded since the last Talon startup marker." in raw_output:
-        print("No startup errors found since the most recent Talon startup marker.")
+    raw_output = run_scanner(scanner_path, args.log_path, args.since_last_file_change)
+    period_description, change_line = detect_scan_period(raw_output)
+    if "No errors recorded since " in raw_output:
+        if change_line:
+            print(f"Latest file change: {change_line}")
+            print()
+        print(f"No errors found since {period_description}.")
         return
     blocks = parse_blocks(raw_output)
-    print_summary(blocks, args.show_raw)
+    print_summary(blocks, args.show_raw, period_description, change_line)
 
 
 if __name__ == "__main__":

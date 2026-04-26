@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -12,6 +13,9 @@ from typing import Iterable
 START_MARKER = "Talon Version:"
 LOG_ENTRY_RE = re.compile(
     r"^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d+)?)\s+(?P<level>[A-Z]+)"
+)
+FILE_CHANGE_RE = re.compile(
+    r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d+)?\s+DEBUG\s+\[~\]\s+"
 )
 IN_SCRIPT_RE = re.compile(r"^\s*in script at (?P<path>.+?):(?P<line>\d+):")
 STACK_FRAME_RE = re.compile(
@@ -23,12 +27,18 @@ DEFAULT_LOG_FILE = TALON_HOME / "talon.log"
 USER_ROOT = TALON_HOME / "user"
 
 
+@dataclass
+class LogMarker:
+    offset: int
+    line: str
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Print Talon log error entries that occurred after the most recent "
             "startup marker. The startup marker is identified by the latest line "
-            "containing 'Talon Version:'."
+            "containing 'Talon Version:' unless --since-last-file-change is used."
         )
     )
     parser.add_argument(
@@ -37,21 +47,39 @@ def parse_args() -> argparse.Namespace:
         default=Path.home() / ".talon" / "talon.log",
         help="Path to the Talon log file (defaults to ~/.talon/talon.log).",
     )
+    parser.add_argument(
+        "--since-last-file-change",
+        action="store_true",
+        help=(
+            "Print only errors recorded after the latest Talon file-change "
+            "reload marker, logged as 'DEBUG [~] /path/to/file'."
+        ),
+    )
     return parser.parse_args()
 
 
-def find_last_start_offset(log_path: Path) -> int | None:
-    """Return the byte offset of the latest startup marker, if any."""
-    offset: int | None = None
+def find_last_matching_marker(log_path: Path, predicate: Callable[[str], bool]) -> LogMarker | None:
+    """Return the latest line and byte offset matching the predicate."""
+    marker: LogMarker | None = None
     with log_path.open("r", encoding="utf-8", errors="replace") as handle:
         while True:
             position = handle.tell()
             line = handle.readline()
             if not line:
                 break
-            if START_MARKER in line:
-                offset = position
-    return offset
+            if predicate(line):
+                marker = LogMarker(offset=position, line=line.rstrip("\n"))
+    return marker
+
+
+def find_last_start_marker(log_path: Path) -> LogMarker | None:
+    """Return the latest startup marker, if any."""
+    return find_last_matching_marker(log_path, lambda line: START_MARKER in line)
+
+
+def find_last_file_change_marker(log_path: Path) -> LogMarker | None:
+    """Return the latest Talon file-change marker, if any."""
+    return find_last_matching_marker(log_path, lambda line: bool(FILE_CHANGE_RE.match(line)))
 
 
 def collect_error_blocks(log_path: Path, start_offset: int) -> list[str]:
@@ -169,7 +197,11 @@ def format_summary_line(summary: ProblemSummary) -> str:
     return f"TALON-ERROR: {path}:{line}: {summary.message}"
 
 
-def print_errors(errors: Iterable[str]) -> None:
+def format_change_line(marker: LogMarker) -> str:
+    return f"TALON-CHANGE: {marker.line}"
+
+
+def print_errors(errors: Iterable[str], period_description: str) -> None:
     printed = False
     for block in errors:
         summary = summarize_error_block(block)
@@ -178,7 +210,7 @@ def print_errors(errors: Iterable[str]) -> None:
         print()
         printed = True
     if not printed:
-        print("No errors recorded since the last Talon startup marker.")
+        print(f"No errors recorded since {period_description}.")
 
 
 def main() -> None:
@@ -187,15 +219,29 @@ def main() -> None:
     if not log_path.exists():
         raise SystemExit(f"Log file not found: {log_path}")
 
-    start_offset = find_last_start_offset(log_path)
-    if start_offset is None:
-        raise SystemExit(
+    if args.since_last_file_change:
+        start_marker = find_last_file_change_marker(log_path)
+        period_description = "the last Talon file-change marker"
+        missing_marker_message = (
+            "Could not find a 'DEBUG [~]' file-change marker in the log. "
+            "Save or update a Talon file, then re-run this script."
+        )
+    else:
+        start_marker = find_last_start_marker(log_path)
+        period_description = "the last Talon startup marker"
+        missing_marker_message = (
             "Could not find a 'Talon Version:' startup marker in the log. "
             "Run Talon once, then re-run this script."
         )
 
-    errors = collect_error_blocks(log_path, start_offset)
-    print_errors(errors)
+    if start_marker is None:
+        raise SystemExit(missing_marker_message)
+
+    if args.since_last_file_change:
+        print(format_change_line(start_marker))
+
+    errors = collect_error_blocks(log_path, start_marker.offset)
+    print_errors(errors, period_description)
 
 
 if __name__ == "__main__":

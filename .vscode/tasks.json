@@ -35,11 +35,12 @@
       "problemMatcher": []
     },
     {
-      "label": "Talon: Show errors since startup",
+      "label": "Talon: Show errors since last file change",
       "type": "shell",
       "command": "python",
       "args": [
-        "~/.talon/user/community/my-config/scripts/talon_errors_since_startup.py"
+        "~/.talon/user/community/my-config/scripts/talon_errors_since_startup.py",
+        "--since-last-file-change"
       ],
       "windows": {
         "args": ""
@@ -67,10 +68,10 @@
       }
     },
     {
-      "label": "Talon: Restart then show startup errors",
+      "label": "Talon: Restart then show errors since last file change",
       "dependsOn": [
         "Talon tmux restart",
-        "Talon: Show errors since startup"
+        "Talon: Show errors since last file change"
       ],
       "dependsOrder": "sequence",
       "group": "build"

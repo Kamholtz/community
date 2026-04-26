@@ -1,31 +1,37 @@
 ---
 name: talon-startup-error-troubleshooter
-description: Run Talon startup error extraction and troubleshoot failures from the most recent startup using stack traces and exception messages. Use when Talon reports startup failures, when the user asks for recent Talon errors, or when debugging problems that started after the latest Talon launch.
+description: Run Talon error extraction and troubleshoot failures from the most recent startup or latest file-change reload using stack traces and exception messages. Use when Talon reports startup or reload failures, when the user asks for recent Talon errors, or when debugging problems that started after the latest Talon launch or file save.
 ---
 
-# Talon Startup Error Troubleshooter
+# Talon Error Troubleshooter
 
 ## Quick Run
 
-Run the helper from the repository root:
+Run the helper from the repository root to inspect errors since the latest Talon file-change reload:
 
 ```bash
-python3 skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py
+python3 .agents/skills/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py --since-last-file-change
 ```
 
 Use `--show-raw` when you need the full error blocks:
 
 ```bash
-python3 skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py --show-raw
+python3 .agents/skills/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py --since-last-file-change --show-raw
 ```
 
 Use a custom log path only when needed:
 
 ```bash
-python3 skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py --log-path /path/to/talon.log
+python3 .agents/skills/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py --since-last-file-change --log-path /path/to/talon.log
 ```
 
-The helper wraps `my-config/scripts/talon_errors_since_startup.py` and keeps that script as the source of truth for "recent" errors (`ERROR` blocks after the latest `Talon Version:` marker).
+Use startup mode when the problem comes from a full Talon launch rather than a reload:
+
+```bash
+python3 .agents/skills/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py
+```
+
+The helper wraps `my-config/scripts/talon_errors_since_startup.py` and keeps that script as the source of truth for "recent" errors. With `--since-last-file-change`, recent means `ERROR` blocks after the latest `DEBUG [~] /path/to/file` marker, and the helper prints that marker so the triggering file is visible. Without the flag, recent means after the latest `Talon Version:` marker.
 
 ## Troubleshooting Workflow
 
@@ -38,7 +44,7 @@ The helper wraps `my-config/scripts/talon_errors_since_startup.py` and keeps tha
 4. Open the implicated file and surrounding lines, then inspect related symbols with `rg`.
 5. Form a concrete hypothesis from the exception text and traceback path, then apply the smallest safe fix.
 6. Re-run the script to verify the error is gone and check whether a new downstream error appears.
-7. Repeat until no startup errors remain or only external/dependency issues remain.
+7. Repeat until no reload/startup errors remain or only external/dependency issues remain.
 
 ## Error-Type Playbook
 
@@ -57,6 +63,6 @@ When reporting progress:
 - quote the exact exception line and the decisive traceback frame
 - name the file and line being changed
 - state the hypothesis before editing
-- confirm verification results after re-running the startup error script
+- confirm verification results after re-running the error script
 
-If no recent startup errors are found, state that clearly and stop troubleshooting unless the user asks for deeper historical log analysis.
+If no recent reload/startup errors are found, state that clearly and stop troubleshooting unless the user asks for deeper historical log analysis.

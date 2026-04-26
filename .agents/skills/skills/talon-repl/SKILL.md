@@ -51,6 +51,11 @@ Execute multiple statements by piping multi-line input:
 echo -e "from talon import actions\nprint(actions.app.name())" | ~/.talon/bin/repl
 ```
 
+For compound statements such as loops, `try`/`except`, or nested parsing logic, wrap the payload in `exec("""...""")` when piping it. This avoids REPL indentation and block-submission issues:
+```bash
+printf 'exec("""from talon import actions\nfor name in [\"one\", \"two\"]:\n    print(name)\n""")\n' | ~/.talon/bin/repl
+```
+
 Or using heredoc syntax:
 ```bash
 ~/.talon/bin/repl << EOF
@@ -104,6 +109,32 @@ hasattr(actions.user, "my_custom_action")
 # Check registered commands
 from talon import registry
 list(registry.commands)
+```
+
+### Debugging Action Contracts
+Use the REPL to validate the live contract between Talon modules when a stack trace shows one module calling another module's action. This is especially useful for callbacks, draw handlers, lists, captures, and other places where static code passes strings or structured values into registered actions.
+
+1. Read the stack trace from the outer callback to the failing action.
+2. Inspect the caller's input values and the callee's accepted values in code.
+3. Reproduce the failing action call in the REPL with the smallest dummy input that exercises the same path.
+4. After fixing one value, validate the entire local data structure that feeds the action, because repeated callbacks often reveal only the first invalid entry.
+5. Trigger the user-facing action through the REPL and check the log tail for fresh errors. Startup-error scripts may continue to show old entries until Talon restarts.
+
+Example: validate whether window snap labels used by a UI are accepted by the live snap action:
+```bash
+printf 'exec("""from talon import actions\nfrom talon.types import Rect\nfor name in [\"top center\", \"top center third\", \"middle\", \"center\"]:\n    try:\n        r = actions.user.snap_apply_position_to_rect(Rect(0, 0, 300, 200), name)\n        print(name, \"=>\", (r.x, r.y, r.width, r.height))\n    except Exception as e:\n        print(name, \"=>\", type(e).__name__, e)\n""")\n' | ~/.talon/bin/repl
+```
+
+Example: parse a Python file and validate every label from a list against a live Talon action:
+```bash
+printf 'exec("""import ast\nfrom pathlib import Path\nfrom talon import actions\nfrom talon.types import Rect\n\nmodule = ast.parse(Path(\"/home/carl/.talon/user/community/plugin/quick_pick/quick_pick.py\").read_text())\nsnap_positions = []\nfor node in module.body:\n    if isinstance(node, ast.Assign):\n        for target in node.targets:\n            if isinstance(target, ast.Name) and target.id == \"snap_positions\":\n                snap_positions = ast.literal_eval(node.value)\n\nfailures = []\nfor group in snap_positions:\n    for name in group:\n        try:\n            actions.user.snap_apply_position_to_rect(Rect(0, 0, 300, 200), name)\n        except Exception as e:\n            failures.append((name, type(e).__name__, str(e)))\nprint(\"failures\", failures)\nprint(\"checked\", sum(len(group) for group in snap_positions), \"labels\")\n""")\n' | ~/.talon/bin/repl
+```
+
+Example: trigger a UI action after patching, then inspect the log for new callback errors:
+```bash
+printf 'exec("""from talon import actions\nactions.user.quick_pick_show()\nactions.sleep(\"200ms\")\nactions.user.quick_pick_show()\nprint(\"quick pick show/hide invoked\")\n""")\n' | ~/.talon/bin/repl
+
+tail -n 120 ~/.talon/talon.log
 ```
 
 ## When to Use This Skill
