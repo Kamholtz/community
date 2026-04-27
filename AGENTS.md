@@ -54,6 +54,17 @@ Use the **talon-dev-workflow** skill to manage development sessions:
 4. Verify changes with live testing
 5. Commit changes with clear commit messages
 
+## Skill Selection
+
+- `talon-dev-workflow`: start, stop, or coordinate the tmuxinator-based Talon development environment.
+- `talon-event-monitoring`: debug missing commands by watching events, contexts, modes, hooks, and app focus.
+- `talon-debug-sim`: test whether a spoken phrase matches a Talon command without executing it.
+- `talon-debug-mimic`: replay commands through Talon when execution behavior, macro playback, or recognition-vs-action boundaries matter.
+- `talon-repl`: inspect live Talon state, call actions, validate contracts, and reproduce failures programmatically.
+- `talon-startup-error-troubleshooter`: triage recent startup/reload exceptions after edits or Talon launch failures.
+- `talon-list-management`: maintain vocabulary, homophones, `.talon-list` files, CSV lists, and list overrides.
+- `talon-hotkeys`: add keyboard-triggered Talon actions or global/app-specific shortcut bindings.
+
 ## Updating and Maintaining the Config
 
 ### Common Update Tasks
@@ -103,10 +114,18 @@ Use the **talon-event-monitoring** skill to:
 
 ### Validation & Testing
 
-- Run test suite: `python -m pytest test/`
-- Use Talon REPL to execute and test actions interactively
-- Leverage **talon-repl** skill for programmatic testing
-- Check recent reload/startup errors with the **talon-startup-error-troubleshooter** skill
+- Run repository gates before handoff or commit: `python3 .agents/scripts/check_talon_config.py`
+- Run syntax/metadata gates only for quick iteration: `python3 .agents/scripts/check_talon_config.py --skip-tests`
+- Run full historical text lint only when intentionally auditing existing files: `python3 .agents/scripts/check_talon_config.py --scope all --skip-tests`
+- Check Talon reload/startup errors after changing `.talon`, `.talon-list`, or Talon Python files: `python3 .agents/scripts/check_talon_config.py --talon-errors`
+- Use **talon-repl** for targeted runtime checks and **talon-debug-sim** or **talon-debug-mimic** for phrase-level debugging.
+- If a gate fails, fix the first actionable error, rerun the same gate, then broaden to the full gate suite.
+
+### Enforcement Hooks
+
+- Git pre-commit hooks live in `.githooks/` and run `python3 .agents/scripts/check_talon_config.py`.
+- Enable hooks in this clone with `git config core.hooksPath .githooks`.
+- Do not bypass hooks unless the user explicitly approves; if bypassing is necessary, document the failing gate and follow-up fix.
 
 ### Tracking Changes
 
@@ -162,7 +181,7 @@ Use the **talon-event-monitoring** skill to:
 Use the **talon-startup-error-troubleshooter** skill whenever you need to find the latest Talon errors. Prefer the latest file-change mode after editing Talon files because it shows the `DEBUG [~]` line that triggered the reload:
 
 ```bash
-python3 .agents/skills/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py --since-last-file-change
+python3 .agents/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py --since-last-file-change
 ```
 
 The skill wraps [my-config/scripts/talon_errors_since_startup.py](my-config/scripts/talon_errors_since_startup.py). You can run the script directly when you need raw log blocks or VS Code problem matcher output:
@@ -174,7 +193,7 @@ python3 my-config/scripts/talon_errors_since_startup.py --since-last-file-change
 Use the startup mode only when investigating full Talon launch failures:
 
 ```bash
-python3 .agents/skills/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py
+python3 .agents/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py
 ```
 
 Use this workflow to:
@@ -194,9 +213,14 @@ Use this workflow to:
 - **Talon Official**: https://talon.wiki/
 - **Community Config**: Check upstream for new features
 - **Skill Resources**:
-  - `talon-basic-customization`: Config fundamentals
-  - `talon-talon-file-syntax`: .talon file syntax reference
-  - `talon-dev-workflow`: Complete development session management
+  - `talon-dev-workflow`: session management
+  - `talon-event-monitoring`: live event/context debugging
+  - `talon-debug-sim`: non-executing phrase match checks
+  - `talon-debug-mimic`: deterministic command replay
+  - `talon-repl`: live API/state inspection
+  - `talon-startup-error-troubleshooter`: recent reload/startup error triage
+  - `talon-list-management`: vocabulary and list overrides
+  - `talon-hotkeys`: keyboard-triggered actions
 
 ## Integration with Other Workspaces
 

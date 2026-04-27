@@ -5,6 +5,10 @@ description: Monitor and troubleshoot Talon events in real-time, debug command e
 
 # Talon Event Monitoring & Debugging
 
+## When to Use
+
+Use when commands are not firing and you need live event, context, mode, or hook visibility.
+
 ## Overview
 Talon routes events through hooks and handlers. This skill covers:
 - Monitoring live Talon events

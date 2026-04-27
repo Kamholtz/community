@@ -5,6 +5,10 @@ description: Manage and customize Talon lists, vocabulary, CSV files, and homoph
 
 # Talon List Management
 
+## When to Use
+
+Use when changing vocabulary, homophones, .talon-list files, CSV lists, or list overrides.
+
 ## Overview
 Talon uses list files (`.talon-list`) and CSV files for customization. This skill covers:
 - Adding custom words to vocabulary

@@ -5,6 +5,10 @@ description: Execute Python code in Talon's REPL to interact with the Talon API,
 
 # Talon REPL Skill
 
+## When to Use
+
+Use when testing actions, inspecting runtime state, or reproducing failures directly in Talon Python.
+
 ## Overview
 The Talon REPL provides an interactive Python shell with full access to Talon's API. It can be used to:
 - Execute Talon actions and test voice commands programmatically

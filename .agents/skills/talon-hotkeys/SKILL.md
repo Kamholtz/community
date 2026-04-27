@@ -5,6 +5,10 @@ description: Create global hotkeys in Talon that bind keyboard keys to actions. 
 
 # Talon Hotkeys
 
+## When to Use
+
+Use when adding keyboard-triggered Talon actions or global/app-specific shortcut bindings.
+
 ## Overview
 Talon hotkeys allow you to bind keyboard keys and key combinations to Talon actions. They work globally across all applications and provide quick access to commands without using voice.
 

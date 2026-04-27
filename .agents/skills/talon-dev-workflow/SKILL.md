@@ -5,6 +5,10 @@ description: Manage a comprehensive Talon development environment with tmuxinato
 
 # Talon Development Workflow
 
+## When to Use
+
+Use when starting, restarting, or coordinating a live Talon development session with tmuxinator.
+
 ## Overview
 A tmuxinator-based development environment for Talon that provides:
 - Talon runtime with colorized output
