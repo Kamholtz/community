@@ -6,7 +6,26 @@
 
 See header
 
-## (2) Agent Skills
+## (2) Emacs in WSL (RAIL window)
+
+### (2.1) Context match for WSL RemoteApp windows
+
+`my-config/apps/emacs/emacs_wsl.py` extends `mod.apps.emacs` with a rule that
+matches `win.class: RAIL_WINDOW` + `win.title: /Emacs/`. This fires when Emacs
+runs inside WSL but is displayed as a Windows RemoteApp (RAIL) window via
+`msrdc.exe`; the standard `app.exe: /^emacs\.exe$/` rule never matches in that
+configuration.
+
+**Caveat:** `actions.key()` keystrokes land in the RAIL window and are
+forwarded by the RAIL protocol into the WSL session, so most Emacs keybindings
+work as normal. Two exceptions:
+
+- Keys Windows intercepts before RAIL (e.g. `Win+key`, `Alt+F4`) never reach
+  Emacs.
+- `actions.clip` uses the Windows clipboard; sharing with the WSL session
+  depends on the WSL/RDP clipboard-integration setting.
+
+## (3) Agent Skills
 
 ### (2.1) Flatten Community Skill Layout
 
