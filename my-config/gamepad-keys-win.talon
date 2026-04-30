@@ -5,39 +5,39 @@ os: windows
 
 # F13 — L
 key(f13):
-    print("key(f13):")
+    user.gamepad_debug("key(f13):")
 
 # F14 — L2
 key(f14):
-    print("key(f14):")
+    user.gamepad_debug("key(f14):")
 
 # F15 — R2
 key(f15):
-    print("key(f15):")
+    user.gamepad_debug("key(f15):")
 
 # F16 — R
 key(f16):
-    print("key(f16):")
+    user.gamepad_debug("key(f16):")
 
 # F17 — - (minus)
 key(f17):
-    print("key(f17):")
+    user.gamepad_debug("key(f17):")
 
 # F18 — + (plus)
 key(f18):
-    print("key(f18):")
+    user.gamepad_debug("key(f18):")
 
 # F19 — * (star)
 key(f19):
-    print("key(f19):")
+    user.gamepad_debug("key(f19):")
 
 # F20 — M-shaped symbol (go flag)
 key(f20):
-    print("key(f20):")
+    user.gamepad_debug("key(f20):")
 
 # F21 —
 key(f21):
-    print("key(f21):")
+    user.gamepad_debug("key(f21):")
 
 # the mouse key bindings do not require the work around
 
