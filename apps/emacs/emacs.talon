@@ -175,7 +175,7 @@ other file open: user.emacs("find-file-other-window")
 
 # File hunt commands (VSCode-style quick file picker)
 file hunt [<user.text>]:
-    user.emacs("project-find-file")
+    user.emacs("+default/find-file-under-here")
     sleep(50ms)
     insert(text or "")
 
