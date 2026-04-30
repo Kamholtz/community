@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
+import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -22,7 +24,10 @@ STACK_FRAME_RE = re.compile(
     r"(?P<path>(?:[A-Za-z]:)?[^\s|:]+(?:[\\/][^\s|:]+)*):(?P<line>\d+)\|"
 )
 EXCEPTION_MESSAGE_RE = re.compile(r"^(?P<type>[A-Za-z][A-Za-z0-9_.]+):\s*(?P<message>.*)$")
-TALON_HOME = Path.home() / ".talon"
+if sys.platform == "win32":
+    TALON_HOME = Path(os.environ["APPDATA"]) / "talon"
+else:
+    TALON_HOME = Path.home() / ".talon"
 DEFAULT_LOG_FILE = TALON_HOME / "talon.log"
 USER_ROOT = TALON_HOME / "user"
 
@@ -44,7 +49,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--log-path",
         type=Path,
-        default=Path.home() / ".talon" / "talon.log",
+        default=DEFAULT_LOG_FILE,
         help="Path to the Talon log file (defaults to ~/.talon/talon.log).",
     )
     parser.add_argument(
