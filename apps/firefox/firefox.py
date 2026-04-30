@@ -85,10 +85,8 @@ def win_event_handler(window):
 
     print("win_event_handler: window.title=" + window.title)
     if window and "ChatGPT" in window.title:
-        print("adding tag firefox_chatgpt")
         ctx.tags = ["firefox_chatgpt"]
     else:
-        print("removing tag firefox_chatgpt")
         ctx.tags = []
 
     # on windows, we get events from the clock
