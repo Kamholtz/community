@@ -6,15 +6,83 @@ from talon.types import Rect, Point2d
 from talon.grammar import Phrase
 from dataclasses import dataclass
 from typing import Callable, Optional
-import math
+import math, os, platform, struct
 
-# Font must be installed on the OS. "DejaVu Sans" is not present on Windows and
-# causes all icon rendering to fail silently (Skia falls back to a font without
-# symbol coverage). "Segoe UI Symbol" ships with Windows and covers ASCII, arrows,
-# geometric shapes, and the U+23xx media transport symbols.
-# NOTE: high-plane emoji (U+1F5xx, U+1F86x) are missing from Segoe UI Symbol —
-# those were replaced with text labels in commit de0818b9 for exactly this reason.
+# NOTE: This file was originally copied from C:\Users\carlk\repos\andreas-talon\plugins\quick_pick\quick_pick.py
+# it has been adopted so that it no longer produces errors on Linux and windows and remains a work in progress
+
+
+# Font must be installed on the OS — Skia silently falls back to a font without
+# symbol coverage if the name is not found. "Segoe UI Symbol" ships with Windows
+# and covers ASCII, arrows, geometric shapes, and U+23xx media transport symbols,
+# but lacks high-plane emoji (U+1F5xx, U+1F86x). A Nerd Font such as "Maple Mono
+# NF" covers those but is not always present. _font_covers() detects availability
+# at load time so each option list uses the best glyph the installed font provides.
 FONT_FAMILY = "Segoe UI Symbol"
+
+
+def _find_font_path(font_name: str) -> str | None:
+    """Return the file path for font_name via the Windows font registry, or None."""
+    if platform.system() != "Windows":
+        return None
+    import winreg
+    try:
+        key = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key) as hkey:
+            i = 0
+            while True:
+                try:
+                    name, value, _ = winreg.EnumValue(hkey, i)
+                    if font_name.lower() in name.lower():
+                        font_dir = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
+                        return os.path.join(font_dir, value)
+                    i += 1
+                except OSError:
+                    break
+    except Exception:
+        pass
+    return None
+
+
+def _font_covers(font_path: str, codepoint: int) -> bool:
+    """Return True if the TTF/OTF font file has a glyph for codepoint.
+
+    Checks cmap format 4 (BMP, U+0000–U+FFFF) and format 12 (full Unicode).
+    """
+    try:
+        with open(font_path, "rb") as f:
+            data = f.read()
+        num_tables = struct.unpack_from(">H", data, 4)[0]
+        for i in range(num_tables):
+            tag = data[12 + i * 16 : 12 + i * 16 + 4].decode("ascii", errors="ignore")
+            if tag != "cmap":
+                continue
+            cmap_off = struct.unpack_from(">I", data, 12 + i * 16 + 8)[0]
+            n_sub = struct.unpack_from(">H", data, cmap_off + 2)[0]
+            for j in range(n_sub):
+                sub_off = cmap_off + struct.unpack_from(">I", data, cmap_off + 4 + j * 8 + 4)[0]
+                fmt = struct.unpack_from(">H", data, sub_off)[0]
+                if fmt == 4 and codepoint <= 0xFFFF:
+                    seg_count = struct.unpack_from(">H", data, sub_off + 6)[0] // 2
+                    ends   = [struct.unpack_from(">H", data, sub_off + 14 + k * 2)[0] for k in range(seg_count)]
+                    starts = [struct.unpack_from(">H", data, sub_off + 16 + seg_count * 2 + k * 2)[0] for k in range(seg_count)]
+                    if any(s <= codepoint <= e for s, e in zip(starts, ends)):
+                        return True
+                elif fmt == 12:
+                    n_groups = struct.unpack_from(">I", data, sub_off + 12)[0]
+                    for k in range(n_groups):
+                        start = struct.unpack_from(">I", data, sub_off + 16 + k * 12)[0]
+                        end   = struct.unpack_from(">I", data, sub_off + 16 + k * 12 + 4)[0]
+                        if start <= codepoint <= end:
+                            return True
+    except Exception:
+        pass
+    return False
+
+
+_font_path  = _find_font_path(FONT_FAMILY)
+_has_emoji  = _font_path is not None and _font_covers(_font_path, 0x1F591)  # 🖑 high-plane
+_has_media  = _font_path is not None and _font_covers(_font_path, 0x23EE)   # ⏮ U+23xx
 BACKGROUND_COLOR = "fffafa"  # Snow
 HOVER_COLOR = "6495ed"  # CornflowerBlue
 BORDER_COLOR = "000000"  # Black
@@ -80,26 +148,21 @@ repeater_callback: Callable[[], None] = None
 buttons: list[Button] = []
 
 circle_options = [
-    CircleOption("DRAG", -90, actions.mouse_drag, True),
-    CircleOption("CTRL", -140, lambda: actions.user.mouse_click("control"), True),
-    CircleOption("RIGHT", -40, lambda: actions.user.mouse_click("right"), True),
-    CircleOption("←", -170, actions.user.go_back),
-    CircleOption("→", -10, actions.user.go_forward),
-    CircleOption("X", 13, actions.app.tab_close),
-    CircleOption("TASK", 140, lambda: actions.key("ctrl-shift-escape")),
-    CircleOption("WIN", 40, lambda: actions.user.window_switcher_menu()),
-    CircleOption("SEARCH", 90, actions.user.browser_search_selected),
+    CircleOption("🖑" if _has_emoji else "DRAG",   -90,  actions.mouse_drag, True),
+    CircleOption("🖖" if _has_emoji else "CTRL",   -140, lambda: actions.user.mouse_click("control"), True),
+    CircleOption("🖙" if _has_emoji else "RIGHT",  -40,  lambda: actions.user.mouse_click("right"), True),
+    CircleOption("🡨" if _has_emoji else "←",      -170, actions.user.go_back),
+    CircleOption("🡪" if _has_emoji else "→",      -10,  actions.user.go_forward),
+    CircleOption("╳",                              13,   actions.app.tab_close),
+    CircleOption("🖳" if _has_emoji else "TASK",   140,  lambda: actions.key("ctrl-shift-escape")),
+    CircleOption("🗗" if _has_emoji else "WIN",    40,   lambda: actions.user.window_switcher_menu()),
+    CircleOption("🔍" if _has_emoji else "SEARCH", 90,   actions.user.browser_search_selected),
 ]
 
-# Icon rendering requires a font that covers the codepoint (see FONT_FAMILY above).
-# With DejaVu Sans (not installed on Windows) ALL icons below fail to render.
-# With Segoe UI Symbol both sets work:
-#   original U+23xx media transport symbols: ⏮ U+23EE, ⏯ U+23EF, ⏭ U+23ED
-#   geometric shape alternatives: ◀◀ U+25C0, ▶‖ U+25B6+U+2016, ▶▶ U+25B6
 media_options = [
-    Option("◀◀", lambda: actions.key("prev")),
-    Option("▶‖", lambda: actions.key("play_pause")),
-    Option("▶▶", lambda: actions.key("next")),
+    Option("⏮" if _has_media else "◀◀", lambda: actions.key("prev")),
+    Option("⏯" if _has_media else "▶‖",  lambda: actions.key("play_pause")),
+    Option("⏭" if _has_media else "▶▶", lambda: actions.key("next")),
 ]
 
 snap_positions = [
