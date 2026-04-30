@@ -99,7 +99,7 @@ snap_positions = [
     ["center"],
     ["right large"],
     ["top left large", "bottom left large"],
-    ["top center third", "bottom center third"],
+    ["top center small", "bottom center small"],
     ["top right large", "bottom right large"],
     ["left small", "center small", "right small"],
     ["top left", "top right", "bottom left", "bottom right"],
@@ -318,14 +318,14 @@ def hide():
     canvas = None
 
 
-@ctx.action_class("user")
-class UserActions:
-    def noise_cluck():
-        # If available the repeat noise repeats the last quick pick callback
-        if repeater_callback:
-            run_callback(repeater_callback)
-        else:
-            actions.next()
+# @ctx.action_class("user")
+# class UserActions:
+#     def noise_cluck():
+#         # If available the repeat noise repeats the last quick pick callback
+#         if repeater_callback:
+#             run_callback(repeater_callback)
+#         else:
+#             actions.next()
 
 
 @mod.action_class
