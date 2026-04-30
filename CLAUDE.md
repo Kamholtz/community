@@ -142,3 +142,5 @@ python3 my-config/scripts/talon_errors_since_startup.py --since-last-file-change
 - **talon_hud**: HUD display system (sibling workspace)
 - **Cursorless**: Programming/text editing enhancement
 - **Rango**: Browser navigation enhancement
+
+@AGENTS.md
