@@ -50,8 +50,6 @@ def _notify(msg: str) -> None:
         actions.user.notify(msg)
     except Exception:
         print("ERROR: actions.user.notify(msg) " + msg)
-        # In case notify isn't available in this Talon build
-        pass
 
 
 def _proc_is_running() -> bool:
@@ -122,8 +120,10 @@ def _handle_ws_event(event: dict) -> None:
 
 def _stdout_reader(proc: subprocess.Popen) -> None:
     """Background thread: feed stdout lines into _whisper_line_queue; None signals EOF."""
+    if proc.stdout is None:
+        _whisper_line_queue.put(None)
+        return
     try:
-        assert proc.stdout is not None
         for raw in proc.stdout:
             _whisper_line_queue.put(raw.rstrip("\n"))
     except Exception:
