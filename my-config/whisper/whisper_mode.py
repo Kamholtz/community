@@ -9,7 +9,7 @@ On entry: unmute the transcription daemon and disable `command` mode.
 On exit: mute the daemon and re-enable `command` mode.
 """
 
-from talon import actions, Context, Module, cron
+from talon import actions, Context, Module, cron, imgui, settings
 from pathlib import Path
 from typing import Optional
 
@@ -21,6 +21,12 @@ import threading
 
 mod = Module()
 mod.mode("whisper", desc="Transcription mode for Whisper daemon")
+mod.setting(
+    "whisper_insert_history_size",
+    type=int,
+    default=50,
+    desc="Number of inserted Whisper dictation entries to keep in session history.",
+)
 
 ctx = Context()
 
@@ -42,6 +48,7 @@ _whisper_theme_map = {
     "dark": "dark_whisper",
     "light": "light_whisper",
 }
+_whisper_insert_history: list[str] = []
 _WHISPER_VAD_SUBTITLE = "Listening..."
 
 
@@ -71,6 +78,54 @@ def _show_subtitle(text: str) -> None:
 
 def _queue_ui_action(action) -> None:
     _whisper_event_queue.put(action)
+
+
+def _remember_inserted_text(text: str) -> None:
+    global _whisper_insert_history
+    history_size = max(0, settings.get("user.whisper_insert_history_size"))
+    if history_size == 0:
+        _whisper_insert_history = []
+        return
+
+    _whisper_insert_history.append(text)
+    _whisper_insert_history = _whisper_insert_history[-history_size:]
+
+
+def _insert_and_remember(text: str) -> None:
+    actions.insert(text)
+    _remember_inserted_text(text)
+
+
+def _format_history_preview(text: str, max_length: int = 80) -> str:
+    preview = " ".join(text.split())
+    if len(preview) > max_length:
+        return preview[: max_length - 3] + "..."
+    return preview
+
+
+def _get_whisper_history_entry(index: int) -> Optional[str]:
+    if index < 1 or index > len(_whisper_insert_history):
+        return None
+
+    return list(reversed(_whisper_insert_history))[index - 1]
+
+
+@imgui.open(y=0)
+def _whisper_history_gui(gui: imgui.GUI):
+    gui.text("Whisper History")
+    gui.line()
+
+    if not _whisper_insert_history:
+        gui.text("No Whisper dictation history")
+    else:
+        for index, text in enumerate(reversed(_whisper_insert_history), 1):
+            preview = _format_history_preview(text)
+            if gui.button(f"whisper pick {index}: {preview}"):
+                actions.user.whisper_insert_history(index)
+
+    gui.spacer()
+    if gui.button("Whisper history close"):
+        actions.user.whisper_history_hide()
 
 
 def _drain_event_queue() -> None:
@@ -114,7 +169,7 @@ def _handle_ws_event(event: dict) -> None:
 
         _whisper_last_full = content
         text_to_insert = f"{content} "
-        _queue_ui_action(lambda text=text_to_insert: actions.insert(text))
+        _queue_ui_action(lambda text=text_to_insert: _insert_and_remember(text))
         _queue_ui_action(lambda text=content: _show_subtitle(text))
 
 
@@ -384,3 +439,34 @@ class Actions:
         else:
             actions.speech.disable()
             _enable_whisper()
+
+    def whisper_insert_latest() -> None:
+        """Insert the most recent Whisper dictation history entry."""
+        actions.user.whisper_insert_history(1)
+
+    def whisper_insert_history(index: int) -> None:
+        """Insert a Whisper dictation history entry by newest-first index."""
+        text = _get_whisper_history_entry(index)
+        if text is None:
+            _notify("Whisper: no history entry at that number")
+            return
+
+        actions.insert(text)
+        _whisper_history_gui.hide()
+
+    def whisper_history_toggle() -> None:
+        """Toggle the Whisper dictation history GUI."""
+        if _whisper_history_gui.showing:
+            _whisper_history_gui.hide()
+        else:
+            _whisper_history_gui.show()
+
+    def whisper_history_hide() -> None:
+        """Hide the Whisper dictation history GUI."""
+        _whisper_history_gui.hide()
+
+    def whisper_history_clear() -> None:
+        """Clear the Whisper dictation history."""
+        global _whisper_insert_history
+        _whisper_insert_history = []
+        _whisper_history_gui.hide()

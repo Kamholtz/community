@@ -1,0 +1,5 @@
+whisper insert latest: user.whisper_insert_latest()
+whisper history: user.whisper_history_toggle()
+whisper history close: user.whisper_history_hide()
+whisper history clear: user.whisper_history_clear()
+whisper pick <number_small>: user.whisper_insert_history(number_small)
