@@ -1,0 +1,68 @@
+import os
+
+from talon import Context, Module, actions, app, ui
+
+mod = Module()
+ctx = Context()
+
+ctx.matches = """
+os: windows
+"""
+
+FLUENT_SEARCH_EXE = None
+
+
+def wait_for_fluent_search_window():
+    for attempt in range(20):
+        if ui.active_app().name == "FluentSearch":
+            return True
+        actions.sleep("50ms")
+
+    app.notify("Gave up while waiting for Fluent Search")
+    return False
+
+
+@mod.action_class
+class Actions:
+    def fluent_search(text: str):
+        """Searches using Fluent Search"""
+
+    def fluent_search_in_app(text: str, submit: bool):
+        """Searches using Fluent Search's In-app Search"""
+
+
+@ctx.action_class("user")
+class UserActions:
+    def fluent_search(text: str):
+        global FLUENT_SEARCH_EXE
+
+        apps = ui.apps(name="Fluent Search")
+        if len(apps) == 0:
+            if FLUENT_SEARCH_EXE is not None:
+                app.notify("Fluent Search is not running; relaunching...")
+                os.startfile(FLUENT_SEARCH_EXE)
+            else:
+                app.notify("Fluent Search is not running; please (re)launch it")
+                return
+        else:
+            FLUENT_SEARCH_EXE = apps[0].exe
+        # XXX can't use app.focus() and unaware of any other way to
+        # automate the way we do with LaunchBar
+        # If you have a different search keyboard shortcut configured,
+        # replace ctrl-alt-space with it below.
+        actions.key("ctrl-alt")
+        if not wait_for_fluent_search_window():
+            return
+        actions.key("backspace")
+        if "\t" in text:
+            plugin, text = text.split("\t", 1)
+            actions.insert(plugin + "\t")
+        actions.user.paste(text)
+
+    def fluent_search_in_app(text: str, submit: bool):
+        actions.key("alt-shift-/")
+        if not wait_for_fluent_search_window():
+            return
+        actions.user.paste(text)
+        if submit:
+            actions.key("enter")
