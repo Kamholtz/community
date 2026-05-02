@@ -7,7 +7,6 @@ tag(): user.multiple_cursors
 tag(): user.splits
 tag(): user.tabs
 tag(): user.command_search
-tag(): user.cursorless_use_community_snippets
 
 settings():
     user.paste_to_insert_threshold = 0
