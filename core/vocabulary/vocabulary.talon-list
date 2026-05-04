@@ -2,7 +2,6 @@ list: user.vocabulary
 -
 
 N map: nmap
-under documented: under-documented
 nmap
 admin
 Cisco
@@ -17,10 +16,8 @@ nswag
 Brisbane
 OpenAPI
 C U D A: CUDA
-witch: which
 N V I D I A: NVIDIA
 Roboflow
-witch: which
 eventref
 proj
 lua
@@ -35,7 +32,6 @@ mmengine
 nix
 treesitter
 jq
-brows: browse
 bitwarden
 ChatGPT
 TryHackMe
@@ -43,20 +39,14 @@ ifconfig
 difftastic
 AliExpress
 U D P: UDP
-git marge: git merge
-get marge: git merge
-marge: merge
 kendo
 rango
-to do: TODO
 lazyvim
 markdown
-data sauce: data source
 authorisation
 T C P: TCP
 yeah
 tmux
-bullion: boolean
 H T M L: HTML
 homography
 no-undef
@@ -66,8 +56,6 @@ Y A R A: YARA
 Radare2
 Jsunpack
 Retdec
-analyzing: analysing
-organization: organisation
 Nikto
 Netcat
 customise
@@ -91,42 +79,16 @@ VSCode
 worktree
 eslint
 diff
-pray: pre
-turtle: total
-recognize: recognise
-color: colour
-organize: organise
-analyze: analyse
-center: centre
-meter: metre
-theater: theatre
-favor: favour
-honor: honour
-neighbor: neighbour
-traveled: travelled
-canceled: cancelled
-labeled: labelled
-defense: defence
-offense: offence
-license: licence
-practice: practise
-plow: plough
-catalog: catalogue
-dialog: dialogue
-gray: grey
 V N C: VNC
 W L A N: WLAN
 WLANs
-youse: user
 Entra
 tmuxinator
-heads up display: hud
 fzf
 nvm
 zoxide
 direnv
 zsh
-ca sharp: C sharp
 Hello Fresh
 Bunnings
 I-MED Radiology
@@ -140,9 +102,7 @@ Calva
 clojure
 restic
 rclone
-death container: devcontainer
 git worktree
-mud: mode
 tensorboard
 pip install
 R A M: RAM
@@ -151,12 +111,9 @@ cell heading
 O N N X: ONNX
 work dir
 elixir
-asa: as a
 tidewave
 deps
 Docling
-toll on: talon
-repel: REPL
 eval
 yolox
 VirtualBox
@@ -165,9 +122,6 @@ Security Information and Event Management
 S I E M: SIEM
 QRadar
 PopOS
-gau: GPU
-ags: args
-ad: add
 dataset
 phishing
 phishing attack
@@ -192,15 +146,11 @@ pytorch
 TensorRT
 cuda
 workspace
-he max: emacs
-he macs: emacs
 multiboard
 Lumus
-Loomis: Lumus
 pilates
 lifecycle
 lifecycle policy
-Eddie: Eddy
 zotero
 N F S: NFS
 E F S: EFS
@@ -208,12 +158,10 @@ SD card
 ACP protocol
 codespaces
 talon-gaze-ocr
-toby eye tracker 5: Tobii eye tracker 5
 CloudFormation
 RosscosCoffeeKeyPair
 RosscoCoffee
 Rosscos Coffee Shop
-samel: yaml
 network ACL
 edge associations
 Route propagation
@@ -223,8 +171,6 @@ EC2
 hardcoded
 APA Style
 WirePlumber
-a ws: AWS
-vice code:VSCode
 availability zone
 Application Load Balancer
 ECS on EC2
@@ -245,7 +191,6 @@ git message
 undo tree
 live sync
 clojure babashka
-faith:phase
 org file
 talon commands
 
@@ -268,3 +213,4 @@ Context7 MCP
 Context7 MCP server
 nix develop
 fluent search
+pi agent
