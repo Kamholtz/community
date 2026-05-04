@@ -562,6 +562,21 @@ tab {user.letter} [{user.letter}]:
 generate range [from <number_small>]:
     user.run_rpc_command("andreas.generateRange", number_small or 1)
 
+search files:
+    user.run_rpc_command("andreas.searchFiles")
+
+search files <user.text>:
+    user.run_rpc_command("andreas.searchFiles", text)
+
+search file results open selected:
+    user.run_rpc_command("andreas.searchFilesOpenSelected")
+
+search file results delete selected:
+    user.run_rpc_command("andreas.searchFilesDeleteSelected")
+
+search file results toggle selected:
+    user.run_rpc_command("andreas.searchFilesToggleSelected")
+
 quick fix: user.vscode("editor.action.quickFix")
 
 # Bookmarks. Requires Bookmarks plugin
