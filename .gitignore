@@ -21,3 +21,4 @@ my-config/liveview-talon
 .calva
 .lsp
 /.agent-shell/
+stored_state/
