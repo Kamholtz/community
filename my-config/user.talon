@@ -12,11 +12,11 @@ settings():
     speech.timeout = 0.6
     # subtitles_show = true
     user.subtitles_color = "ffffaa"
-    user.model_endpoint = "acp"
+    user.model_endpoint = "llm"
     # user.model_default = "gpt-4o-mini"
     user.model_shell_default = "zsh"
     user.cursorless_settings_directory = "community/my-config/cursorless-settings"
-    user.model_acp_agent_command = "/home/carl/repos/acp-wrapper/run-acp-agent"
+    # user.model_acp_agent_command = "/home/carl/repos/acp-wrapper/run-acp-agent"
     # Enable evil-mode support in Emacs (uses C-r " for paste in insert mode)
     user.emacs_evil_mode = true
     # user.subtitles_size = 500
