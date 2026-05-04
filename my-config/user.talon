@@ -32,7 +32,7 @@ yep: edit.redo()
 
 scrape: key(escape)
 
-quick pick: user.quick_pick_show()
+quick pick$: user.quick_pick_show()
 
 # Command to open Talon user directory in VSCode
 open talon config: user.open_talon_config_vscode()
