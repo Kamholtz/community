@@ -1,4 +1,13 @@
+import json
+
 from talon import Context, Module, actions, app
+
+from ...plugin.quick_pick.quick_pick import (
+    QuickPickCircleOption,
+    QuickPickMenu,
+    QuickPickOption,
+    QuickPickView,
+)
 
 is_mac = app.platform == "mac"
 
@@ -78,6 +87,75 @@ mac_ctx.matches = r"""
 os: mac
 app: vscode
 """
+
+
+def vscode_command(command_id: str):
+    return lambda: actions.user.vscode(command_id)
+
+
+def get_vscode_recent_options() -> list[QuickPickOption]:
+    try:
+        entries = actions.user.history_get_recent_for_active_app(10)
+    except Exception:
+        entries = []
+
+    options = []
+    for entry in entries:
+        entry_id = entry["id"]
+        text = entry["text"]
+        options.append(
+            QuickPickOption(
+                text,
+                lambda entry_id=entry_id: actions.user.history_replay_entry(entry_id),
+            )
+        )
+
+    return options
+
+
+def get_vscode_quick_pick_view() -> QuickPickView:
+    return QuickPickView(
+        circle_options=[
+            QuickPickCircleOption(
+                "TASK", -90, vscode_command("workbench.action.tasks.runTask")
+            ),
+            QuickPickCircleOption(
+                "BUILD", -140, vscode_command("workbench.action.tasks.build")
+            ),
+            QuickPickCircleOption(
+                "TERM", -40, vscode_command("workbench.action.terminal.focus")
+            ),
+            QuickPickCircleOption(
+                "LAST",
+                -170,
+                vscode_command("workbench.action.terminal.runRecentCommand"),
+            ),
+            QuickPickCircleOption(
+                "TEST", -10, vscode_command("testing.reRunLastRun")
+            ),
+            QuickPickCircleOption(
+                "FIX", 40, vscode_command("editor.action.quickFix")
+            ),
+            QuickPickCircleOption(
+                "CMD", 90, vscode_command("workbench.action.showCommands")
+            ),
+            QuickPickCircleOption(
+                "BACK", 140, actions.user.quick_pick_global_show
+            ),
+        ],
+        left_options=get_vscode_recent_options(),
+        bottom_options=[
+            QuickPickOption("EXPLORE", vscode_command("workbench.view.explorer")),
+            QuickPickOption("SEARCH", vscode_command("workbench.view.search")),
+            QuickPickOption("SOURCE", vscode_command("workbench.view.scm")),
+            QuickPickOption("PROBLEMS", vscode_command("workbench.panel.markers.view.focus")),
+            QuickPickOption("OUTPUT", vscode_command("workbench.panel.output.focus")),
+        ],
+    )
+
+
+def get_vscode_quick_pick_menu() -> QuickPickMenu:
+    return QuickPickMenu("vscode", "VS Code", get_vscode_quick_pick_view)
 
 
 @ctx.action_class("app")
@@ -249,6 +327,9 @@ class MacUserActions:
 
 @ctx.action_class("user")
 class UserActions:
+    def quick_pick_app_menu_get():
+        return get_vscode_quick_pick_menu()
+
     # splits.py support begin
     def split_clear_all():
         actions.user.vscode("workbench.action.editorLayoutSingle")

@@ -20,6 +20,7 @@ key(f15:up): mouse_scroll(-3, 0, true)
 
 window reload: user.vscode("workbench.action.reloadWindow")
 window close: user.vscode("workbench.action.closeWindow")
+code menu: user.quick_pick_app_show()
 #multiple_cursor.py support end
 
 go view [<user.text>]:
@@ -74,9 +75,9 @@ show shortcuts: user.vscode("workbench.action.openGlobalKeybindings")
 show shortcuts json: user.vscode("workbench.action.openGlobalKeybindingsFile")
 show snippets: user.vscode("workbench.action.openSnippets")
 
-# =====================================
+# -------------------------------------
 # VSCode Snippets
-# =====================================
+# -------------------------------------
 snip (last | previous): user.vscode("jumpToPrevSnippetPlaceholder")
 snip next: user.vscode("jumpToNextSnippetPlaceholder")
 
@@ -167,9 +168,9 @@ go recent [<user.text>]:
     sleep(250ms)
 go edit: user.vscode("workbench.action.navigateToLastEditLocation")
 
-# =====================================
+# -------------------------------------
 # Bookmarks. Requires Bookmarks plugin
-# =====================================
+# -------------------------------------
 bar marks: user.vscode("workbench.view.extension.bookmarks")
 go marks:
     user.deprecate_command("2023-06-06", "go marks", "bar marks")
@@ -180,17 +181,17 @@ go last mark: user.vscode("bookmarks.jumpToPrevious")
 <user.teleport> next mark: user.vscode("bookmarks.jumpToNext")
 <user.teleport> last mark: user.vscode("bookmarks.jumpToPrevious")
 
-# =====================================
+# -------------------------------------
 # Tabs
-# =====================================
+# -------------------------------------
 close other tabs: user.vscode("workbench.action.closeOtherEditors")
 close all tabs: user.vscode("workbench.action.closeAllEditors")
 close tabs way right: user.vscode("workbench.action.closeEditorsToTheRight")
 close tabs way left: user.vscode("workbench.action.closeEditorsToTheLeft")
 
-# =====================================
+# -------------------------------------
 # Folding
-# =====================================
+# -------------------------------------
 # fold that: user.vscode("editor.fold")
 # unfold that: user.vscode("editor.unfold")
 fold those: user.vscode("editor.foldAllMarkerRegions")
@@ -296,9 +297,9 @@ step over: user.vscode("workbench.action.debug.stepOver")
 (debug | debugger) console: user.vscode("workbench.debug.action.toggleRepl")
 (debug | debugger) clean: user.vscode("workbench.debug.panel.action.clearReplAction")
 
-# =====================================
+# -------------------------------------
 # Terminal
-# =====================================
+# -------------------------------------
 
 terminal new: user.vscode("workbench.action.terminal.newInActiveWorkspace")
 terminal kill: user.vscode("workbench.action.terminal.kill")
@@ -400,9 +401,9 @@ toggle sticky (terminal | term):
 
 (term | terminal) <number_small>: user.vscode_terminal(number_small)
 
-# =====================================
+# -------------------------------------
 # Tasks
-# =====================================
+# -------------------------------------
 task run [<user.text>]:
     user.vscode("workbench.action.tasks.runTask")
     insert(user.text or "")
@@ -543,13 +544,13 @@ chat (sessions | session): user.vscode("workbench.action.chat.focusAgentSessions
 
 build run: user.vscode("workbench.action.tasks.build")
 
-# =====================================
+# -------------------------------------
 # Whisper
-# =====================================
+# -------------------------------------
 
-# =====================================
+# -------------------------------------
 # Andreas talon - VSCode extension
-# =====================================
+# -------------------------------------
 
 # Show the tabs pane for changing the currently selected tab
 bar tabs: user.run_rpc_command("andreas.tabs.focus")
@@ -611,9 +612,9 @@ new sesh [<user.text>]:
     key(enter)
     sleep(250ms)
 
-# =====================================
+# -------------------------------------
 # Docker
-# =====================================
+# -------------------------------------
 
 compose restart: user.vscode("vscode-containers.compose.restart")
 compose up: user.vscode("vscode-containers.compose.up")
@@ -622,18 +623,18 @@ compose down: user.vscode("vscode-containers.compose.down")
 container shell: user.vscode("vscode-containers.containers.attachShell")
 container (browse | browser): user.vscode("vscode-containers.containers.browse")
 
-# =====================================
+# -------------------------------------
 # Dev Container
-# =====================================
+# -------------------------------------
 
 devcontainer rebuild: user.vscode("remote-containers.rebuildContainer")
 devcontainer attach: user.vscode("remote-containers.attachToRunningContainer")
 devcontainer [open] config: user.vscode("remote-containers.openAttachDevContainerFile")
 devcontainer reopen: user.vscode("remote-containers.reopenInContainer")
 
-# =====================================
+# -------------------------------------
 # Codex
-# =====================================
+# -------------------------------------
 codex this: user.vscode("chatgpt.addToThread")
 codex file: user.vscode("chatgpt.addFileToThread")
 codex focus: user.vscode("chatgpt.sidebarView.focus")
@@ -659,9 +660,9 @@ chat pinned: user.vscode("workbench.action.chat.attachPinnedEditors")
 
 chat this: user.vscode()
 
-# =====================================
+# -------------------------------------
 # Calva
-# =====================================
+# -------------------------------------
 
 Calva jack in: user.vscode("calva.jackIn")
 Calva load file: user.vscode("calva.loadFile")

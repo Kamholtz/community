@@ -1,23 +1,23 @@
-from talon import Module, Context, ui, speech_system, actions
-from talon.screen import Screen
-from talon.canvas import Canvas, MouseEvent
-from talon.skia import RoundRect, Canvas as SkiaCanvas
-from talon.types import Rect, Point2d
-from talon.grammar import Phrase
 from dataclasses import dataclass
 from typing import Callable, Optional
-import math, os, platform, struct
+import math
+import os
+import platform
+import struct
 
-# NOTE: This file was originally copied from C:\Users\carlk\repos\andreas-talon\plugins\quick_pick\quick_pick.py
-# it has been adopted so that it no longer produces errors on Linux and windows and remains a work in progress
+from talon import Context, Module, actions, speech_system, ui
+from talon.canvas import Canvas, MouseEvent
+from talon.grammar import Phrase
+from talon.screen import Screen
+from talon.skia import Canvas as SkiaCanvas
+from talon.skia import RoundRect
+from talon.types import Point2d, Rect
 
+# NOTE: This file was originally copied from
+# C:\Users\carlk\repos\andreas-talon\plugins\quick_pick\quick_pick.py.
+# It now exposes reusable menu/view objects so app contexts can provide their
+# own quick-pick panels while retaining the original global menu.
 
-# Font must be installed on the OS — Skia silently falls back to a font without
-# symbol coverage if the name is not found. "Segoe UI Symbol" ships with Windows
-# and covers ASCII, arrows, geometric shapes, and U+23xx media transport symbols,
-# but lacks high-plane emoji (U+1F5xx, U+1F86x). A Nerd Font such as "Maple Mono
-# NF" covers those but is not always present. _font_covers() detects availability
-# at load time so each option list uses the best glyph the installed font provides.
 FONT_FAMILY = "Segoe UI Symbol"
 
 
@@ -26,6 +26,7 @@ def _find_font_path(font_name: str) -> str | None:
     if platform.system() != "Windows":
         return None
     import winreg
+
     try:
         key = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
         with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key) as hkey:
@@ -34,7 +35,9 @@ def _find_font_path(font_name: str) -> str | None:
                 try:
                     name, value, _ = winreg.EnumValue(hkey, i)
                     if font_name.lower() in name.lower():
-                        font_dir = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
+                        font_dir = os.path.join(
+                            os.environ.get("WINDIR", r"C:\Windows"), "Fonts"
+                        )
                         return os.path.join(font_dir, value)
                     i += 1
                 except OSError:
@@ -45,34 +48,47 @@ def _find_font_path(font_name: str) -> str | None:
 
 
 def _font_covers(font_path: str, codepoint: int) -> bool:
-    """Return True if the TTF/OTF font file has a glyph for codepoint.
-
-    Checks cmap format 4 (BMP, U+0000–U+FFFF) and format 12 (full Unicode).
-    """
+    """Return True if the TTF/OTF font file has a glyph for codepoint."""
     try:
         with open(font_path, "rb") as f:
             data = f.read()
         num_tables = struct.unpack_from(">H", data, 4)[0]
         for i in range(num_tables):
-            tag = data[12 + i * 16 : 12 + i * 16 + 4].decode("ascii", errors="ignore")
+            tag = data[12 + i * 16 : 12 + i * 16 + 4].decode(
+                "ascii", errors="ignore"
+            )
             if tag != "cmap":
                 continue
             cmap_off = struct.unpack_from(">I", data, 12 + i * 16 + 8)[0]
             n_sub = struct.unpack_from(">H", data, cmap_off + 2)[0]
             for j in range(n_sub):
-                sub_off = cmap_off + struct.unpack_from(">I", data, cmap_off + 4 + j * 8 + 4)[0]
+                sub_off = cmap_off + struct.unpack_from(
+                    ">I", data, cmap_off + 4 + j * 8 + 4
+                )[0]
                 fmt = struct.unpack_from(">H", data, sub_off)[0]
                 if fmt == 4 and codepoint <= 0xFFFF:
                     seg_count = struct.unpack_from(">H", data, sub_off + 6)[0] // 2
-                    ends   = [struct.unpack_from(">H", data, sub_off + 14 + k * 2)[0] for k in range(seg_count)]
-                    starts = [struct.unpack_from(">H", data, sub_off + 16 + seg_count * 2 + k * 2)[0] for k in range(seg_count)]
+                    ends = [
+                        struct.unpack_from(">H", data, sub_off + 14 + k * 2)[0]
+                        for k in range(seg_count)
+                    ]
+                    starts = [
+                        struct.unpack_from(
+                            ">H", data, sub_off + 16 + seg_count * 2 + k * 2
+                        )[0]
+                        for k in range(seg_count)
+                    ]
                     if any(s <= codepoint <= e for s, e in zip(starts, ends)):
                         return True
                 elif fmt == 12:
                     n_groups = struct.unpack_from(">I", data, sub_off + 12)[0]
                     for k in range(n_groups):
-                        start = struct.unpack_from(">I", data, sub_off + 16 + k * 12)[0]
-                        end   = struct.unpack_from(">I", data, sub_off + 16 + k * 12 + 4)[0]
+                        start = struct.unpack_from(">I", data, sub_off + 16 + k * 12)[
+                            0
+                        ]
+                        end = struct.unpack_from(
+                            ">I", data, sub_off + 16 + k * 12 + 4
+                        )[0]
                         if start <= codepoint <= end:
                             return True
     except Exception:
@@ -80,9 +96,9 @@ def _font_covers(font_path: str, codepoint: int) -> bool:
     return False
 
 
-_font_path  = _find_font_path(FONT_FAMILY)
-_has_emoji  = _font_path is not None and _font_covers(_font_path, 0x1F591)  # 🖑 high-plane
-_has_media  = _font_path is not None and _font_covers(_font_path, 0x23EE)   # ⏮ U+23xx
+_font_path = _find_font_path(FONT_FAMILY)
+_has_media = _font_path is not None and _font_covers(_font_path, 0x23EE)
+
 BACKGROUND_COLOR = "fffafa"  # Snow
 HOVER_COLOR = "6495ed"  # CornflowerBlue
 BORDER_COLOR = "000000"  # Black
@@ -98,7 +114,14 @@ SNAP_COLORS = [
 
 
 @dataclass
-class CircleOption:
+class QuickPickOption:
+    text: str
+    callback: Callable[[], None]
+    move_mouse: Optional[bool] = False
+
+
+@dataclass
+class QuickPickCircleOption:
     text: str
     degrees: int
     callback: Callable[[], None]
@@ -106,10 +129,18 @@ class CircleOption:
 
 
 @dataclass
-class Option:
-    text: str
-    callback: Callable[[], None]
-    move_mouse: Optional[bool] = False
+class QuickPickView:
+    circle_options: list[QuickPickCircleOption]
+    left_options: Optional[list[QuickPickOption]] = None
+    bottom_options: Optional[list[QuickPickOption]] = None
+    snap_positions: Optional[list[list[str]]] = None
+
+
+@dataclass
+class QuickPickMenu:
+    id: str
+    title: str
+    view_provider: Callable[[], QuickPickView]
 
 
 @dataclass
@@ -140,30 +171,31 @@ and mode: dictation
 """
 
 mod = Module()
-size: Size = None
-canvas: Canvas = None
-mouse_pos: Point2d = None
-hover_rect: Rect = None
-repeater_callback: Callable[[], None] = None
+size: Optional[Size] = None
+canvas: Optional[Canvas] = None
+mouse_pos: Optional[Point2d] = None
+hover_rect: Optional[Rect] = None
+repeater_callback: Optional[Callable[[], None]] = None
 buttons: list[Button] = []
+current_menu: Optional[QuickPickMenu] = None
 
 circle_options = [
-    CircleOption("🖑" if _has_emoji else "DRAG",   -90,  actions.mouse_drag, True),
-    CircleOption("🖖" if _has_emoji else "CTRL",   -140, lambda: actions.user.mouse_click("control"), True),
-    CircleOption("🖙" if _has_emoji else "RIGHT",  -40,  lambda: actions.user.mouse_click("right"), True),
-    CircleOption("🡨" if _has_emoji else "←",      -170, actions.user.go_back),
-    CircleOption("🡪" if _has_emoji else "→",      -10,  actions.user.go_forward),
-    CircleOption("╳",                              13,   actions.app.tab_close),
-    CircleOption("🖳" if _has_emoji else "TASK",   140,  lambda: actions.key("ctrl-shift-escape")),
-    CircleOption("🗗" if _has_emoji else "WIN",    40,   lambda: actions.user.window_switcher_menu()),
-    CircleOption("🔍" if _has_emoji else "SEARCH", 90,   actions.user.browser_search_selected),
+    QuickPickCircleOption("DRAG", -90, actions.mouse_drag, True),
+    QuickPickCircleOption("CTRL", -140, lambda: actions.user.mouse_click("control"), True),
+    QuickPickCircleOption("RIGHT", -40, lambda: actions.user.mouse_click("right"), True),
+    QuickPickCircleOption("BACK", -170, actions.user.go_back),
+    QuickPickCircleOption("FWD", -10, actions.user.go_forward),
+    QuickPickCircleOption("CLOSE", 13, actions.app.tab_close),
+    QuickPickCircleOption("TASK", 140, lambda: actions.key("ctrl-shift-escape")),
+    QuickPickCircleOption("WIN", 40, lambda: actions.user.window_switcher_menu()),
+    QuickPickCircleOption("SEARCH", 90, actions.user.browser_search_selected),
 ]
 
 media_options = [
-    Option("⏮" if _has_media else "◀◀", lambda: actions.key("prev")),
-    Option("⏯" if _has_media else "▶‖",  lambda: actions.key("play_pause")),
-    Option("⏭" if _has_media else "▶▶", lambda: actions.key("next")),
-    Option("EYE OFF", lambda: actions.tracking.control_toggle(False)),
+    QuickPickOption("PREV" if not _has_media else "PREV", lambda: actions.key("prev")),
+    QuickPickOption("PLAY", lambda: actions.key("play_pause")),
+    QuickPickOption("NEXT", lambda: actions.key("next")),
+    QuickPickOption("EYE OFF", lambda: actions.tracking.control_toggle(False)),
 ]
 
 snap_positions = [
@@ -192,10 +224,15 @@ snap_positions = [
 
 
 def get_midpoint(length: int, value: float):
+    if not size or length <= 0:
+        return 0
     return (length * value + (length - 1) * size.margin) / 2
 
 
 def add_button(c: SkiaCanvas, text: str, rect: Rect):
+    if not size:
+        return
+
     rrect = RoundRect.from_rect(rect, x=size.corner_radius, y=size.corner_radius)
 
     c.paint.style = c.paint.Style.FILL
@@ -221,7 +258,10 @@ def add_button(c: SkiaCanvas, text: str, rect: Rect):
     )
 
 
-def draw_horizontal(c: SkiaCanvas, options: list[Option], x: float, y: float):
+def draw_horizontal(c: SkiaCanvas, options: list[QuickPickOption], x: float, y: float):
+    if not size:
+        return
+
     x -= get_midpoint(len(options), size.width)
     y -= size.height / 2
     for option in options:
@@ -231,7 +271,10 @@ def draw_horizontal(c: SkiaCanvas, options: list[Option], x: float, y: float):
         add_button(c, option.text, rect)
 
 
-def draw_vertical(c: SkiaCanvas, options: list[Option], x: float, y: float):
+def draw_vertical(c: SkiaCanvas, options: list[QuickPickOption], x: float, y: float):
+    if not size:
+        return
+
     x -= size.width / 2
     y -= get_midpoint(len(options), size.height)
     for option in options:
@@ -241,7 +284,12 @@ def draw_vertical(c: SkiaCanvas, options: list[Option], x: float, y: float):
         add_button(c, option.text, rect)
 
 
-def draw_circle(c: SkiaCanvas, options: list[CircleOption], cx: float, cy: float):
+def draw_circle(
+    c: SkiaCanvas, options: list[QuickPickCircleOption], cx: float, cy: float
+):
+    if not size:
+        return
+
     for option in options:
         radians = math.radians(option.degrees)
         x = cx + size.radius * math.cos(radians)
@@ -251,9 +299,10 @@ def draw_circle(c: SkiaCanvas, options: list[CircleOption], cx: float, cy: float
         add_button(c, option.text, rect)
 
 
-def draw_snap_positions(
-    c: SkiaCanvas, positions: list[list[str]], org_x: float, y: float
-):
+def draw_snap_positions(c: SkiaCanvas, positions: list[list[str]], org_x: float, y: float):
+    if not size:
+        return
+
     height = size.snap_width * c.height / c.width
     x = org_x
     y -= get_midpoint(math.ceil(len(positions) / 3), height)
@@ -288,7 +337,7 @@ def draw_snap_positions(
         c.draw_rect(rect)
 
 
-def get_running_options() -> list[Option]:
+def get_running_options() -> list[QuickPickOption]:
     try:
         running = actions.user.get_running_applications()
     except Exception:
@@ -298,9 +347,36 @@ def get_running_options() -> list[Option]:
         return []
 
     return [
-        Option(key, lambda key=key: actions.user.window_focus_name(running[key]))
+        QuickPickOption(key, lambda key=key: actions.user.window_focus_name(running[key]))
         for key in sorted(running)
     ]
+
+
+def get_app_menu() -> Optional[QuickPickMenu]:
+    try:
+        menu = actions.user.quick_pick_app_menu_get()
+    except Exception:
+        return None
+    return menu if isinstance(menu, QuickPickMenu) else None
+
+
+def get_global_view() -> QuickPickView:
+    options = list(circle_options)
+    if get_app_menu():
+        options.append(
+            QuickPickCircleOption("APP", -225, actions.user.quick_pick_app_show)
+        )
+
+    return QuickPickView(
+        circle_options=options,
+        left_options=get_running_options(),
+        bottom_options=media_options,
+        snap_positions=snap_positions,
+    )
+
+
+def get_global_menu() -> QuickPickMenu:
+    return QuickPickMenu("global", "Global", get_global_view)
 
 
 def on_draw(c: SkiaCanvas):
@@ -308,34 +384,30 @@ def on_draw(c: SkiaCanvas):
     buttons = []
 
     c.paint.typeface = FONT_FAMILY
+    view = current_menu.view_provider() if current_menu else get_global_view()
 
-    draw_circle(
-        c,
-        circle_options,
-        c.rect.center.x,
-        c.rect.center.y,
-    )
+    draw_circle(c, view.circle_options, c.rect.center.x, c.rect.center.y)
 
-    draw_vertical(
-        c,
-        get_running_options(),
-        c.rect.center.x - size.offset - size.width / 2,
-        c.rect.center.y,
-    )
+    if view.left_options:
+        draw_vertical(
+            c,
+            view.left_options,
+            c.rect.center.x - size.offset - size.width / 2,
+            c.rect.center.y,
+        )
 
-    draw_horizontal(
-        c,
-        media_options,
-        c.rect.center.x,
-        c.rect.center.y + size.offset + size.height / 2,
-    )
+    if view.bottom_options:
+        draw_horizontal(
+            c,
+            view.bottom_options,
+            c.rect.center.x,
+            c.rect.center.y + size.offset + size.height / 2,
+        )
 
-    draw_snap_positions(
-        c,
-        snap_positions,
-        c.rect.center.x + size.offset,
-        c.rect.center.y,
-    )
+    if view.snap_positions:
+        draw_snap_positions(
+            c, view.snap_positions, c.rect.center.x + size.offset, c.rect.center.y
+        )
 
 
 def get_button_for_position(pos: Point2d):
@@ -354,27 +426,32 @@ def run_callback(callback: Callable[[], None]) -> bool:
 
 
 def on_mouse(e: MouseEvent):
-    global repeater_callback, hover_rect
+    global hover_rect, repeater_callback
     button = get_button_for_position(e.gpos)
 
     if e.event == "mousemove":
         hover_rect_new = button.rect if button else None
         if hover_rect != hover_rect_new:
             hover_rect = hover_rect_new
-            canvas.freeze()
+            if canvas:
+                canvas.freeze()
 
     elif e.event == "mouseup" and e.button == 0:
         hide()
         if button:
-            if button.move_mouse:
+            if button.move_mouse and mouse_pos:
                 actions.mouse_move(mouse_pos.x, mouse_pos.y)
             actions.sleep("150ms")
             if run_callback(button.callback):
                 repeater_callback = button.callback
 
 
-def show():
-    global canvas, mouse_pos, size
+def show(menu: QuickPickMenu):
+    global canvas, current_menu, mouse_pos, size
+    if canvas:
+        hide()
+
+    current_menu = menu
     mouse_pos = Point2d(actions.mouse_x(), actions.mouse_y())
     screen: Screen = ui.main_screen()
     size = Size(screen.scale)
@@ -386,36 +463,45 @@ def show():
 
 
 def hide():
-    global canvas
+    global canvas, current_menu, hover_rect
+    if not canvas:
+        return
+
     canvas.unregister("draw", on_draw)
     canvas.unregister("mouse", on_mouse)
     canvas.close()
     canvas = None
-
-
-# @ctx.action_class("user")
-# class UserActions:
-#     def noise_cluck():
-#         # If available the repeat noise repeats the last quick pick callback
-#         if repeater_callback:
-#             run_callback(repeater_callback)
-#         else:
-#             actions.next()
+    current_menu = None
+    hover_rect = None
 
 
 @mod.action_class
 class Actions:
     def quick_pick_show():
-        """Show quick pick"""
+        """Show quick pick."""
         if not canvas:
-            show()
+            show(get_global_menu())
         else:
             hide()
+
+    def quick_pick_global_show():
+        """Show the global quick pick menu."""
+        show(get_global_menu())
+
+    def quick_pick_app_menu_get():
+        """Return the active app quick pick menu, or None."""
+        return None
+
+    def quick_pick_app_show():
+        """Show the active app quick pick menu if one is available."""
+        menu = get_app_menu()
+        if menu:
+            show(menu)
 
 
 def on_post_phrase(phrase: Phrase):
     global repeater_callback
-    # On each spoken phrase the repeater noise returns to default implementation
+    # On each spoken phrase the repeater noise returns to default implementation.
     if repeater_callback and phrase.get("phrase"):
         repeater_callback = None
 
