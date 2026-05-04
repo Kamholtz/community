@@ -20,6 +20,13 @@
 		},
 		{
 			"path": "../../../repos/realtimestt-cli"
+		},
+		{
+			"path": "../../../../../repos/andreas-talon"
+		},
+		{
+			"name": "cursorless-emacs",
+			"path": "../cursorless-emacs"
 		}
 	],
 	"settings": {
