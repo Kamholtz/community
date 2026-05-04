@@ -97,6 +97,7 @@ def _font_covers(font_path: str, codepoint: int) -> bool:
 
 
 _font_path = _find_font_path(FONT_FAMILY)
+_has_emoji = _font_path is not None and _font_covers(_font_path, 0x1F591)
 _has_media = _font_path is not None and _font_covers(_font_path, 0x23EE)
 
 BACKGROUND_COLOR = "fffafa"  # Snow
@@ -180,21 +181,39 @@ buttons: list[Button] = []
 current_menu: Optional[QuickPickMenu] = None
 
 circle_options = [
-    QuickPickCircleOption("DRAG", -90, actions.mouse_drag, True),
-    QuickPickCircleOption("CTRL", -140, lambda: actions.user.mouse_click("control"), True),
-    QuickPickCircleOption("RIGHT", -40, lambda: actions.user.mouse_click("right"), True),
-    QuickPickCircleOption("BACK", -170, actions.user.go_back),
-    QuickPickCircleOption("FWD", -10, actions.user.go_forward),
-    QuickPickCircleOption("CLOSE", 13, actions.app.tab_close),
-    QuickPickCircleOption("TASK", 140, lambda: actions.key("ctrl-shift-escape")),
-    QuickPickCircleOption("WIN", 40, lambda: actions.user.window_switcher_menu()),
-    QuickPickCircleOption("SEARCH", 90, actions.user.browser_search_selected),
+    QuickPickCircleOption("🖑" if _has_emoji else "DRAG", -90, actions.mouse_drag, True),
+    QuickPickCircleOption(
+        "🖖" if _has_emoji else "CTRL",
+        -140,
+        lambda: actions.user.mouse_click("control"),
+        True,
+    ),
+    QuickPickCircleOption(
+        "🖙" if _has_emoji else "RIGHT",
+        -40,
+        lambda: actions.user.mouse_click("right"),
+        True,
+    ),
+    QuickPickCircleOption("🡨" if _has_emoji else "←", -170, actions.user.go_back),
+    QuickPickCircleOption("🡪" if _has_emoji else "→", -10, actions.user.go_forward),
+    QuickPickCircleOption("╳", 13, actions.app.tab_close),
+    QuickPickCircleOption(
+        "🖳" if _has_emoji else "TASK",
+        140,
+        lambda: actions.key("ctrl-shift-escape"),
+    ),
+    QuickPickCircleOption(
+        "🗗" if _has_emoji else "WIN", 40, lambda: actions.user.window_switcher_menu()
+    ),
+    QuickPickCircleOption(
+        "🔍" if _has_emoji else "SEARCH", 90, actions.user.browser_search_selected
+    ),
 ]
 
 media_options = [
-    QuickPickOption("PREV" if not _has_media else "PREV", lambda: actions.key("prev")),
-    QuickPickOption("PLAY", lambda: actions.key("play_pause")),
-    QuickPickOption("NEXT", lambda: actions.key("next")),
+    QuickPickOption("⏮" if _has_media else "PREV", lambda: actions.key("prev")),
+    QuickPickOption("⏯" if _has_media else "PLAY", lambda: actions.key("play_pause")),
+    QuickPickOption("⏭" if _has_media else "NEXT", lambda: actions.key("next")),
     QuickPickOption("EYE OFF", lambda: actions.tracking.control_toggle(False)),
 ]
 
@@ -364,7 +383,7 @@ def get_global_view() -> QuickPickView:
     options = list(circle_options)
     if get_app_menu():
         options.append(
-            QuickPickCircleOption("APP", -225, actions.user.quick_pick_app_show)
+            QuickPickCircleOption("APP", 165, actions.user.quick_pick_app_show)
         )
 
     return QuickPickView(
