@@ -163,6 +163,7 @@ media_options = [
     Option("⏮" if _has_media else "◀◀", lambda: actions.key("prev")),
     Option("⏯" if _has_media else "▶‖",  lambda: actions.key("play_pause")),
     Option("⏭" if _has_media else "▶▶", lambda: actions.key("next")),
+    Option("EYE OFF", lambda: actions.tracking.control_toggle(False)),
 ]
 
 snap_positions = [

@@ -41,9 +41,7 @@ key(f19:up):
 # F20 — M-shaped symbol (go flag)
 key(f20:up):
     user.gamepad_debug("key(f20:up):")
-    tracking.control_toggle()
-        # key(super-~)# me to steal add branding.^af.''
-    # user.quick_pick_show()
+    user.gamepad_toggle_control_mouse_or_quick_pick()
 
 # F21 —
 key(f21:up):
