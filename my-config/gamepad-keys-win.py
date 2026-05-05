@@ -13,10 +13,10 @@ class Actions:
             print(text)
 
     def gamepad_toggle_control_mouse_or_quick_pick():
-        """Enable eye tracking or show quick pick when eye tracking is already enabled."""
+        """Enable eye tracking or advance quick pick when eye tracking is already enabled."""
         from talon import actions
 
         if actions.tracking.control_enabled():
-            actions.user.quick_pick_show()
+            actions.user.quick_pick_show_or_app_show()
         else:
             actions.tracking.control_toggle(True)

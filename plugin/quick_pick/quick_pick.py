@@ -663,6 +663,18 @@ class Actions:
             else:
                 show(menu)
 
+    def quick_pick_show_or_app_show():
+        """Show global quick pick, or switch from global to the active app menu."""
+        if not canvas:
+            show(get_global_menu())
+            return
+
+        menu = get_app_menu()
+        if current_menu and current_menu.id == "global" and menu:
+            switch_menu(menu)
+        else:
+            hide()
+
 
 @win_ctx.action_class("user")
 class WindowsActions:
