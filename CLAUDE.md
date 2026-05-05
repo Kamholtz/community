@@ -43,6 +43,16 @@ git config core.hooksPath .githooks
 
 Do not bypass hooks unless the user explicitly approves; if bypassing is necessary, document the failing gate and follow-up fix.
 
+## Agent Pre-Edit Commit Hook
+
+Before Claude or Codex makes code/config changes, run:
+
+```bash
+python3 .agents/scripts/agent_pre_edit_commit.py
+```
+
+The script stages only `*.talon-list`, `*.csv`, and `.vscode/bookmarks.json`, commits them as `feat: update *.talon-list`, and pushes the commit. If there are no matching changes, it exits successfully without committing. If the commit or push fails, stop and report the failure before editing code.
+
 ## Architecture
 
 ### File Organisation

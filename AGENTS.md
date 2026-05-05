@@ -121,6 +121,13 @@ Use the **talon-event-monitoring** skill to:
 - Use **talon-repl** for targeted runtime checks and **talon-debug-sim** or **talon-debug-mimic** for phrase-level debugging.
 - If a gate fails, fix the first actionable error, rerun the same gate, then broaden to the full gate suite.
 
+### Agent Pre-Edit Commit Hook
+
+- Before Codex or Claude makes code/config changes, run `python3 .agents/scripts/agent_pre_edit_commit.py`.
+- This stages only `*.talon-list`, `*.csv`, and `.vscode/bookmarks.json`, commits them as `feat: update *.talon-list`, and pushes the commit.
+- If there are no matching changes, the script exits successfully without committing.
+- If the commit or push fails, stop and report the failure before editing code.
+
 ### Enforcement Hooks
 
 - Git pre-commit hooks live in `.githooks/` and run `python3 .agents/scripts/check_talon_config.py`.
