@@ -428,8 +428,8 @@ def draw_layout_options(
             content.width,
             panel_h,
         )
-        side_rect = Rect(rect.x + pad, rect.y + pad, side_w - pad, rect.height - pad * 2)
-        aux_rect = Rect(
+        aux_rect = Rect(rect.x + pad, rect.y + pad, side_w - pad, rect.height - pad * 2)
+        side_rect = Rect(
             rect.x + rect.width - side_w,
             rect.y + pad,
             side_w - pad,
@@ -441,8 +441,8 @@ def draw_layout_options(
 
         visible = set(option.visible_parts)
         layout_rects = [
-            ("side", side_rect, SNAP_COLORS[1]),
             ("aux", aux_rect, SNAP_COLORS[4]),
+            ("side", side_rect, SNAP_COLORS[1]),
             ("panel", panel_rect, SNAP_COLORS[2]),
         ]
         for part, part_rect, color in layout_rects:
