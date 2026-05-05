@@ -66,6 +66,8 @@ The contextual `APP` button is currently text-labelled and positioned on the upp
 
 Clicking a button closes the canvas and runs its callback. Buttons with `move_mouse=True` first restore the mouse to the location where quick pick was opened.
 
+The `EYE OFF` bottom-row button is handled specially: it turns eye tracking off, then restores the cursor to the position captured just before quick pick opened. This keeps the pointer hovering over the same target that was under the cursor before opening the menu.
+
 ## VS Code Provider
 
 The first app provider is in `apps/vscode/vscode.py`.
@@ -164,4 +166,4 @@ Notes from the checkpoint:
 
 - The gates pass when run outside the sandbox so Python can write `__pycache__`.
 - `pytest` was skipped because it was not installed.
-- `apps/vscode/vscode.talon` decorative `# =====` separators were changed to dashes because the gate treats `=======` anywhere as a merge-conflict marker.
+- `apps/vscode/vscode.talon` decorative equals-sign separators were changed to dashes because the gate treats long equals runs as merge-conflict markers.

@@ -34,3 +34,15 @@ Moved active Talon agent skills from `.agents/skills/skills/` to `.agents/skills
 ### (2.2) Add Agent Skill Gates
 
 Added `.agents/scripts/check_talon_config.py` and `.githooks/pre-commit` to enforce skill metadata, changed/staged text linting, Python compilation, and pytest when available. Updated agent docs to explain when to use each Talon skill and how to run the validation workflow.
+
+## (4) Fluent Search
+
+### (4.1) Add Windows Fluent Search Commands
+
+Imported `apps/fluent_search/` from `nriley/talon_community` commit `51bc9087a723af0c6b8587cccea14068280fafee`. Adds Windows commands for launching app/process searches, Fluent Search screen labels, and in-app/menu search hotkeys.
+
+## (5) Vocabulary
+
+### (5.1) Move Misrecognitions to Words To Replace
+
+Moved correction-style vocabulary mappings from `core/vocabulary/vocabulary.talon-list` into `settings/words_to_replace.csv`, leaving the vocabulary list focused on ordinary terms, proper nouns, and acronym pronunciations.
