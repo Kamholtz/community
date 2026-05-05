@@ -5,7 +5,7 @@ mod = Module()
 
 mod.apps.notepad = r"""
 os: windows
-and app.exe: notepad.exe
+and app.exe: Notepad.exe
 """
 
 ctx.matches = r"""
