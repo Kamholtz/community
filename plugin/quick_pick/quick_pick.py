@@ -119,6 +119,7 @@ class QuickPickOption:
     text: str
     callback: Callable[[], None]
     move_mouse: Optional[bool] = False
+    close_menu: Optional[bool] = True
 
 
 @dataclass
@@ -127,6 +128,16 @@ class QuickPickCircleOption:
     degrees: int
     callback: Callable[[], None]
     move_mouse: Optional[bool] = False
+    close_menu: Optional[bool] = True
+
+
+@dataclass
+class QuickPickLayoutOption:
+    text: str
+    visible_parts: tuple[str, ...]
+    callback: Callable[[], None]
+    move_mouse: Optional[bool] = False
+    close_menu: Optional[bool] = True
 
 
 @dataclass
@@ -135,6 +146,7 @@ class QuickPickView:
     left_options: Optional[list[QuickPickOption]] = None
     bottom_options: Optional[list[QuickPickOption]] = None
     snap_positions: Optional[list[list[str]]] = None
+    layout_options: Optional[list[QuickPickLayoutOption]] = None
 
 
 @dataclass
@@ -149,6 +161,7 @@ class Button:
     rect: Rect
     callback: Callable[[], None]
     move_mouse: Optional[bool] = False
+    close_menu: Optional[bool] = True
 
 
 class Size:
@@ -298,7 +311,9 @@ def draw_horizontal(c: SkiaCanvas, options: list[QuickPickOption], x: float, y: 
     for option in options:
         rect = Rect(x, y, size.width, size.height)
         x += size.width + size.margin
-        buttons.append(Button(rect, option.callback, option.move_mouse))
+        buttons.append(
+            Button(rect, option.callback, option.move_mouse, option.close_menu)
+        )
         add_button(c, option.text, rect)
 
 
@@ -311,7 +326,9 @@ def draw_vertical(c: SkiaCanvas, options: list[QuickPickOption], x: float, y: fl
     for option in options:
         rect = Rect(x, y, size.width, size.height)
         y += size.height + size.margin
-        buttons.append(Button(rect, option.callback, option.move_mouse))
+        buttons.append(
+            Button(rect, option.callback, option.move_mouse, option.close_menu)
+        )
         add_button(c, option.text, rect)
 
 
@@ -326,7 +343,9 @@ def draw_circle(
         x = cx + size.radius * math.cos(radians)
         y = cy + size.radius * 1.25 * math.sin(radians)
         rect = Rect(x - size.width / 2, y - size.height / 2, size.width, size.height)
-        buttons.append(Button(rect, option.callback, option.move_mouse))
+        buttons.append(
+            Button(rect, option.callback, option.move_mouse, option.close_menu)
+        )
         add_button(c, option.text, rect)
 
 
@@ -368,6 +387,85 @@ def draw_snap_positions(c: SkiaCanvas, positions: list[list[str]], org_x: float,
         c.draw_rect(rect)
 
 
+def draw_layout_options(
+    c: SkiaCanvas, options: list[QuickPickLayoutOption], org_x: float, y: float
+):
+    if not size:
+        return
+
+    height = size.snap_width * c.height / c.width
+    x = org_x
+    y -= get_midpoint(math.ceil(len(options) / 3), height)
+
+    for i, option in enumerate(options):
+        rect = Rect(x, y, size.snap_width, height)
+        if i % 3 == 2:
+            x = org_x
+            y += height + size.margin
+        else:
+            x += size.snap_width + size.margin
+
+        buttons.append(
+            Button(rect, option.callback, option.move_mouse, option.close_menu)
+        )
+
+        c.paint.style = c.paint.Style.FILL
+        c.paint.color = HOVER_COLOR if hover_rect == rect else BACKGROUND_COLOR
+        c.draw_rect(rect)
+
+        pad = max(3, size.margin * 0.35)
+        side_w = rect.width * 0.20
+        panel_h = rect.height * 0.24
+        content = Rect(
+            rect.x + pad + side_w,
+            rect.y + pad,
+            rect.width - (pad * 2) - (side_w * 2),
+            rect.height - (pad * 2),
+        )
+        panel_rect = Rect(
+            content.x,
+            rect.y + rect.height - pad - panel_h,
+            content.width,
+            panel_h,
+        )
+        side_rect = Rect(rect.x + pad, rect.y + pad, side_w - pad, rect.height - pad * 2)
+        aux_rect = Rect(
+            rect.x + rect.width - side_w,
+            rect.y + pad,
+            side_w - pad,
+            rect.height - pad * 2,
+        )
+
+        c.paint.color = "f0f0f0"
+        c.draw_rect(content)
+
+        visible = set(option.visible_parts)
+        layout_rects = [
+            ("side", side_rect, SNAP_COLORS[1]),
+            ("aux", aux_rect, SNAP_COLORS[4]),
+            ("panel", panel_rect, SNAP_COLORS[2]),
+        ]
+        for part, part_rect, color in layout_rects:
+            if part in visible:
+                c.paint.color = color
+                c.draw_rect(part_rect)
+
+        c.paint.style = c.paint.Style.STROKE
+        c.paint.color = BORDER_COLOR
+        c.draw_rect(rect)
+
+        if option.text:
+            c.paint.style = c.paint.Style.FILL
+            c.paint.color = TEXT_COLOR
+            c.paint.textsize = size.text * 0.45
+            text_rect = c.paint.measure_text(option.text)[1]
+            c.draw_text(
+                option.text,
+                rect.center.x + text_rect.x - text_rect.width / 2,
+                rect.y + rect.height - pad - text_rect.height / 2,
+            )
+
+
 def get_running_options() -> list[QuickPickOption]:
     try:
         running = actions.user.get_running_applications()
@@ -391,6 +489,14 @@ def get_app_menu() -> Optional[QuickPickMenu]:
     return menu if isinstance(menu, QuickPickMenu) else None
 
 
+def switch_menu(menu: QuickPickMenu):
+    global current_menu, hover_rect
+    current_menu = menu
+    hover_rect = None
+    if canvas:
+        canvas.freeze()
+
+
 def get_bottom_options() -> list[QuickPickOption]:
     options = list(media_options)
     if app.platform == "windows":
@@ -400,9 +506,12 @@ def get_bottom_options() -> list[QuickPickOption]:
 
 def get_global_view() -> QuickPickView:
     options = list(circle_options)
-    if get_app_menu():
+    menu = get_app_menu()
+    if menu:
         options.append(
-            QuickPickCircleOption("APP", 165, actions.user.quick_pick_app_show)
+            QuickPickCircleOption(
+                "APP", 165, lambda menu=menu: switch_menu(menu), close_menu=False
+            )
         )
 
     return QuickPickView(
@@ -447,6 +556,11 @@ def on_draw(c: SkiaCanvas):
             c, view.snap_positions, c.rect.center.x + size.offset, c.rect.center.y
         )
 
+    if view.layout_options:
+        draw_layout_options(
+            c, view.layout_options, c.rect.center.x + size.offset, c.rect.center.y
+        )
+
 
 def get_button_for_position(pos: Point2d):
     for button in buttons:
@@ -475,13 +589,16 @@ def on_mouse(e: MouseEvent):
                 canvas.freeze()
 
     elif e.event == "mouseup" and e.button == 0:
-        hide()
         if button:
+            if button.close_menu:
+                hide()
             if button.move_mouse and mouse_pos:
                 actions.mouse_move(mouse_pos.x, mouse_pos.y)
             actions.sleep("150ms")
             if run_callback(button.callback):
                 repeater_callback = button.callback
+        else:
+            hide()
 
 
 def show(menu: QuickPickMenu):
@@ -528,7 +645,10 @@ class Actions:
 
     def quick_pick_global_show():
         """Show the global quick pick menu."""
-        show(get_global_menu())
+        if canvas:
+            switch_menu(get_global_menu())
+        else:
+            show(get_global_menu())
 
     def quick_pick_app_menu_get():
         """Return the active app quick pick menu, or None."""
@@ -538,7 +658,10 @@ class Actions:
         """Show the active app quick pick menu if one is available."""
         menu = get_app_menu()
         if menu:
-            show(menu)
+            if canvas:
+                switch_menu(menu)
+            else:
+                show(menu)
 
 
 @win_ctx.action_class("user")

@@ -4,6 +4,7 @@ from talon import Context, Module, actions, app
 
 from ...plugin.quick_pick.quick_pick import (
     QuickPickCircleOption,
+    QuickPickLayoutOption,
     QuickPickMenu,
     QuickPickOption,
     QuickPickView,
@@ -93,6 +94,66 @@ def vscode_command(command_id: str):
     return lambda: actions.user.vscode(command_id)
 
 
+def vscode_commands(command_ids: list[str]):
+    def run():
+        for command_id in command_ids:
+            actions.user.vscode(command_id)
+
+    return run
+
+
+def vscode_layout_visibility_commands(
+    side_bar: bool, auxiliary_bar: bool, panel: bool
+) -> list[str]:
+    commands = [
+        "workbench.action.closeSidebar",
+        "workbench.action.closeAuxiliaryBar",
+        "workbench.action.closePanel",
+    ]
+    if side_bar:
+        commands.append("workbench.action.focusSideBar")
+    if auxiliary_bar:
+        commands.append("workbench.action.focusAuxiliaryBar")
+    if panel:
+        commands.append("workbench.action.focusPanel")
+    commands.append("workbench.action.focusActiveEditorGroup")
+    return commands
+
+
+def get_vscode_layout_options() -> list[QuickPickLayoutOption]:
+    layouts = [
+        ("CLEAN", (False, False, False)),
+        ("SIDE", (True, False, False)),
+        ("SEC", (False, True, False)),
+        ("PANEL", (False, False, True)),
+        ("S+P", (True, False, True)),
+        ("SEC+P", (False, True, True)),
+        ("BOTH", (True, True, False)),
+        ("ALL", (True, True, True)),
+    ]
+
+    options = []
+    for text, (side_bar, auxiliary_bar, panel) in layouts:
+        visible_parts = []
+        if side_bar:
+            visible_parts.append("side")
+        if auxiliary_bar:
+            visible_parts.append("aux")
+        if panel:
+            visible_parts.append("panel")
+        options.append(
+            QuickPickLayoutOption(
+                text,
+                tuple(visible_parts),
+                vscode_commands(
+                    vscode_layout_visibility_commands(side_bar, auxiliary_bar, panel)
+                ),
+            )
+        )
+
+    return options
+
+
 def get_vscode_recent_options() -> list[QuickPickOption]:
     try:
         entries = actions.user.history_get_recent_for_active_app(10)
@@ -140,7 +201,7 @@ def get_vscode_quick_pick_view() -> QuickPickView:
                 "CMD", 90, vscode_command("workbench.action.showCommands")
             ),
             QuickPickCircleOption(
-                "BACK", 140, actions.user.quick_pick_global_show
+                "BACK", 140, actions.user.quick_pick_global_show, close_menu=False
             ),
         ],
         left_options=get_vscode_recent_options(),
@@ -151,6 +212,7 @@ def get_vscode_quick_pick_view() -> QuickPickView:
             QuickPickOption("PROBLEMS", vscode_command("workbench.panel.markers.view.focus")),
             QuickPickOption("OUTPUT", vscode_command("workbench.panel.output.focus")),
         ],
+        layout_options=get_vscode_layout_options(),
     )
 
 
