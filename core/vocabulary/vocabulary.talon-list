@@ -193,7 +193,6 @@ live sync
 clojure babashka
 org file
 talon commands
-
 cursorless emacs
 cursorless mode
 cursorless casual mode
@@ -215,3 +214,4 @@ nix develop
 fluent search
 pi agent
 quick pick
+magit
