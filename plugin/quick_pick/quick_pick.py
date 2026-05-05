@@ -5,7 +5,7 @@ import os
 import platform
 import struct
 
-from talon import Context, Module, actions, speech_system, ui
+from talon import Context, Module, actions, app, speech_system, ui
 from talon.canvas import Canvas, MouseEvent
 from talon.grammar import Phrase
 from talon.screen import Screen
@@ -171,6 +171,11 @@ mode: all
 and mode: dictation
 """
 
+win_ctx = Context()
+win_ctx.matches = r"""
+os: windows
+"""
+
 mod = Module()
 size: Optional[Size] = None
 canvas: Optional[Canvas] = None
@@ -179,6 +184,13 @@ hover_rect: Optional[Rect] = None
 repeater_callback: Optional[Callable[[], None]] = None
 buttons: list[Button] = []
 current_menu: Optional[QuickPickMenu] = None
+
+
+def tracking_control_off_restore_mouse():
+    actions.tracking.control_toggle(False)
+    if mouse_pos:
+        actions.mouse_move(mouse_pos.x, mouse_pos.y)
+
 
 circle_options = [
     QuickPickCircleOption("🖑" if _has_emoji else "DRAG", -90, actions.mouse_drag, True),
@@ -214,7 +226,7 @@ media_options = [
     QuickPickOption("⏮" if _has_media else "PREV", lambda: actions.key("prev")),
     QuickPickOption("⏯" if _has_media else "PLAY", lambda: actions.key("play_pause")),
     QuickPickOption("⏭" if _has_media else "NEXT", lambda: actions.key("next")),
-    QuickPickOption("EYE OFF", lambda: actions.tracking.control_toggle(False)),
+    QuickPickOption("EYE OFF", tracking_control_off_restore_mouse),
 ]
 
 snap_positions = [
@@ -379,6 +391,13 @@ def get_app_menu() -> Optional[QuickPickMenu]:
     return menu if isinstance(menu, QuickPickMenu) else None
 
 
+def get_bottom_options() -> list[QuickPickOption]:
+    options = list(media_options)
+    if app.platform == "windows":
+        options.append(QuickPickOption("RESTART", lambda: actions.user.talon_restart()))
+    return options
+
+
 def get_global_view() -> QuickPickView:
     options = list(circle_options)
     if get_app_menu():
@@ -389,7 +408,7 @@ def get_global_view() -> QuickPickView:
     return QuickPickView(
         circle_options=options,
         left_options=get_running_options(),
-        bottom_options=media_options,
+        bottom_options=get_bottom_options(),
         snap_positions=snap_positions,
     )
 
@@ -496,6 +515,10 @@ def hide():
 
 @mod.action_class
 class Actions:
+    def talon_restart():
+        """Restart Talon."""
+        app.notify("Restarting Talon is only supported on Windows")
+
     def quick_pick_show():
         """Show quick pick."""
         if not canvas:
@@ -516,6 +539,16 @@ class Actions:
         menu = get_app_menu()
         if menu:
             show(menu)
+
+
+@win_ctx.action_class("user")
+class WindowsActions:
+    def talon_restart():
+        """Restart Talon."""
+        talon_app = ui.apps(pid=os.getpid())[0]
+        os.startfile(talon_app.exe)
+        actions.sleep("100ms")
+        talon_app.quit()
 
 
 def on_post_phrase(phrase: Phrase):
