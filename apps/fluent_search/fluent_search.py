@@ -62,7 +62,8 @@ class UserActions:
         actions.key("ctrl-alt")
         if not wait_for_fluent_search_window():
             return
-        actions.key("backspace")
+        # actions.key("backspace")
+        actions.key("tab")
         print("text=" + text)
         if "\t" in text:
             plugin, text = text.split("\t", 1)
