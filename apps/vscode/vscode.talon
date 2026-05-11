@@ -129,6 +129,10 @@ file collapse: user.vscode("workbench.files.action.collapseExplorerFolders")
 search collapse: user.vscode("search.action.collapseSearchResults")
 search editor: user.vscode("search.action.openEditor")
 search new editor: user.vscode("search.action.openNewEditor")
+search new window editor:
+    user.vscode("search.action.openNewEditor")
+    sleep(150ms)
+    user.vscode("workbench.action.moveEditorToNewWindow")
 search side editor: user.vscode("search.action.openNewEditorToSide")
 search results editor: user.vscode("search.action.openInEditor")
 
@@ -188,6 +192,7 @@ close other tabs: user.vscode("workbench.action.closeOtherEditors")
 close all tabs: user.vscode("workbench.action.closeAllEditors")
 close tabs way right: user.vscode("workbench.action.closeEditorsToTheRight")
 close tabs way left: user.vscode("workbench.action.closeEditorsToTheLeft")
+tab (new window | move window): user.vscode("workbench.action.moveEditorToNewWindow")
 
 # -------------------------------------
 # Folding
@@ -491,6 +496,10 @@ disclose:
 disk gentle: edit.save()
 
 magit status: user.vscode("magit.status")
+magit status window:
+    user.vscode("magit.status")
+    sleep(150ms)
+    user.vscode("workbench.action.moveEditorToNewWindow")
 
 chat prompt grammar:
     # user.vscode("workbench.panel.chat.view.copilot.focus")
