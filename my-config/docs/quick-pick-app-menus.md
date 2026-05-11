@@ -98,6 +98,8 @@ VS Code bottom row currently maps to:
 - Source Control
 - Problems
 - Output
+- Magit status in a new window
+- VS Code reload
 
 The VS Code left panel shows recent replayable commands recorded while VS Code was active.
 
@@ -110,7 +112,7 @@ The VS Code app menu shows:
 
 - A central ring of VS Code commands for tasks, build, terminal focus, recent terminal command, last test rerun, quick fixes, command palette, and returning to the global quick pick.
 - A left vertical panel of recent replayable Talon commands that were spoken while VS Code was active.
-- A bottom horizontal row of VS Code workbench views: Explorer, Search, Source Control, Problems, and Output.
+- A bottom horizontal row of VS Code workbench views and utilities: Explorer, Search, Source Control, Problems, Output, Magit status in a new window, and VS Code reload.
 
 The `BACK` ring button switches back to the global quick pick view by calling `user.quick_pick_global_show()`.
 

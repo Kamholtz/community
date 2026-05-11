@@ -102,6 +102,12 @@ def vscode_commands(command_ids: list[str]):
     return run
 
 
+def vscode_magit_status_window():
+    actions.user.vscode("magit.status")
+    actions.sleep("150ms")
+    actions.user.vscode("workbench.action.moveEditorToNewWindow")
+
+
 def vscode_layout_visibility_commands(
     side_bar: bool, auxiliary_bar: bool, panel: bool
 ) -> list[str]:
@@ -211,6 +217,8 @@ def get_vscode_quick_pick_view() -> QuickPickView:
             QuickPickOption("SOURCE", vscode_command("workbench.view.scm")),
             QuickPickOption("PROBLEMS", vscode_command("workbench.panel.markers.view.focus")),
             QuickPickOption("OUTPUT", vscode_command("workbench.panel.output.focus")),
+            QuickPickOption("MAGIT", vscode_magit_status_window),
+            QuickPickOption("RELOAD", vscode_command("workbench.action.reloadWindow")),
         ],
         layout_options=get_vscode_layout_options(),
     )
