@@ -218,3 +218,4 @@ magit
 X mod map:xmodmap
 bubblewrap
 WSL2
+pytest
