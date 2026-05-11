@@ -10,11 +10,20 @@ os: windows
 """
 
 FLUENT_SEARCH_EXE = None
+FLUENT_SEARCH_APP_NAMES = {"Fluent Search", "FluentSearch"}
+
+
+def is_fluent_search_app(active_app):
+    if active_app is None:
+        return False
+    if active_app.name in FLUENT_SEARCH_APP_NAMES:
+        return True
+    return os.path.basename(active_app.exe).lower() == "fluentsearch.exe"
 
 
 def wait_for_fluent_search_window():
     for attempt in range(20):
-        if ui.active_app().name == "FluentSearch":
+        if is_fluent_search_app(ui.active_app()):
             return True
         actions.sleep("50ms")
 
@@ -54,13 +63,18 @@ class UserActions:
         if not wait_for_fluent_search_window():
             return
         actions.key("backspace")
+        print("text=" + text)
         if "\t" in text:
             plugin, text = text.split("\t", 1)
-            actions.insert(plugin + "\t")
+            print("plugin=" + plugin)
+            actions.insert(plugin)
+            actions.sleep("100ms")
+            actions.insert("\t")
+        print("text=" + text)
         actions.user.paste(text)
 
     def fluent_search_in_app(text: str, submit: bool):
-        actions.key("alt-shift-/")
+        actions.key("shift-super")
         if not wait_for_fluent_search_window():
             return
         actions.user.paste(text)
