@@ -209,8 +209,8 @@ file path
 M P C: MPC
 anvil MPC
 Context7
-Context7 MCP
-Context7 MCP server
+Context7 M C P: Context7 MCP
+Context7 M C P server: Context7 MCP server
 nix develop
 fluent search
 pi agent
@@ -220,3 +220,5 @@ X mod map:xmodmap
 bubblewrap
 WSL2
 pytest
+maker world: makerworld
+8bitdo
