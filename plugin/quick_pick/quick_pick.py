@@ -145,6 +145,7 @@ class QuickPickView:
     circle_options: list[QuickPickCircleOption]
     left_options: Optional[list[QuickPickOption]] = None
     bottom_options: Optional[list[QuickPickOption]] = None
+    action_options: Optional[list[QuickPickOption]] = None
     snap_positions: Optional[list[list[str]]] = None
     layout_options: Optional[list[QuickPickLayoutOption]] = None
 
@@ -549,6 +550,14 @@ def on_draw(c: SkiaCanvas):
             view.bottom_options,
             c.rect.center.x,
             c.rect.center.y + size.offset + size.height / 2,
+        )
+
+    if view.action_options:
+        draw_horizontal(
+            c,
+            view.action_options,
+            c.rect.center.x,
+            c.rect.center.y + size.radius * 1.6 + size.height / 2,
         )
 
     if view.snap_positions:
