@@ -27,6 +27,9 @@
 		{
 			"name": "cursorless-emacs",
 			"path": "../cursorless-emacs"
+		},
+		{
+			"path": "../talon-gaze-ocr"
 		}
 	],
 	"settings": {
