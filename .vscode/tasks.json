@@ -92,7 +92,10 @@
         "focus": true
       },
       "isBackground": true,
-      "problemMatcher": []
+      "problemMatcher": [],
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
     },
     {
       "label": "Talon: Restart then show errors since last file change",
