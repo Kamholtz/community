@@ -20,6 +20,12 @@ settings():
     # Enable evil-mode support in Emacs (uses C-r " for paste in insert mode)
     user.emacs_evil_mode = true
     # user.subtitles_size = 500
+    user.ocr_gaze_box_padding = 150
+    user.ocr_gaze_point_padding = 250
+    user.ocr_behavior_when_no_eye_tracker = "ACTIVE_WINDOW"
+
+
+
 
 # Custom voice commands for undo and redo
 nope: edit.undo()
