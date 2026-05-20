@@ -646,16 +646,16 @@ devcontainer reopen: user.vscode("remote-containers.reopenInContainer")
 # -------------------------------------
 codex this: user.vscode("chatgpt.addToThread")
 codex file: user.vscode("chatgpt.addFileToThread")
-codex focus: user.vscode("chatgpt.sidebarView.focus")
+codex focus: user.vscode("chatgpt.sidebarSecondaryView.focus")
 
 codex copy paste:
     edit.copy()
-    user.vscode("chatgpt.sidebarView.focus")
+    user.vscode("chatgpt.sidebarSecondaryView.focus")
     edit.paste()
     user.vscode("workbench.action.focusActiveEditorGroup")
 
 codex paste:
-    user.vscode("chatgpt.sidebarView.focus")
+    user.vscode("chatgpt.sidebarSecondaryView.focus")
     edit.paste()
     user.vscode("workbench.action.focusActiveEditorGroup")
 

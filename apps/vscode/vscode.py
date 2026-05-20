@@ -180,6 +180,12 @@ def get_vscode_recent_options() -> list[QuickPickOption]:
     return options
 
 
+def vscode_codex_bring_terminal():
+    actions.user.vscode("chatgpt.sidebarSecondaryView.focus")
+    actions.sleep("150ms")
+    actions.user.vscode_terminal_copy_named("command_and_output", True)
+
+
 def get_vscode_quick_pick_view() -> QuickPickView:
     return QuickPickView(
         circle_options=[
@@ -219,6 +225,9 @@ def get_vscode_quick_pick_view() -> QuickPickView:
             QuickPickOption("OUTPUT", vscode_command("workbench.panel.output.focus")),
             QuickPickOption("MAGIT", vscode_magit_status_window),
             QuickPickOption("RELOAD", vscode_command("workbench.action.reloadWindow")),
+        ],
+        action_options=[
+            QuickPickOption("CODEX TERM", vscode_codex_bring_terminal),
         ],
         layout_options=get_vscode_layout_options(),
     )
