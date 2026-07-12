@@ -14,9 +14,10 @@ from pathlib import Path
 from typing import Optional
 
 import json
-import os
 import queue
 import subprocess
+import sys
+import threading
 
 mod = Module()
 mod.mode("whisper", desc="Transcription mode for Whisper daemon")
@@ -24,11 +25,14 @@ mod.mode("whisper", desc="Transcription mode for Whisper daemon")
 ctx = Context()
 
 REALITIME_DIR = Path("~/repos/realtimestt-cli").expanduser()
-REALITIME_CMD = ["./venv/bin/python3", "./webserver/client.py", "--json-lines"]
+if sys.platform == "win32":
+    REALITIME_CMD = [str(REALITIME_DIR / "venv" / "Scripts" / "python.exe"), "webserver/client.py", "--json-lines"]
+else:
+    REALITIME_CMD = ["./venv/bin/python3", "./webserver/client.py", "--json-lines"]
 _whisper_proc = None
 _whisper_poll_job = None
-_whisper_stdout_buffer = ""
-_whisper_event_queue = queue.Queue()
+_whisper_line_queue: queue.Queue = queue.Queue()
+_whisper_event_queue: queue.Queue = queue.Queue()
 _whisper_enabled = False
 _whisper_last_realtime = None
 _whisper_last_full = None
@@ -39,15 +43,13 @@ _whisper_theme_map = {
     "light": "light_whisper",
 }
 _WHISPER_VAD_SUBTITLE = "Listening..."
-_WHISPER_READ_SIZE = 4096
 
 
 def _notify(msg: str) -> None:
     try:
         actions.user.notify(msg)
     except Exception:
-        # In case notify isn't available in this Talon build
-        pass
+        print("ERROR: actions.user.notify(msg) " + msg)
 
 
 def _proc_is_running() -> bool:
@@ -116,42 +118,42 @@ def _handle_ws_event(event: dict) -> None:
         _queue_ui_action(lambda text=content: _show_subtitle(text))
 
 
-def _read_proc_output() -> None:
-    global _whisper_stdout_buffer
-    if _whisper_proc is None or _whisper_proc.stdout is None:
+def _stdout_reader(proc: subprocess.Popen) -> None:
+    """Background thread: feed stdout lines into _whisper_line_queue; None signals EOF."""
+    if proc.stdout is None:
+        _whisper_line_queue.put(None)
         return
+    try:
+        for raw in proc.stdout:
+            _whisper_line_queue.put(raw.rstrip("\n"))
+    except Exception:
+        pass
+    finally:
+        _whisper_line_queue.put(None)
 
-    for _ in range(5):
+
+def _read_proc_output() -> None:
+    for _ in range(20):
         try:
-            chunk = _whisper_proc.stdout.read(_WHISPER_READ_SIZE)
-        except BlockingIOError:
+            line = _whisper_line_queue.get_nowait()
+        except queue.Empty:
             break
+
+        if line is None:
+            _stop_proc()
+            return
+
+        line = line.strip()
+        if not line:
+            continue
+
+        try:
+            event = json.loads(line)
         except Exception:
-            break
+            continue
 
-        if not chunk:
-            if _whisper_proc.poll() is not None:
-                _stop_proc()
-                return
-            break
-
-        _whisper_stdout_buffer += chunk
-        while True:
-            newline_idx = _whisper_stdout_buffer.find("\n")
-            if newline_idx == -1:
-                break
-            line = _whisper_stdout_buffer[:newline_idx].strip()
-            _whisper_stdout_buffer = _whisper_stdout_buffer[newline_idx + 1 :]
-            if not line:
-                continue
-
-            try:
-                event = json.loads(line)
-            except Exception:
-                continue
-
-            if isinstance(event, dict):
-                _handle_ws_event(event)
+        if isinstance(event, dict):
+            _handle_ws_event(event)
 
 
 def _poll_proc_output() -> None:
@@ -169,11 +171,15 @@ def _start_polling() -> None:
 
 
 def _stop_polling() -> None:
-    global _whisper_poll_job, _whisper_stdout_buffer
+    global _whisper_poll_job
     if _whisper_poll_job is not None:
         cron.cancel(_whisper_poll_job)
         _whisper_poll_job = None
-    _whisper_stdout_buffer = ""
+    while not _whisper_line_queue.empty():
+        try:
+            _whisper_line_queue.get_nowait()
+        except queue.Empty:
+            break
     _drain_event_queue()
 
 
@@ -188,30 +194,35 @@ def _start_proc() -> bool:
         return False
 
     try:
-        _whisper_proc = subprocess.Popen(
-            REALITIME_CMD,
-            cwd=str(REALITIME_DIR),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1,
-        )
+        if sys.platform == "win32":
+            _whisper_proc = subprocess.Popen(
+                REALITIME_CMD,
+                cwd=str(REALITIME_DIR),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
+        else:
+            _whisper_proc = subprocess.Popen(
+                REALITIME_CMD,
+                cwd=str(REALITIME_DIR),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
+            )
         if _whisper_proc.stdout is None:
             _notify("Whisper: missing stdout pipe")
             _stop_proc()
             return False
 
-        try:
-            os.set_blocking(_whisper_proc.stdout.fileno(), False)
-        except Exception:
-            _notify("Whisper: failed to configure non-blocking stdout")
-            _stop_proc()
-            return False
-
+        threading.Thread(target=_stdout_reader, args=(_whisper_proc,), daemon=True).start()
         _start_polling()
         return True
-    except Exception:
-        _notify("Whisper: failed to start subprocess")
+    except Exception as e:
+        _notify(f"Whisper: failed to start subprocess: {e}")
         _whisper_proc = None
         return False
 

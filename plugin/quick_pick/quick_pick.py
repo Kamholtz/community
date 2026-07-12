@@ -8,7 +8,13 @@ from dataclasses import dataclass
 from typing import Callable, Optional
 import math
 
-FONT_FAMILY = "DejaVu Sans"  # Has ASCII + symbol support
+# Font must be installed on the OS. "DejaVu Sans" is not present on Windows and
+# causes all icon rendering to fail silently (Skia falls back to a font without
+# symbol coverage). "Segoe UI Symbol" ships with Windows and covers ASCII, arrows,
+# geometric shapes, and the U+23xx media transport symbols.
+# NOTE: high-plane emoji (U+1F5xx, U+1F86x) are missing from Segoe UI Symbol —
+# those were replaced with text labels in commit de0818b9 for exactly this reason.
+FONT_FAMILY = "Segoe UI Symbol"
 BACKGROUND_COLOR = "fffafa"  # Snow
 HOVER_COLOR = "6495ed"  # CornflowerBlue
 BORDER_COLOR = "000000"  # Black
@@ -85,10 +91,15 @@ circle_options = [
     CircleOption("SEARCH", 90, actions.user.browser_search_selected),
 ]
 
+# Icon rendering requires a font that covers the codepoint (see FONT_FAMILY above).
+# With DejaVu Sans (not installed on Windows) ALL icons below fail to render.
+# With Segoe UI Symbol both sets work:
+#   original U+23xx media transport symbols: ⏮ U+23EE, ⏯ U+23EF, ⏭ U+23ED
+#   geometric shape alternatives: ◀◀ U+25C0, ▶‖ U+25B6+U+2016, ▶▶ U+25B6
 media_options = [
-    Option("⏮", lambda: actions.key("prev")),
-    Option("⏯", lambda: actions.key("play_pause")),
-    Option("⏭", lambda: actions.key("next")),
+    Option("◀◀", lambda: actions.key("prev")),
+    Option("▶‖", lambda: actions.key("play_pause")),
+    Option("▶▶", lambda: actions.key("next")),
 ]
 
 snap_positions = [
@@ -99,7 +110,7 @@ snap_positions = [
     ["center"],
     ["right large"],
     ["top left large", "bottom left large"],
-    ["top center third", "bottom center third"],
+    ["top center small", "bottom center small"],
     ["top right large", "bottom right large"],
     ["left small", "center small", "right small"],
     ["top left", "top right", "bottom left", "bottom right"],
@@ -318,14 +329,14 @@ def hide():
     canvas = None
 
 
-@ctx.action_class("user")
-class UserActions:
-    def noise_cluck():
-        # If available the repeat noise repeats the last quick pick callback
-        if repeater_callback:
-            run_callback(repeater_callback)
-        else:
-            actions.next()
+# @ctx.action_class("user")
+# class UserActions:
+#     def noise_cluck():
+#         # If available the repeat noise repeats the last quick pick callback
+#         if repeater_callback:
+#             run_callback(repeater_callback)
+#         else:
+#             actions.next()
 
 
 @mod.action_class

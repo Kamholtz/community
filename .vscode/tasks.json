@@ -12,6 +12,11 @@
       "options": {
         "cwd": "${env:HOME}/.talon/user/community/"
       },
+      "windows": {
+        "options": {
+          "cwd": "${env:APPDATA}\\talon\\user\\community\\"
+        }
+      },
       "group": "build",
       "presentation": {
         "echo": true,
@@ -43,7 +48,11 @@
         "--since-last-file-change"
       ],
       "windows": {
-        "args": ""
+        "command": "${env:APPDATA}\\talon\\venv\\3.11\\Scripts\\python.exe",
+        "args": [
+          "${env:APPDATA}\\talon\\user\\community\\my-config\\scripts\\talon_errors_since_startup.py",
+          "--since-last-file-change"
+        ]
       },
       "presentation": {
         "panel": "dedicated",
@@ -66,6 +75,24 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "Talon: Tail log",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "Get-Content -Path \"$env:APPDATA\\talon\\talon.log\" -Wait -Tail 50"
+      ],
+      "presentation": {
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "reveal": "always",
+        "focus": true
+      },
+      "isBackground": true,
+      "problemMatcher": []
     },
     {
       "label": "Talon: Restart then show errors since last file change",
