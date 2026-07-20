@@ -230,8 +230,6 @@ Application Load Balancer
 ECS on EC2
 E C S: ECS
 Amazon Elastic Container Registry
-
-
 Macie
 - The Virtual Private Cloud Provides a logically isolated private network environment for all Rossco resources.
 Virtual Private Cloud
@@ -248,7 +246,6 @@ git message
 undo tree
 live sync
 clojure babashka
-faith:phase
 org file
 talon commands
 
@@ -267,3 +264,14 @@ Parameterised queries
 learning path
 U R L: URL
 Lyndon
+Server-Side Request Forgery
+partial URL
+full URL
+URLs
+SSRF injection points
+SSRF
+open redirect
+deny list
+allow list
+XOR Cipher
+XOR encryption
