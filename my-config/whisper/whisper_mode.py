@@ -9,8 +9,12 @@ On entry: unmute the transcription daemon and disable `command` mode.
 On exit: mute the daemon and re-enable `command` mode.
 """
 
-from talon import actions, Context, Module, cron, imgui, settings
+from talon import actions, app, Context, Module, cron, ctrl, imgui, settings, ui
+from talon.canvas import Canvas
+from talon.skia.canvas import Canvas as SkiaCanvas
+from talon.skia.imagefilter import ImageFilter
 from pathlib import Path
+from talon.types import Rect
 from typing import Optional
 
 import json
@@ -42,6 +46,8 @@ _whisper_event_queue: queue.Queue = queue.Queue()
 _whisper_enabled = False
 _whisper_last_realtime = None
 _whisper_last_full = None
+_whisper_ui_state = None
+_whisper_connected_notified = False
 _whisper_prev_theme = None
 _whisper_theme_switched = False
 _whisper_theme_map = {
@@ -49,7 +55,32 @@ _whisper_theme_map = {
     "light": "light_whisper",
 }
 _whisper_insert_history: list[str] = []
+_whisper_subtitle_canvases: list[Canvas] = []
 _WHISPER_VAD_SUBTITLE = "Listening..."
+_WHISPER_STATUS_TOPIC = "whisper_status"
+_WHISPER_STATUS_ICON = "user.whisper_icon"
+_WHISPER_STATUS_TEXT = {
+    "connecting": "Connecting",
+    "connected": "Connected",
+    "listening": "Listening",
+    "voice_detected": "Voice",
+    "realtime": "Live",
+    "transcribing": "Transcribing",
+    "final": "Final",
+    "connection_failed": "Failed",
+    "disconnected": "Disconnected",
+}
+_WHISPER_SUBTITLE_COLORS = {
+    "connecting": "dddddd",
+    "connected": "55dd77",
+    "listening": "dddddd",
+    "voice_detected": "55c7ff",
+    "realtime": "55d6ff",
+    "transcribing": "ffcc66",
+    "final": "ffff99",
+    "connection_failed": "ff6666",
+    "disconnected": "ff9966",
+}
 
 
 def _notify(msg: str) -> None:
@@ -76,8 +107,133 @@ def _show_subtitle(text: str) -> None:
         _notify(text)
 
 
+def _get_subtitle_screens() -> list[ui.Screen]:
+    screen = settings.get("user.subtitles_screens")
+    if screen == "all":
+        return ui.screens()
+    if screen == "cursor":
+        x, y = ctrl.mouse_pos()
+        return [ui.screen_containing(x, y)]
+    if screen == "focus":
+        return [ui.active_window().screen]
+    return [ui.main_screen()]
+
+
+def _calculate_subtitle_timeout(text: str) -> int:
+    per_char = settings.get("user.subtitles_timeout_per_char")
+    min_ms = settings.get("user.subtitles_timeout_min")
+    max_ms = settings.get("user.subtitles_timeout_max")
+    return min(max_ms, max(min_ms, len(text) * per_char))
+
+
+def _measure_subtitle_rect(c: SkiaCanvas, size: int, text: str) -> Rect:
+    while True:
+        c.paint.textsize = size
+        rect = c.paint.measure_text(text)[1]
+        if rect.width < c.width * 0.8:
+            return rect
+        size *= 0.9
+
+
+def _draw_whisper_subtitle(
+    c: SkiaCanvas,
+    screen: ui.Screen,
+    text: str,
+    color: str,
+    outline: str,
+) -> None:
+    scale = screen.scale if app.platform != "mac" else 1
+    size = settings.get("user.subtitles_size") * scale
+    rect = _measure_subtitle_rect(c, size, text)
+    x = c.rect.center.x - rect.center.x
+    y_setting = settings.get("user.subtitles_y")
+    y = max(
+        min(
+            c.rect.y + y_setting * c.rect.height + c.paint.textsize / 2,
+            c.rect.bot - rect.bot,
+        ),
+        c.rect.top - rect.top,
+    )
+
+    c.paint.imagefilter = ImageFilter.drop_shadow(2, 2, 1, 1, "000000")
+    c.paint.style = c.paint.Style.FILL
+    c.paint.color = color
+    c.draw_text(text, x, y)
+
+    c.paint.imagefilter = None
+    c.paint.style = c.paint.Style.STROKE
+    c.paint.color = outline
+    c.draw_text(text, x, y)
+
+
+def _clear_whisper_subtitles() -> None:
+    for canvas in _whisper_subtitle_canvases:
+        canvas.close()
+    _whisper_subtitle_canvases.clear()
+
+
+def _show_whisper_subtitle(
+    text: str,
+    state: str,
+    outline: str = "222222",
+) -> None:
+    if not settings.get("user.subtitles_show"):
+        _show_subtitle(text)
+        return
+
+    _clear_whisper_subtitles()
+    color = _WHISPER_SUBTITLE_COLORS.get(state, settings.get("user.subtitles_color"))
+    timeout = _calculate_subtitle_timeout(text)
+
+    for screen in _get_subtitle_screens():
+        canvas = Canvas.from_screen(screen)
+        canvas.register(
+            "draw",
+            lambda c, screen=screen, text=text, color=color: _draw_whisper_subtitle(
+                c,
+                screen,
+                text,
+                color,
+                outline,
+            ),
+        )
+        canvas.freeze()
+        cron.after(f"{timeout}ms", canvas.close)
+        _whisper_subtitle_canvases.append(canvas)
+
+
 def _queue_ui_action(action) -> None:
     _whisper_event_queue.put(action)
+
+
+def _publish_whisper_status(state: str) -> None:
+    text = _WHISPER_STATUS_TEXT.get(state, state.replace("_", " ").title())
+    try:
+        status_icon = actions.user.hud_create_status_icon(
+            _WHISPER_STATUS_TOPIC,
+            _WHISPER_STATUS_ICON,
+            text,
+            f"Whisper {text}",
+        )
+        actions.user.hud_publish_status_icon(_WHISPER_STATUS_TOPIC, status_icon)
+    except Exception:
+        pass
+
+
+def _remove_whisper_status() -> None:
+    try:
+        actions.user.hud_remove_status_icon(_WHISPER_STATUS_TOPIC)
+    except Exception:
+        pass
+
+
+def _set_whisper_ui_state(state: str) -> None:
+    global _whisper_ui_state
+    if _whisper_ui_state == state:
+        return
+
+    _whisper_ui_state = state
+    _publish_whisper_status(state)
 
 
 def _remember_inserted_text(text: str) -> None:
@@ -142,15 +298,87 @@ def _drain_event_queue() -> None:
 
 
 def _handle_ws_event(event: dict) -> None:
-    global _whisper_last_realtime, _whisper_last_full
+    global _whisper_connected_notified, _whisper_last_realtime, _whisper_last_full
     event_type = event.get("type")
     if not event_type or not _whisper_enabled:
         return
 
+    if event_type == "client_connecting":
+        _set_whisper_ui_state("connecting")
+        _queue_ui_action(
+            lambda: _show_whisper_subtitle("Connecting to Whisper...", "connecting")
+        )
+        return
+
+    if event_type == "client_connected":
+        _set_whisper_ui_state("connected")
+        if not _whisper_connected_notified:
+            _whisper_connected_notified = True
+            _queue_ui_action(lambda: _notify("Whisper: connected"))
+        _queue_ui_action(
+            lambda: _show_whisper_subtitle("Whisper connected", "connected")
+        )
+        return
+
+    if event_type == "client_connection_failed":
+        content = event.get("content") or "Unable to connect"
+        retry_seconds = event.get("retry_seconds")
+        message = f"Whisper connection failed: {content}"
+        if retry_seconds is not None:
+            message = f"{message}; retrying in {retry_seconds}s"
+
+        _set_whisper_ui_state("connection_failed")
+        _queue_ui_action(lambda text=message: _notify(text))
+        _queue_ui_action(
+            lambda text=message: _show_whisper_subtitle(text, "connection_failed")
+        )
+        return
+
+    if event_type == "client_disconnected":
+        content = event.get("content") or "Server disconnected"
+        _set_whisper_ui_state("disconnected")
+        _queue_ui_action(lambda text=content: _notify(f"Whisper: {text}"))
+        _queue_ui_action(
+            lambda text=content: _show_whisper_subtitle(
+                f"Whisper disconnected: {text}",
+                "disconnected",
+            )
+        )
+        return
+
+    if event_type == "client_reconnecting":
+        retry_seconds = event.get("retry_seconds")
+        message = "Reconnecting to Whisper..."
+        if retry_seconds is not None:
+            message = f"Reconnecting to Whisper in {retry_seconds}s..."
+
+        _set_whisper_ui_state("connecting")
+        _queue_ui_action(
+            lambda text=message: _show_whisper_subtitle(text, "connecting")
+        )
+        return
+
     if event_type == "vad_start":
         _whisper_last_realtime = None
+        _set_whisper_ui_state("voice_detected")
         _apply_whisper_theme()
-        _queue_ui_action(lambda: _show_subtitle(_WHISPER_VAD_SUBTITLE))
+        _queue_ui_action(
+            lambda: _show_whisper_subtitle("Voice detected", "voice_detected")
+        )
+        return
+
+    if event_type == "record_start":
+        _set_whisper_ui_state("listening")
+        _queue_ui_action(
+            lambda: _show_whisper_subtitle(_WHISPER_VAD_SUBTITLE, "listening")
+        )
+        return
+
+    if event_type == "transcript_start":
+        _set_whisper_ui_state("transcribing")
+        _queue_ui_action(
+            lambda: _show_whisper_subtitle("Transcribing...", "transcribing")
+        )
         return
 
     if event_type == "realtime":
@@ -159,7 +387,10 @@ def _handle_ws_event(event: dict) -> None:
             return
 
         _whisper_last_realtime = content
-        _queue_ui_action(lambda text=content: _show_subtitle(text))
+        _set_whisper_ui_state("realtime")
+        _queue_ui_action(
+            lambda text=content: _show_whisper_subtitle(f"Live: {text}", "realtime")
+        )
         return
 
     if event_type == "full":
@@ -169,8 +400,11 @@ def _handle_ws_event(event: dict) -> None:
 
         _whisper_last_full = content
         text_to_insert = f"{content} "
+        _set_whisper_ui_state("final")
         _queue_ui_action(lambda text=text_to_insert: _insert_and_remember(text))
-        _queue_ui_action(lambda text=content: _show_subtitle(text))
+        _queue_ui_action(
+            lambda text=content: _show_whisper_subtitle(f"Final: {text}", "final")
+        )
 
 
 def _stdout_reader(proc: subprocess.Popen) -> None:
@@ -195,6 +429,15 @@ def _read_proc_output() -> None:
             break
 
         if line is None:
+            if _whisper_enabled:
+                _set_whisper_ui_state("disconnected")
+                _queue_ui_action(lambda: _notify("Whisper: client disconnected"))
+                _queue_ui_action(
+                    lambda: _show_whisper_subtitle(
+                        "Whisper client disconnected",
+                        "disconnected",
+                    )
+                )
             _stop_proc()
             return
 
@@ -388,36 +631,49 @@ def _exit_whisper_mode() -> None:
 
 def _enable_whisper() -> bool:
     """Mark Whisper as enabled and start the real-time process."""
-    global _whisper_enabled, _whisper_last_realtime, _whisper_last_full
+    global _whisper_connected_notified, _whisper_enabled, _whisper_last_realtime, _whisper_last_full, _whisper_ui_state
     if _whisper_enabled:
         return True
 
+    _whisper_ui_state = None
+    _whisper_connected_notified = False
     _whisper_last_realtime = None
     _whisper_last_full = None
     _whisper_enabled = True
     _enter_whisper_mode()
     _apply_whisper_theme()
+    _set_whisper_ui_state("connecting")
+    _queue_ui_action(lambda: _show_whisper_subtitle("Connecting to Whisper...", "connecting"))
 
     started = _start_proc()
     if not started:
         _whisper_enabled = False
         _exit_whisper_mode()
         _restore_hud_theme()
+        _remove_whisper_status()
 
     return started
 
 
 def _disable_whisper() -> None:
     """Ensure the Whisper process is stopped and reset the tracked state."""
-    global _whisper_enabled
+    global _whisper_connected_notified, _whisper_enabled, _whisper_last_full, _whisper_last_realtime, _whisper_ui_state
     if not _whisper_enabled and not _proc_is_running():
         _exit_whisper_mode()
         _restore_hud_theme()
+        _remove_whisper_status()
+        _clear_whisper_subtitles()
         return
 
     _whisper_enabled = False
+    _whisper_connected_notified = False
+    _whisper_last_realtime = None
+    _whisper_last_full = None
+    _whisper_ui_state = None
     _exit_whisper_mode()
     _restore_hud_theme()
+    _remove_whisper_status()
+    _clear_whisper_subtitles()
     _stop_proc()
 
 

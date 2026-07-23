@@ -41,6 +41,10 @@ Added `.agents/scripts/check_talon_config.py` and `.githooks/pre-commit` to enfo
 
 Imported `apps/fluent_search/` from `nriley/talon_community` commit `51bc9087a723af0c6b8587cccea14068280fafee`. Adds Windows commands for launching app/process searches, Fluent Search screen labels, and in-app/menu search hotkeys.
 
+### (4.2) Fix Fluent Search Wait Detection
+
+Updated `apps/fluent_search/fluent_search.py` to recognize Fluent Search when Talon reports the active app as `Fluent Search` on Windows, avoiding the timeout notification before query text is pasted.
+
 ## (5) Vocabulary
 
 ### (5.1) Move Misrecognitions to Words To Replace

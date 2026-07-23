@@ -2,6 +2,23 @@
 
 ## Installation
 
+command to open a new window
+workbench.action.moveEditorToNewWindow
+
+shift window to run the menu command for fluent search for showing labels
+
+a command which will open magit status and then moved into a new window
+
+make a command to open a new search editor in a new window
+search new editor: user.vscode("search.action.openNewEditor")
+
+make commands specific for magit window, such as stage or onstage
+magit.commit
+magit.branching
+find the other commands here https://github.com/kahole/edamagit
+
+open words to replace in VSCode
+
 - [ ] Update the install script
   - [ ] Include new repositories
   - [ ] Install Andreas configuration

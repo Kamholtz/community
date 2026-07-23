@@ -1,8 +1,7 @@
-import os
 import subprocess
 from pathlib import Path
 
-from talon import Context, Module, app
+from talon import Context, Module, app, ui
 
 # Path to community root directory
 REPO_DIR = Path(__file__).parent.parent.parent
@@ -29,9 +28,17 @@ class Actions:
 class WinActions:
     def edit_text_file(file: str):
         path = get_full_path(file)
+        try:
+            ui.launch(path="code", args=["--reuse-window", str(path)])
+            return
+        except Exception:
+            pass
+
         # If there's no applications registered that can open the given type
         # of file, 'edit' will fail, but 'open' always gives the user a
         # choice between applications.
+        import os
+
         try:
             os.startfile(path, "edit")
         except OSError:
