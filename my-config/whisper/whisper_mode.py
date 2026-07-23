@@ -17,6 +17,8 @@ from pathlib import Path
 from talon.types import Rect
 from typing import Optional
 
+from whisper_transcript_state import PendingTranscript, TranscriptState
+
 import json
 import queue
 import subprocess
@@ -30,6 +32,18 @@ mod.setting(
     type=int,
     default=50,
     desc="Number of inserted Whisper dictation entries to keep in session history.",
+)
+mod.setting(
+    "whisper_polish_segments",
+    type=bool,
+    default=True,
+    desc="Wait briefly for polished Whisper segments before inserting final text.",
+)
+mod.setting(
+    "whisper_polish_fallback_ms",
+    type=int,
+    default=700,
+    desc="Milliseconds to wait for a polished transcript before inserting the original.",
 )
 
 ctx = Context()
@@ -45,7 +59,8 @@ _whisper_line_queue: queue.Queue = queue.Queue()
 _whisper_event_queue: queue.Queue = queue.Queue()
 _whisper_enabled = False
 _whisper_last_realtime = None
-_whisper_last_full = None
+_whisper_transcripts = TranscriptState()
+_whisper_last_event_signature = None
 _whisper_ui_state = None
 _whisper_connected_notified = False
 _whisper_prev_theme = None
@@ -67,6 +82,8 @@ _WHISPER_STATUS_TEXT = {
     "realtime": "Live",
     "transcribing": "Transcribing",
     "final": "Final",
+    "polishing": "Polishing",
+    "polished": "Polished",
     "connection_failed": "Failed",
     "disconnected": "Disconnected",
 }
@@ -78,6 +95,8 @@ _WHISPER_SUBTITLE_COLORS = {
     "realtime": "55d6ff",
     "transcribing": "ffcc66",
     "final": "ffff99",
+    "polishing": "ffcc66",
+    "polished": "77ee99",
     "connection_failed": "ff6666",
     "disconnected": "ff9966",
 }
@@ -252,6 +271,35 @@ def _insert_and_remember(text: str) -> None:
     _remember_inserted_text(text)
 
 
+def _cancel_fallback(pending: PendingTranscript) -> None:
+    if pending.fallback_job is not None:
+        cron.cancel(pending.fallback_job)
+        pending.fallback_job = None
+
+
+def _resolve_pending_transcript(identity: int) -> None:
+    pending = _whisper_transcripts.resolve(identity)
+    if pending is None:
+        return
+
+    _cancel_fallback(pending)
+    _insert_and_remember(f"{pending.insertion_text} ")
+
+
+def _insert_displaced_transcript(pending: PendingTranscript) -> None:
+    if pending.inserted:
+        return
+    pending.inserted = True
+    _cancel_fallback(pending)
+    _insert_and_remember(f"{pending.insertion_text} ")
+
+
+def _flush_pending_transcript() -> None:
+    pending = _whisper_transcripts.pending
+    if pending is not None:
+        _resolve_pending_transcript(pending.identity)
+
+
 def _format_history_preview(text: str, max_length: int = 80) -> str:
     preview = " ".join(text.split())
     if len(preview) > max_length:
@@ -298,10 +346,15 @@ def _drain_event_queue() -> None:
 
 
 def _handle_ws_event(event: dict) -> None:
-    global _whisper_connected_notified, _whisper_last_realtime, _whisper_last_full
+    global _whisper_connected_notified, _whisper_last_event_signature, _whisper_last_realtime
     event_type = event.get("type")
     if not event_type or not _whisper_enabled:
         return
+
+    event_signature = json.dumps(event, sort_keys=True, default=str)
+    if event_signature == _whisper_last_event_signature:
+        return
+    _whisper_last_event_signature = event_signature
 
     if event_type == "client_connecting":
         _set_whisper_ui_state("connecting")
@@ -395,15 +448,52 @@ def _handle_ws_event(event: dict) -> None:
 
     if event_type == "full":
         content = event.get("content")
-        if not content or content == _whisper_last_full:
+        if not content:
             return
 
-        _whisper_last_full = content
-        text_to_insert = f"{content} "
-        _set_whisper_ui_state("final")
-        _queue_ui_action(lambda text=text_to_insert: _insert_and_remember(text))
+        displaced, pending = _whisper_transcripts.begin_full(content)
+        if displaced is not None and not displaced.inserted:
+            _queue_ui_action(
+                lambda transcript=displaced: _insert_displaced_transcript(transcript)
+            )
+
+        if not settings.get("user.whisper_polish_segments"):
+            _set_whisper_ui_state("final")
+            _queue_ui_action(
+                lambda identity=pending.identity: _resolve_pending_transcript(identity)
+            )
+        else:
+            fallback_ms = max(0, settings.get("user.whisper_polish_fallback_ms"))
+            pending.fallback_job = cron.after(
+                f"{fallback_ms}ms",
+                lambda identity=pending.identity: _resolve_pending_transcript(identity),
+            )
+            _set_whisper_ui_state("polishing")
+
         _queue_ui_action(
             lambda text=content: _show_whisper_subtitle(f"Final: {text}", "final")
+        )
+        return
+
+    if event_type == "polished":
+        content = event.get("content")
+        if not content:
+            return
+
+        pending = _whisper_transcripts.apply_polished(content)
+        if pending is None:
+            return
+
+        _cancel_fallback(pending)
+        _set_whisper_ui_state("polished")
+        _queue_ui_action(
+            lambda identity=pending.identity: _resolve_pending_transcript(identity)
+        )
+        _queue_ui_action(
+            lambda text=content: _show_whisper_subtitle(
+                f"Polished: {text}",
+                "polished",
+            )
         )
 
 
@@ -631,14 +721,15 @@ def _exit_whisper_mode() -> None:
 
 def _enable_whisper() -> bool:
     """Mark Whisper as enabled and start the real-time process."""
-    global _whisper_connected_notified, _whisper_enabled, _whisper_last_realtime, _whisper_last_full, _whisper_ui_state
+    global _whisper_connected_notified, _whisper_enabled, _whisper_last_event_signature, _whisper_last_realtime, _whisper_ui_state
     if _whisper_enabled:
         return True
 
     _whisper_ui_state = None
     _whisper_connected_notified = False
     _whisper_last_realtime = None
-    _whisper_last_full = None
+    _whisper_last_event_signature = None
+    _whisper_transcripts.reset()
     _whisper_enabled = True
     _enter_whisper_mode()
     _apply_whisper_theme()
@@ -657,7 +748,7 @@ def _enable_whisper() -> bool:
 
 def _disable_whisper() -> None:
     """Ensure the Whisper process is stopped and reset the tracked state."""
-    global _whisper_connected_notified, _whisper_enabled, _whisper_last_full, _whisper_last_realtime, _whisper_ui_state
+    global _whisper_connected_notified, _whisper_enabled, _whisper_last_event_signature, _whisper_last_realtime, _whisper_ui_state
     if not _whisper_enabled and not _proc_is_running():
         _exit_whisper_mode()
         _restore_hud_theme()
@@ -665,10 +756,12 @@ def _disable_whisper() -> None:
         _clear_whisper_subtitles()
         return
 
+    _flush_pending_transcript()
     _whisper_enabled = False
     _whisper_connected_notified = False
     _whisper_last_realtime = None
-    _whisper_last_full = None
+    _whisper_last_event_signature = None
+    _whisper_transcripts.reset()
     _whisper_ui_state = None
     _exit_whisper_mode()
     _restore_hud_theme()
