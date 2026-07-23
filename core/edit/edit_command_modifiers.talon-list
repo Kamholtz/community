@@ -1,7 +1,7 @@
 list: user.edit_modifier
 -
 
-all: document
+document: document
 paragraph: paragraph
 line: line
 line start: lineStart
