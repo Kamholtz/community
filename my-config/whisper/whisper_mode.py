@@ -130,7 +130,13 @@ _whisper_insert_history: list[str] = []
 _whisper_subtitle_canvases: list[Canvas] = []
 _WHISPER_VAD_SUBTITLE = "Listening..."
 _WHISPER_STATUS_TOPIC = "whisper_status"
-_WHISPER_STATUS_ICON = "user.whisper_icon"
+_WHISPER_STATUS_ICON = str(
+    Path(__file__).resolve().parents[1]
+    / "talon_hud_themes"
+    / "dark_whisper"
+    / "images"
+    / "user.whisper_icon.png"
+)
 _WHISPER_SESSION_TOPIC = "whisper_polished_session"
 _WHISPER_SESSION_ICON = "copy_icon"
 _WHISPER_STATUS_TEXT = {
@@ -295,7 +301,7 @@ def _publish_whisper_status(state: str) -> None:
         status_icon = actions.user.hud_create_status_icon(
             _WHISPER_STATUS_TOPIC,
             _WHISPER_STATUS_ICON,
-            text,
+            None,
             f"Whisper {text}",
         )
         actions.user.hud_publish_status_icon(_WHISPER_STATUS_TOPIC, status_icon)

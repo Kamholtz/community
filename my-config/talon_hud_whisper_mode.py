@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from talon import Context, actions, app, scope
+from talon import Context, actions, app, cron, scope
 
 THEME_DIRS = {
     "dark_whisper": Path(__file__).resolve().parent / "talon_hud_themes" / "dark_whisper",
@@ -13,7 +13,8 @@ tag: user.talon_hud_available
 """
 
 
-def _register_whisper_theme() -> None:
+def _register_whisper_theme(attempt: int = 0) -> None:
+    registered_all = True
     for theme_name, theme_dir in THEME_DIRS.items():
         if not theme_dir.is_dir():
             continue
@@ -21,11 +22,16 @@ def _register_whisper_theme() -> None:
         try:
             actions.user.hud_register_theme(theme_name, str(theme_dir))
         except Exception:
-            # HUD not available yet or action not present.
-            continue
+            registered_all = False
+
+    # The HUD can finish loading after Talon's ready event. Retry briefly so a
+    # full Talon restart behaves the same as a script reload.
+    if not registered_all and attempt < 20:
+        cron.after("500ms", lambda: _register_whisper_theme(attempt + 1))
 
 
 app.register("ready", _register_whisper_theme)
+_register_whisper_theme()
 
 
 @ctx.action_class("user")
