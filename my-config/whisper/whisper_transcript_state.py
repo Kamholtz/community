@@ -54,4 +54,3 @@ class TranscriptState:
         pending.inserted = True
         self.pending = None
         return pending
-

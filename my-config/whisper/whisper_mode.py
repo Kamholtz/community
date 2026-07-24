@@ -9,7 +9,7 @@ On entry: unmute the transcription daemon and disable `command` mode.
 On exit: mute the daemon and re-enable `command` mode.
 """
 
-from talon import actions, app, Context, Module, cron, ctrl, imgui, screen, settings, ui
+from talon import actions, app, clip, Context, Module, cron, ctrl, imgui, screen, settings, ui
 from talon.canvas import Canvas
 from talon.skia.canvas import Canvas as SkiaCanvas
 from talon.skia.imagefilter import ImageFilter
@@ -17,7 +17,7 @@ from pathlib import Path
 from talon.types import Rect
 from typing import Optional
 
-from whisper_transcript_state import PendingTranscript, TranscriptState
+from .whisper_transcript_state import PendingTranscript, TranscriptState
 
 import json
 import os
@@ -71,6 +71,18 @@ mod.setting(
     default=30000,
     desc="Milliseconds to wait for a screenshot context response.",
 )
+mod.setting(
+    "whisper_subtitles_show",
+    type=bool,
+    default=True,
+    desc="Show Whisper transcription using community-style canvas subtitles.",
+)
+mod.setting(
+    "whisper_transcript_subtitle_color",
+    type=str,
+    default="66ff66",
+    desc="Color used for Whisper realtime, final, and polished transcript subtitles.",
+)
 
 ctx = Context()
 
@@ -119,6 +131,8 @@ _whisper_subtitle_canvases: list[Canvas] = []
 _WHISPER_VAD_SUBTITLE = "Listening..."
 _WHISPER_STATUS_TOPIC = "whisper_status"
 _WHISPER_STATUS_ICON = "user.whisper_icon"
+_WHISPER_SESSION_TOPIC = "whisper_polished_session"
+_WHISPER_SESSION_ICON = "copy_icon"
 _WHISPER_STATUS_TEXT = {
     "connecting": "Connecting",
     "connected": "Connected",
@@ -153,30 +167,21 @@ _WHISPER_SUBTITLE_COLORS = {
     "connection_failed": "ff6666",
     "disconnected": "ff9966",
 }
+_WHISPER_TRANSCRIPT_SUBTITLE_STATES = {"realtime", "final", "polished"}
 
 
 def _notify(msg: str) -> None:
     try:
         actions.user.notify(msg)
     except Exception:
-        print("ERROR: actions.user.notify(msg) " + msg)
+        try:
+            app.notify(msg)
+        except Exception:
+            print("Whisper: " + msg)
 
 
 def _proc_is_running() -> bool:
     return _whisper_proc is not None and _whisper_proc.poll() is None
-
-
-def _show_subtitle(text: str) -> None:
-    try:
-        from plugin.subtitles.subtitles import show_subtitle
-    except Exception:
-        _notify(text)
-        return
-
-    try:
-        show_subtitle(text)
-    except Exception:
-        _notify(text)
 
 
 def _get_subtitle_screens() -> list[ui.Screen]:
@@ -249,12 +254,18 @@ def _show_whisper_subtitle(
     state: str,
     outline: str = "222222",
 ) -> None:
-    if not settings.get("user.subtitles_show"):
-        _show_subtitle(text)
+    if not settings.get("user.whisper_subtitles_show"):
+        _clear_whisper_subtitles()
         return
 
     _clear_whisper_subtitles()
-    color = _WHISPER_SUBTITLE_COLORS.get(state, settings.get("user.subtitles_color"))
+    if state in _WHISPER_TRANSCRIPT_SUBTITLE_STATES:
+        color = settings.get("user.whisper_transcript_subtitle_color")
+    else:
+        color = _WHISPER_SUBTITLE_COLORS.get(
+            state,
+            settings.get("user.subtitles_color"),
+        )
     timeout = _calculate_subtitle_timeout(text)
 
     for screen in _get_subtitle_screens():
@@ -295,6 +306,36 @@ def _publish_whisper_status(state: str) -> None:
 def _remove_whisper_status() -> None:
     try:
         actions.user.hud_remove_status_icon(_WHISPER_STATUS_TOPIC)
+    except Exception:
+        pass
+
+
+def _insert_last_session_polished(*_args) -> None:
+    if not _whisper_last_session_polished:
+        _notify("Whisper: no polished session transcript")
+        return
+    actions.insert(_whisper_last_session_polished)
+
+
+def _copy_last_session_polished(*_args) -> None:
+    if not _whisper_last_session_polished:
+        _notify("Whisper: no polished session transcript")
+        return
+    clip.set_text(_whisper_last_session_polished)
+    _notify("Whisper: polished session copied")
+
+
+def _publish_polished_session_available() -> None:
+    """Publish a compact HUD icon that copies the latest polished session."""
+    try:
+        status_icon = actions.user.hud_create_status_icon(
+            _WHISPER_SESSION_TOPIC,
+            _WHISPER_SESSION_ICON,
+            None,
+            "Copy latest polished Whisper session",
+            _copy_last_session_polished,
+        )
+        actions.user.hud_publish_status_icon(_WHISPER_SESSION_TOPIC, status_icon)
     except Exception:
         pass
 
@@ -641,6 +682,7 @@ def _handle_ws_event(event: dict) -> None:
         content = event.get("content")
         if content:
             _whisper_last_session_polished = content
+            _queue_ui_action(_publish_polished_session_available)
             _queue_ui_action(lambda: _notify("Whisper: session polished"))
             _queue_ui_action(
                 lambda text=content: _show_whisper_subtitle(
@@ -766,7 +808,9 @@ def _read_proc_output() -> None:
             break
 
         if line is None:
-            if _whisper_enabled:
+            if _whisper_shutdown_pending:
+                _queue_ui_action(_complete_graceful_shutdown)
+            elif _whisper_enabled:
                 _set_whisper_ui_state("disconnected")
                 _queue_ui_action(lambda: _notify("Whisper: client disconnected"))
                 _queue_ui_action(
@@ -1165,10 +1209,7 @@ class Actions:
 
     def whisper_session_insert() -> None:
         """Insert the last session-polished transcript."""
-        if not _whisper_last_session_polished:
-            _notify("Whisper: no polished session transcript")
-            return
-        actions.insert(_whisper_last_session_polished)
+        _insert_last_session_polished()
 
     def whisper_context_set(text: str) -> None:
         """Set screen context text for future polished transcripts."""

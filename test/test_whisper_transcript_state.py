@@ -5,7 +5,7 @@ import unittest
 
 
 MODULE_PATH = (
-    Path(__file__).parents[1] / "my-config" / "whisper_transcript_state.py"
+    Path(__file__).parents[1] / "my-config" / "whisper" / "whisper_transcript_state.py"
 )
 SPEC = importlib.util.spec_from_file_location("whisper_transcript_state", MODULE_PATH)
 assert SPEC and SPEC.loader
