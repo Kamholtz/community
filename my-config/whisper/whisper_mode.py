@@ -115,6 +115,7 @@ _whisper_ui_state = None
 _whisper_connected_notified = False
 _whisper_shutdown_pending = False
 _whisper_shutdown_job = None
+_whisper_copy_on_shutdown = False
 _whisper_last_session_polished = None
 _whisper_context_status = None
 _whisper_context_capture_pending = False
@@ -139,6 +140,7 @@ _WHISPER_STATUS_ICON = str(
 )
 _WHISPER_SESSION_TOPIC = "whisper_polished_session"
 _WHISPER_SESSION_ICON = "copy_icon"
+_WHISPER_COPY_ON_STOP_TOPIC = "whisper_copy_on_stop"
 _WHISPER_STATUS_TEXT = {
     "connecting": "Connecting",
     "connected": "Connected",
@@ -302,18 +304,65 @@ def _publish_whisper_status(state: str) -> None:
             _WHISPER_STATUS_TOPIC,
             _WHISPER_STATUS_ICON,
             None,
-            f"Whisper {text}",
+            f"Return to command mode (Whisper {text})",
+            _return_to_command_mode,
         )
         actions.user.hud_publish_status_icon(_WHISPER_STATUS_TOPIC, status_icon)
     except Exception:
         pass
 
 
-def _remove_whisper_status() -> None:
+def _publish_command_mode_whisper_button(*_args) -> None:
     try:
-        actions.user.hud_remove_status_icon(_WHISPER_STATUS_TOPIC)
+        status_icon = actions.user.hud_create_status_icon(
+            _WHISPER_STATUS_TOPIC,
+            _WHISPER_STATUS_ICON,
+            None,
+            "Switch to Whisper mode",
+            _switch_to_whisper_mode,
+        )
+        actions.user.hud_publish_status_icon(_WHISPER_STATUS_TOPIC, status_icon)
     except Exception:
         pass
+
+
+def _publish_whisper_mode_buttons() -> None:
+    _publish_whisper_status(_whisper_ui_state or "connected")
+    try:
+        copy_icon = actions.user.hud_create_status_icon(
+            _WHISPER_COPY_ON_STOP_TOPIC,
+            _WHISPER_SESSION_ICON,
+            None,
+            "Return to command mode and copy polished session on disconnect",
+            _return_to_command_mode_and_copy,
+        )
+        actions.user.hud_publish_status_icon(
+            _WHISPER_COPY_ON_STOP_TOPIC,
+            copy_icon,
+        )
+    except Exception:
+        pass
+
+
+def _remove_whisper_mode_copy_button() -> None:
+    try:
+        actions.user.hud_remove_status_icon(_WHISPER_COPY_ON_STOP_TOPIC)
+    except Exception:
+        pass
+
+
+def _switch_to_whisper_mode(*_args) -> None:
+    _enable_whisper()
+
+
+def _return_to_command_mode(*_args) -> None:
+    _begin_graceful_shutdown()
+
+
+def _return_to_command_mode_and_copy(*_args) -> None:
+    global _whisper_copy_on_shutdown
+    _whisper_copy_on_shutdown = True
+    _begin_graceful_shutdown()
 
 
 def _insert_last_session_polished(*_args) -> None:
@@ -329,6 +378,13 @@ def _copy_last_session_polished(*_args) -> None:
         return
     clip.set_text(_whisper_last_session_polished)
     _notify("Whisper: polished session copied")
+
+
+def _copy_polished_session_after_disconnect() -> None:
+    global _whisper_copy_on_shutdown
+    if _whisper_copy_on_shutdown:
+        _copy_last_session_polished()
+        _whisper_copy_on_shutdown = False
 
 
 def _publish_polished_session_available() -> None:
@@ -689,6 +745,7 @@ def _handle_ws_event(event: dict) -> None:
         if content:
             _whisper_last_session_polished = content
             _queue_ui_action(_publish_polished_session_available)
+            _queue_ui_action(_copy_polished_session_after_disconnect)
             _queue_ui_action(lambda: _notify("Whisper: session polished"))
             _queue_ui_action(
                 lambda text=content: _show_whisper_subtitle(
@@ -1058,7 +1115,7 @@ def _exit_whisper_mode() -> None:
 
 def _enable_whisper() -> bool:
     """Mark Whisper as enabled and start the real-time process."""
-    global _whisper_connected_notified, _whisper_enabled, _whisper_last_event_signature, _whisper_last_realtime, _whisper_ui_state
+    global _whisper_connected_notified, _whisper_copy_on_shutdown, _whisper_enabled, _whisper_last_event_signature, _whisper_last_realtime, _whisper_ui_state
     if _whisper_enabled:
         return True
 
@@ -1066,11 +1123,13 @@ def _enable_whisper() -> bool:
     _whisper_connected_notified = False
     _whisper_last_realtime = None
     _whisper_last_event_signature = None
+    _whisper_copy_on_shutdown = False
     _whisper_transcripts.reset()
     _whisper_enabled = True
     _enter_whisper_mode()
     _apply_whisper_theme()
     _set_whisper_ui_state("connecting")
+    _publish_whisper_mode_buttons()
     _queue_ui_action(lambda: _show_whisper_subtitle("Connecting to Whisper...", "connecting"))
 
     started = _start_proc()
@@ -1078,19 +1137,22 @@ def _enable_whisper() -> bool:
         _whisper_enabled = False
         _exit_whisper_mode()
         _restore_hud_theme()
-        _remove_whisper_status()
+        _remove_whisper_mode_copy_button()
+        _publish_command_mode_whisper_button()
 
     return started
 
 
 def _disable_whisper() -> None:
     """Ensure the Whisper process is stopped and reset the tracked state."""
-    global _whisper_connected_notified, _whisper_enabled, _whisper_last_event_signature, _whisper_last_realtime, _whisper_ui_state
+    global _whisper_connected_notified, _whisper_copy_on_shutdown, _whisper_enabled, _whisper_last_event_signature, _whisper_last_realtime, _whisper_ui_state
     if not _whisper_enabled and not _proc_is_running():
         _finish_context_capture()
         _exit_whisper_mode()
         _restore_hud_theme()
-        _remove_whisper_status()
+        _whisper_copy_on_shutdown = False
+        _remove_whisper_mode_copy_button()
+        _publish_command_mode_whisper_button()
         _clear_whisper_subtitles()
         return
 
@@ -1100,11 +1162,13 @@ def _disable_whisper() -> None:
     _whisper_connected_notified = False
     _whisper_last_realtime = None
     _whisper_last_event_signature = None
+    _whisper_copy_on_shutdown = False
     _whisper_transcripts.reset()
     _whisper_ui_state = None
     _exit_whisper_mode()
     _restore_hud_theme()
-    _remove_whisper_status()
+    _remove_whisper_mode_copy_button()
+    _publish_command_mode_whisper_button()
     _clear_whisper_subtitles()
     _stop_proc()
 
@@ -1266,3 +1330,14 @@ class Actions:
         """Clear the current screen context."""
         if not _send_control("clear_context"):
             _notify("Whisper: no active client")
+
+
+def _publish_initial_whisper_button() -> None:
+    if _whisper_enabled:
+        _publish_whisper_mode_buttons()
+    else:
+        _publish_command_mode_whisper_button()
+
+
+app.register("ready", _publish_initial_whisper_button)
+_publish_initial_whisper_button()
