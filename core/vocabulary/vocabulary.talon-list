@@ -84,7 +84,7 @@ W L A N: WLAN
 WLANs
 Entra
 tmuxinator
-fzf
+F Z F: fzf
 nvm
 zoxide
 direnv
@@ -151,7 +151,7 @@ Lumus
 pilates
 lifecycle
 lifecycle policy
-zotero
+Zotero
 N F S: NFS
 E F S: EFS
 SD card
@@ -232,3 +232,6 @@ vision latency
 extract screen
 Relacon
 Relacon Handheld Trackball
+Broken Access Control
+O wasp: OWASP
+O W A S P: OWASP
