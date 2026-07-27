@@ -118,6 +118,7 @@ _whisper_shutdown_job = None
 _whisper_copy_on_shutdown = False
 _whisper_last_session_polished = None
 _whisper_context_status = None
+_whisper_context_text = None
 _whisper_context_capture_pending = False
 _whisper_context_capture_path = None
 _whisper_context_capture_job = None
@@ -607,6 +608,8 @@ def _handle_ws_event(event: dict) -> None:
 
     if event_type == "client_connected":
         _set_whisper_ui_state("connected")
+        if _whisper_context_text:
+            _send_control("set_context_text", content=_whisper_context_text)
         if not _whisper_connected_notified:
             _whisper_connected_notified = True
             _queue_ui_action(lambda: _notify("Whisper: connected"))
@@ -1295,11 +1298,13 @@ class Actions:
 
     def whisper_context_set(text: str) -> None:
         """Set screen context text for future polished transcripts."""
+        global _whisper_context_text
         if not text or not text.strip():
             _notify("Whisper: context text cannot be empty")
             return
+        _whisper_context_text = text
         if not _send_control("set_context_text", content=text):
-            _notify("Whisper: no active client")
+            _notify("Whisper: context stored for the next session")
 
     def whisper_context_capture() -> None:
         """Capture a window or screen as PNG context for future polished transcripts."""

@@ -9,3 +9,5 @@ whisper session insert: user.whisper_session_insert()
 whisper context screen: user.whisper_context_capture()
 whisper context show: user.whisper_context_show()
 whisper context clear: user.whisper_context_clear()
+whisper context selection:
+    user.whisper_context_set(edit.selected_text())
