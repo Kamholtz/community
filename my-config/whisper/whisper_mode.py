@@ -139,16 +139,15 @@ _WHISPER_STATUS_ICON = str(
     / "images"
     / "user.whisper_icon.png"
 )
-_WHISPER_START_ICONS = {
-    theme: str(
-        Path(__file__).resolve().parents[1]
-        / "talon_hud_themes"
-        / f"{theme}_whisper"
-        / "images"
-        / "whisper_start_icon.png"
-    )
-    for theme in ("dark", "light")
-}
+# Status buttons use a light circular background in both HUD themes, so the
+# charcoal glyph matches the neighboring controls and remains legible in both.
+_WHISPER_START_ICON = str(
+    Path(__file__).resolve().parents[1]
+    / "talon_hud_themes"
+    / "light_whisper"
+    / "images"
+    / "whisper_start_icon_dark.png"
+)
 _WHISPER_SESSION_TOPIC = "whisper_polished_session"
 _WHISPER_SESSION_ICON = "copy_icon"
 _WHISPER_COPY_ON_STOP_TOPIC = "whisper_copy_on_stop"
@@ -324,12 +323,10 @@ def _publish_whisper_status(state: str) -> None:
 
 
 def _publish_command_mode_whisper_button(*_args) -> None:
-    theme_name = _get_current_theme_name() or "dark"
-    theme_variant = "light" if theme_name.startswith("light") else "dark"
     try:
         status_icon = actions.user.hud_create_status_icon(
             _WHISPER_STATUS_TOPIC,
-            _WHISPER_START_ICONS[theme_variant],
+            _WHISPER_START_ICON,
             None,
             "Switch to Whisper mode",
             _switch_to_whisper_mode,
@@ -1235,6 +1232,10 @@ class Actions:
     def whisper_start() -> bool:
         """Begin transcription by enabling Whisper and starting the daemon."""
         return _enable_whisper()
+
+    def whisper_hud_refresh_button() -> None:
+        """Republish Whisper HUD controls for the currently active HUD theme."""
+        _publish_initial_whisper_button()
 
     def whisper_done() -> None:
         """Gracefully stop transcription and request session polishing."""

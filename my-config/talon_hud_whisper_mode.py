@@ -24,6 +24,22 @@ def _register_whisper_theme(attempt: int = 0) -> None:
         except Exception:
             registered_all = False
 
+    if registered_all:
+        try:
+            current_theme = actions.user.hud_get_theme()
+            current_name = current_theme.name
+            expected_dir = THEME_DIRS.get(current_name)
+            current_dir = Path(current_theme.theme_dir)
+            if expected_dir is not None and current_dir.resolve() != expected_dir.resolve():
+                # The HUD can restore a persisted custom theme before external
+                # themes are registered. Re-enter it so it is rebuilt from the
+                # newly registered directory instead of the light base fallback.
+                base_theme = current_name.removesuffix("_whisper")
+                actions.user.hud_switch_theme(base_theme)
+                actions.user.hud_switch_theme(current_name)
+        except Exception:
+            registered_all = False
+
     # The HUD can finish loading after Talon's ready event. Retry briefly so a
     # full Talon restart behaves the same as a script reload.
     if not registered_all and attempt < 20:
@@ -64,3 +80,8 @@ class Actions:
             actions.speech.disable()
         elif current_mode == "sleep":
             actions.speech.enable()
+
+    def hud_switch_theme(theme_name: str):
+        """Refresh Whisper controls after the HUD changes theme."""
+        actions.next(theme_name)
+        cron.after("50ms", actions.user.whisper_hud_refresh_button)
