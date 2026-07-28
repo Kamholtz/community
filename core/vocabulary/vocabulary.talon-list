@@ -275,3 +275,4 @@ deny list
 allow list
 XOR Cipher
 XOR encryption
+Code Injection
