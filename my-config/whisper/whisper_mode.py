@@ -146,7 +146,7 @@ _WHISPER_START_ICON = str(
     / "talon_hud_themes"
     / "light_whisper"
     / "images"
-    / "whisper_start_icon_dark.png"
+    / "whisper_start_w.png"
 )
 _WHISPER_SESSION_TOPIC = "whisper_polished_session"
 _WHISPER_SESSION_ICON = "copy_icon"
