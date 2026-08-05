@@ -24,8 +24,9 @@ settings():
     user.ocr_gaze_point_padding = 250
     user.ocr_behavior_when_no_eye_tracker = "ACTIVE_WINDOW"
 
-
-
+void say <user.text>$:
+    user.add_phrase_to_history(" {text}")
+    insert(" {text}")
 
 # Custom voice commands for undo and redo
 nope: edit.undo()
