@@ -1,5 +1,17 @@
 # My Changes
 
+## Whisper D-pad overlay
+
+F1 now opens a four-direction Whisper control overlay. Up toggles Whisper and
+keeps the overlay open; Left copies the last polished session; Right inserts
+it; Down copies the current session transcript accumulated to that point.
+The mapping is defined as data in `my-config/whisper/whisper_dpad.py`, including
+each command and its post-command dismissal function. The overlay is green while
+Whisper is active. Keyboard arrows and a gamepad D-pad dispatch through the
+same mapping; the other mapped gamepad controls plus Escape, Enter, Space, Tab,
+and F1 dismiss it. The Whisper integration now retains all finalised segments
+and includes current realtime text when copying the active-session snapshot.
+
 ## (1) Edit
 
 ### (1.1) Replace Edit Action Cut With Carve

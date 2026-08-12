@@ -129,6 +129,7 @@ _whisper_theme_map = {
     "light": "light_whisper",
 }
 _whisper_insert_history: list[str] = []
+_whisper_session_transcript: list[str] = []
 _whisper_subtitle_canvases: list[Canvas] = []
 _WHISPER_VAD_SUBTITLE = "Listening..."
 _WHISPER_STATUS_TOPIC = "whisper_status"
@@ -437,6 +438,22 @@ def _insert_and_remember(text: str) -> None:
     _remember_inserted_text(text)
 
 
+def _remember_session_transcript(text: str) -> None:
+    """Store a finalised segment once for the active Whisper session."""
+    cleaned = text.strip()
+    if cleaned:
+        _whisper_session_transcript.append(cleaned)
+
+
+def _get_current_session_transcript() -> str:
+    """Return finalised text plus the latest non-final realtime text."""
+    parts = list(_whisper_session_transcript)
+    realtime = (_whisper_last_realtime or "").strip()
+    if realtime and (not parts or realtime != parts[-1]):
+        parts.append(realtime)
+    return " ".join(parts)
+
+
 def _cancel_fallback(pending: PendingTranscript) -> None:
     if pending.fallback_job is not None:
         cron.cancel(pending.fallback_job)
@@ -449,6 +466,7 @@ def _resolve_pending_transcript(identity: int) -> None:
         return
 
     _cancel_fallback(pending)
+    _remember_session_transcript(pending.insertion_text)
     _insert_and_remember(f"{pending.insertion_text} ")
 
 
@@ -457,6 +475,7 @@ def _insert_displaced_transcript(pending: PendingTranscript) -> None:
         return
     pending.inserted = True
     _cancel_fallback(pending)
+    _remember_session_transcript(pending.insertion_text)
     _insert_and_remember(f"{pending.insertion_text} ")
 
 
@@ -1127,7 +1146,7 @@ def _exit_whisper_mode() -> None:
 
 def _enable_whisper() -> bool:
     """Mark Whisper as enabled and start the real-time process."""
-    global _whisper_connected_notified, _whisper_copy_on_shutdown, _whisper_enabled, _whisper_last_event_signature, _whisper_last_realtime, _whisper_ui_state
+    global _whisper_connected_notified, _whisper_copy_on_shutdown, _whisper_enabled, _whisper_last_event_signature, _whisper_last_realtime, _whisper_ui_state, _whisper_session_transcript
     if _whisper_enabled:
         return True
 
@@ -1137,6 +1156,7 @@ def _enable_whisper() -> bool:
     _whisper_last_event_signature = None
     _whisper_copy_on_shutdown = False
     _whisper_transcripts.reset()
+    _whisper_session_transcript = []
     _whisper_enabled = True
     _enter_whisper_mode()
     _apply_whisper_theme()
@@ -1249,6 +1269,24 @@ class Actions:
         else:
             actions.speech.disable()
             _enable_whisper()
+        actions.user.whisper_dpad_refresh()
+
+    def whisper_is_active() -> bool:
+        """Return whether Whisper transcription is active or starting."""
+        return _whisper_enabled or _proc_is_running()
+
+    def whisper_session_copy() -> None:
+        """Copy the last session-polished transcript to the clipboard."""
+        _copy_last_session_polished()
+
+    def whisper_session_copy_current() -> None:
+        """Copy the active Whisper session transcript accumulated so far."""
+        text = _get_current_session_transcript()
+        if not text:
+            _notify("Whisper: no current session transcript")
+            return
+        clip.set_text(text)
+        _notify("Whisper: current session copied")
 
     def whisper_insert_latest() -> None:
         """Insert the most recent Whisper dictation history entry."""

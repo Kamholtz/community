@@ -38,7 +38,7 @@ not speech.engine: dragon
     user.whisper_toggle()
 
 key(f1):
-    user.whisper_toggle()
+    user.whisper_dpad_toggle()
 
 key(alt-m):
     user.whisper_toggle()
