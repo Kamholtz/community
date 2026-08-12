@@ -1,5 +1,6 @@
-# tag: user.gamepad
+tag: user.gamepad
 and not tag: user.gamepad_tester
+and not app: duckstation ps1 emulator
 -
 
 # DPAD buttons

@@ -3,12 +3,11 @@ tag(): user.zoxide
 tag(): user.docker
 # tag(): user.gamepad_tester
 
-tag(): user.gamepad
 tag(): user.glazewm
 
 # Example Talon file
 settings():
-    imgui.scale = 4
+    imgui.scale = 6
     speech.timeout = 0.6
     # subtitles_show = true
     user.subtitles_color = "ffffaa"

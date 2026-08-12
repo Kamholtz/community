@@ -1,2 +1,2 @@
 # Uncomment to enable gamepad support
-# tag(): user.gamepad
+tag(): user.gamepad

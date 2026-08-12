@@ -1,4 +1,3 @@
-tag(): user.gamepad
 
 # F1
 # key(f1:up): user.toggle_command_dictation_mode()
