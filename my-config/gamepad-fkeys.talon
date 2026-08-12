@@ -41,6 +41,10 @@ key(f19:up):
 key(f20:up):
     user.gamepad_debug("key(f20:up):")
     user.gamepad_toggle_control_mouse_or_quick_pick()
+# Relacon mouse
+key(shift-f2:up):
+    user.gamepad_debug("key(f2:up):")
+    user.gamepad_toggle_control_mouse_or_quick_pick()
 
 # F21 —
 key(f21:up):

@@ -34,6 +34,9 @@ key(f19):
 # F20 — M-shaped symbol (go flag)
 key(f20):
     user.gamepad_debug("key(f20):")
+# Relacon mouse
+key(shift-f2):
+    user.gamepad_debug("key(f2):")
 
 # F21 —
 key(f21):
