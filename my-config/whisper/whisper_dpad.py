@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 from talon import Context, Module, actions, ui
-from talon.canvas import Canvas
+from talon.canvas import Canvas, MouseEvent
 from talon.skia import RoundRect
 from talon.skia.canvas import Canvas as SkiaCanvas
 from talon.types import Rect
@@ -54,6 +54,28 @@ def _is_active() -> bool:
 
 def _set_tag(visible: bool) -> None:
     ctx.tags = ["user.whisper_dpad"] if visible else []
+
+
+def _button_positions(rect: Rect) -> dict[str, Rect]:
+    side = 72 * _scale
+    gap = 18 * _scale
+    centre_x, top_y = rect.center.x, rect.center.y - 85 * _scale
+    return {
+        "up": Rect(centre_x - side / 2, top_y, side, side),
+        "left": Rect(centre_x - side - gap, top_y + side + gap, side, side),
+        "right": Rect(centre_x + gap, top_y + side + gap, side, side),
+        "down": Rect(centre_x - side / 2, top_y + (side + gap) * 2, side, side),
+    }
+
+
+def _dispatch(direction: str) -> None:
+    binding = _BINDINGS_BY_DIRECTION.get(direction)
+    if binding is None:
+        _hide()
+        return
+    binding.command()
+    if binding.should_dismiss():
+        _hide()
 
 
 def _draw_button(
@@ -107,15 +129,7 @@ def _draw(c: SkiaCanvas) -> None:
         c.rect.y + 42 * _scale,
     )
 
-    side = 72 * _scale
-    gap = 18 * _scale
-    centre_x, top_y = c.rect.center.x, c.rect.center.y - 85 * _scale
-    positions = {
-        "up": Rect(centre_x - side / 2, top_y, side, side),
-        "left": Rect(centre_x - side - gap, top_y + side + gap, side, side),
-        "right": Rect(centre_x + gap, top_y + side + gap, side, side),
-        "down": Rect(centre_x - side / 2, top_y + (side + gap) * 2, side, side),
-    }
+    positions = _button_positions(c.rect)
     arrows = {"up": "↑", "left": "←", "right": "→", "down": "↓"}
     for binding in WHISPER_DPAD_BINDINGS:
         _draw_button(
@@ -138,6 +152,16 @@ def _draw(c: SkiaCanvas) -> None:
     )
 
 
+def _on_mouse(e: MouseEvent) -> None:
+    if e.event != "mouseup" or e.button != 0 or not _canvas:
+        return
+    for direction, rect in _button_positions(_canvas.rect).items():
+        if rect.contains(e.gpos):
+            _dispatch(direction)
+            return
+    _hide()
+
+
 def _show() -> None:
     global _canvas, _scale
     if _canvas:
@@ -145,8 +169,9 @@ def _show() -> None:
     screen = ui.main_screen()
     _scale = screen.scale
     _canvas = Canvas.from_screen(screen)
-    _canvas.blocks_mouse = False
+    _canvas.blocks_mouse = True
     _canvas.register("draw", _draw)
+    _canvas.register("mouse", _on_mouse)
     _set_tag(True)
     _canvas.freeze()
 
@@ -157,6 +182,7 @@ def _hide() -> None:
     if not _canvas:
         return
     _canvas.unregister("draw", _draw)
+    _canvas.unregister("mouse", _on_mouse)
     _canvas.close()
     _canvas = None
 
@@ -181,10 +207,4 @@ class Actions:
 
     def whisper_dpad_dispatch(direction: str) -> None:
         """Run the configured Whisper D-pad command for direction."""
-        binding = _BINDINGS_BY_DIRECTION.get(direction)
-        if binding is None:
-            _hide()
-            return
-        binding.command()
-        if binding.should_dismiss():
-            _hide()
+        _dispatch(direction)
