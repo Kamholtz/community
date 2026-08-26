@@ -252,3 +252,4 @@ PS1
 on shape: OnShape
 restic mount
 gluetun
+database entry
