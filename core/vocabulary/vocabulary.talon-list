@@ -107,6 +107,7 @@ tensorboard
 pip install
 R A M: RAM
 W S L: WSL
+W S L 2: WSL2
 cell heading
 O N N X: ONNX
 work dir
@@ -215,7 +216,6 @@ quick pick
 magit
 X mod map:xmodmap
 bubblewrap
-WSL2
 pytest
 maker world: makerworld
 8bitdo
@@ -260,3 +260,5 @@ for
 use
 UI component
 UI components
+mount
+docker sandbox
