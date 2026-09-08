@@ -13,6 +13,7 @@ class PendingTranscript:
     polished: Optional[str] = None
     inserted: bool = False
     fallback_job: Any = None
+    recovery_id: Optional[str] = None
 
     @property
     def insertion_text(self) -> str:
@@ -46,10 +47,12 @@ class TranscriptState:
         pending.polished = text
         return pending
 
-    def resolve(self, identity: int) -> Optional[PendingTranscript]:
+    def resolve(self, identity: int, polished_only: bool = False) -> Optional[PendingTranscript]:
         """Mark and return a pending transcript if its identity is still current."""
         pending = self.pending
         if pending is None or pending.identity != identity or pending.inserted:
+            return None
+        if polished_only and not pending.polished:
             return None
         pending.inserted = True
         self.pending = None

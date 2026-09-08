@@ -21,6 +21,8 @@ from . import whisper_hud
 from . import whisper_hud_content
 from .whisper_service_state import WhisperServiceState
 from .whisper_transcript_state import PendingTranscript, TranscriptState
+from .whisper_insertion_preferences import InsertionPreferences
+from .whisper_polish_watch import PolishWatch
 
 import json
 import os
@@ -33,6 +35,21 @@ import time
 
 mod = Module()
 mod.mode("whisper", desc="Transcription mode for Whisper daemon")
+mod.setting(
+    "whisper_polish_warning_ms",
+    type=int,
+    default=5000,
+    desc="Warn in the HUD when a final transcript has waited this long for polishing.",
+)
+mod.setting(
+    "whisper_polished_only",
+    type=bool,
+    default=True,
+    desc="Insert only polished transcripts unless overridden by the saved toggle.",
+)
+_insertion_preferences = InsertionPreferences(
+    Path(__file__).resolve().parents[2] / "stored_state" / "whisper_insertion.json"
+)
 mod.setting(
     "whisper_insert_history_size",
     type=int,
@@ -120,6 +137,9 @@ _whisper_ignore_context_status = False
 _whisper_enabled = False
 _whisper_last_realtime = None
 _whisper_transcripts = TranscriptState()
+_whisper_polish_watch = PolishWatch()
+_whisper_polish_warning_job = None
+_whisper_polish_warning = None
 _whisper_last_event_signature = None
 _whisper_ui_state = None
 _whisper_connected_notified = False
@@ -443,6 +463,9 @@ def _publish_polished_session_available() -> None:
         pass
 
 
+_whisper_hud_show_details = False
+
+
 def _refresh_hud_panel(force: bool = False) -> None:
     """Publish the combined Whisper HUD panel (state, service health, live
     draft over the rolling session transcript). Realtime updates are
@@ -466,8 +489,19 @@ def _refresh_hud_panel(force: bool = False) -> None:
         _whisper_hud_draft_phase,
         shutdown_remaining,
         input_device=_whisper_input_device,
+        show_details=_whisper_hud_show_details,
+        polished_only=_polished_only(),
+        polish_warning=_whisper_polish_warning,
     )
     buttons = [
+        (
+            "Toggle polished only",
+            lambda *_: actions.user.whisper_polished_only_toggle(),
+        ),
+        (
+            "Hide details" if _whisper_hud_show_details else "Show details",
+            lambda *_: actions.user.whisper_hud_details_toggle(),
+        ),
         (
             "Copy session",
             lambda *_: actions.user.whisper_session_copy_current(),
@@ -591,23 +625,100 @@ def _cancel_fallback(pending: PendingTranscript) -> None:
         pending.fallback_job = None
 
 
+def _refresh_polish_warning() -> None:
+    global _whisper_polish_warning, _whisper_polish_warning_job
+    delay = max(1, settings.get("user.whisper_polish_warning_ms")) / 1000
+    count = _whisper_polish_watch.overdue(time.monotonic(), delay)
+    warning = None
+    if count:
+        warning = f"Still waiting for polished text (over {delay:g}s)"
+        if count > 1:
+            warning += f" — {count} segments missing"
+    if warning != _whisper_polish_warning:
+        _whisper_polish_warning = warning
+        _refresh_hud_panel(force=True)
+    if not _whisper_polish_watch.started and _whisper_polish_warning_job is not None:
+        cron.cancel(_whisper_polish_warning_job)
+        _whisper_polish_warning_job = None
+
+
+def _watch_for_polish(identity: int, started: float) -> None:
+    global _whisper_polish_warning_job
+    _whisper_polish_watch.begin(identity, started)
+    if _whisper_polish_warning_job is None:
+        _whisper_polish_warning_job = cron.interval("250ms", _refresh_polish_warning)
+    _refresh_polish_warning()
+
+
+def _polish_received() -> None:
+    _whisper_polish_watch.complete()
+    _refresh_polish_warning()
+
+
+def _reset_polish_warning() -> None:
+    global _whisper_polish_warning, _whisper_polish_warning_job
+    if _whisper_polish_warning_job is not None:
+        cron.cancel(_whisper_polish_warning_job)
+    _whisper_polish_warning_job = None
+    _whisper_polish_warning = None
+    _whisper_polish_watch.reset()
+
+
 def _resolve_pending_transcript(identity: int) -> None:
-    pending = _whisper_transcripts.resolve(identity)
+    pending = _whisper_transcripts.pending
+    if pending is not None and pending.identity == identity and _polished_only():
+        _retain_pending_transcript(pending)
+    pending = _whisper_transcripts.resolve(identity, polished_only=_polished_only())
     if pending is None:
         return
 
     _cancel_fallback(pending)
     _remember_session_transcript(pending.insertion_text)
     _insert_and_remember(f"{pending.insertion_text} ")
+    _release_pending_transcript(pending)
 
 
 def _insert_displaced_transcript(pending: PendingTranscript) -> None:
     if pending.inserted:
         return
+    if _polished_only() and not pending.polished:
+        _cancel_fallback(pending)
+        _retain_pending_transcript(pending)
+        _notify("Whisper: unpolished text withheld; say whisper pending copy to recover")
+        return
     pending.inserted = True
     _cancel_fallback(pending)
     _remember_session_transcript(pending.insertion_text)
     _insert_and_remember(f"{pending.insertion_text} ")
+    _release_pending_transcript(pending)
+
+
+def _polished_only() -> bool:
+    return _insertion_preferences.enabled(settings.get("user.whisper_polished_only"))
+
+
+def _retain_pending_transcript(pending: PendingTranscript) -> None:
+    if pending.recovery_id is None and not pending.inserted:
+        pending.recovery_id = _insertion_preferences.retain(pending.original)
+
+
+def _release_pending_transcript(pending: PendingTranscript) -> None:
+    if pending.recovery_id is not None:
+        _insertion_preferences.release(pending.recovery_id)
+
+
+def _set_polished_only(enabled: bool) -> None:
+    _insertion_preferences.set_enabled(enabled)
+    pending = _whisper_transcripts.pending
+    if pending is not None:
+        _cancel_fallback(pending)
+        if enabled:
+            _retain_pending_transcript(pending)
+        else:
+            _resolve_pending_transcript(pending.identity)
+    label = "polished only" if enabled else "polished with timed fallback"
+    _notify(f"Whisper insertion: {label} (saved)")
+    _refresh_hud_panel(force=True)
 
 
 def _flush_pending_transcript() -> None:
@@ -929,12 +1040,18 @@ def _handle_ws_event(event: dict) -> None:
             return
 
         displaced, pending = _whisper_transcripts.begin_full(content)
+        _queue_ui_action(
+            lambda identity=pending.identity, started=time.monotonic(): _watch_for_polish(identity, started)
+        )
         if displaced is not None and not displaced.inserted:
             _queue_ui_action(
                 lambda transcript=displaced: _insert_displaced_transcript(transcript)
             )
 
-        if not settings.get("user.whisper_polish_segments"):
+        if _polished_only():
+            _retain_pending_transcript(pending)
+            _set_whisper_ui_state("polishing")
+        elif not settings.get("user.whisper_polish_segments"):
             _set_whisper_ui_state("final")
             _queue_ui_action(
                 lambda identity=pending.identity: _resolve_pending_transcript(identity)
@@ -958,6 +1075,8 @@ def _handle_ws_event(event: dict) -> None:
         if not content:
             return
 
+        # Clear delay warnings even if timed fallback already inserted the original.
+        _queue_ui_action(_polish_received)
         pending = _whisper_transcripts.apply_polished(content)
         if pending is None:
             return
@@ -1532,6 +1651,7 @@ def _enable_whisper() -> bool:
     _whisper_last_event_signature = None
     _whisper_copy_on_shutdown = False
     _whisper_transcripts.reset()
+    _reset_polish_warning()
     _whisper_session_transcript = []
     _reset_hud_panel_state()
     _whisper_enabled = True
@@ -1556,6 +1676,7 @@ def _enable_whisper() -> bool:
 def _disable_whisper() -> None:
     """Ensure the Whisper process is stopped and reset the tracked state."""
     global _whisper_connected_notified, _whisper_copy_on_shutdown, _whisper_enabled, _whisper_last_event_signature, _whisper_last_realtime, _whisper_ui_state
+    _reset_polish_warning()
     if not _whisper_enabled and not _proc_is_running():
         _finish_context_capture()
         _exit_whisper_mode()
@@ -1662,6 +1783,34 @@ class Actions:
     def whisper_status() -> None:
         """Refresh and display optional Whisper service availability."""
         _start_probe("status")
+
+    def whisper_polished_only_set(enabled: bool) -> None:
+        """Set and persist whether automatic insertion requires polished text."""
+        _set_polished_only(enabled)
+
+    def whisper_polished_only_toggle() -> None:
+        """Toggle polished-only insertion and remember it across restarts."""
+        _set_polished_only(not _polished_only())
+
+    def whisper_polished_only_status() -> None:
+        """Show the current insertion policy."""
+        label = "on" if _polished_only() else "off"
+        _show_whisper_subtitle(f"Polished only: {label}", "polished")
+
+    def whisper_pending_copy() -> None:
+        """Copy retained unpolished text for manual recovery without inserting it."""
+        text = _insertion_preferences.withheld_text()
+        if text:
+            clip.set_text(text)
+            _notify("Whisper: withheld text copied")
+        else:
+            _notify("Whisper: no withheld text")
+
+    def whisper_hud_details_toggle() -> None:
+        """Expand or collapse service and microphone details in the HUD."""
+        global _whisper_hud_show_details
+        _whisper_hud_show_details = not _whisper_hud_show_details
+        _refresh_hud_panel(force=True)
 
     def whisper_test_polisher() -> None:
         """Test the transcript polisher in an isolated client process."""

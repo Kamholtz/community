@@ -104,6 +104,30 @@ def format_shutdown_line(remaining_s: float) -> str:
     return f"<!Finishing session... forcing stop in {remaining}s/>"
 
 
+def format_compact_status(
+    state: Optional[str], services: Any, polished_only: Optional[bool] = None
+) -> str:
+    """Keep routine health compact while making failed probes visible."""
+    text = STATE_TEXT.get(state or "", (state or "off").replace("_", " ").title())
+    parts = [_wrap(state_marker(state), text)]
+    if polished_only is not None:
+        parts.append(f"Polished only: {'on' if polished_only else 'off'}")
+    context = services.context_extractor.label()
+    if context.startswith("passed"):
+        parts.append("<+Context ready/>")
+    elif context == "failed":
+        parts.append("<!!Context failed/>")
+    elif context in ("disabled", "unavailable"):
+        parts.append("Context off")
+    else:
+        parts.append("Context untested")
+    if services.polisher.test_state == "failed":
+        parts.append("<!!Polish failed/>")
+    elif services.polishing_label() != "ready" and not polished_only:
+        parts.append("Plain text")
+    return " · ".join(parts)
+
+
 def format_preview(text: str, max_length: int = 60) -> str:
     preview = " ".join(text.split())
     if len(preview) > max_length:
@@ -120,6 +144,9 @@ def format_whisper_panel(
     shutdown_remaining_s: Optional[float] = None,
     session_tail: int = 8,
     input_device: Optional[str] = None,
+    show_details: bool = False,
+    polished_only: Optional[bool] = None,
+    polish_warning: Optional[str] = None,
 ) -> str:
     """Body for the combined Whisper HUD panel.
 
@@ -127,8 +154,14 @@ def format_whisper_panel(
     transcript tail with the in-progress draft utterance colour-coded by
     phase (realtime blue, final orange, polished green).
     """
-    lines = [format_state_line(state), format_services_line(services)]
-    if input_device:
+    lines = [format_compact_status(state, services, polished_only)]
+    if show_details:
+        lines = [format_state_line(state), format_services_line(services)]
+        if polished_only is not None:
+            lines[0] += f" · Polished only: {'on' if polished_only else 'off'}"
+    if polish_warning:
+        lines.insert(1, f"<!Warning: {escape_rich_text(polish_warning)}/>")
+    if show_details and input_device:
         lines.append(f"<*Mic → WSL:/> {escape_rich_text(input_device)}")
     if shutdown_remaining_s is not None:
         lines.append(format_shutdown_line(shutdown_remaining_s))

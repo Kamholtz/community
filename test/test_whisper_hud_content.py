@@ -35,14 +35,14 @@ class FormatPanelTests(unittest.TestCase):
         services.context_extractor.apply_availability(
             {"enabled": True, "available": False}
         )
-        body = CONTENT.format_whisper_panel("listening", services, [], None, None)
+        body = CONTENT.format_whisper_panel("listening", services, [], None, None, show_details=True)
         self.assertIn("<+ready/>", body)
         self.assertIn("<!!unavailable/>", body)
 
     def test_degraded_polisher_mentions_plain_transcription(self):
         services = WhisperServiceState(connected=True)
         services.polisher.apply_test(False, "boom")
-        body = CONTENT.format_whisper_panel("listening", services, [], None, None)
+        body = CONTENT.format_whisper_panel("listening", services, [], None, None, show_details=True)
         self.assertIn("plain transcription available", body)
 
     def test_draft_phases_use_expected_markers(self):
@@ -76,6 +76,7 @@ class FormatPanelTests(unittest.TestCase):
         body = CONTENT.format_whisper_panel(
             "listening", services, [], None, None,
             input_device="Microphone (AnkerWork M650 RX)",
+            show_details=True,
         )
         self.assertIn("Mic → WSL:", body)
         self.assertIn("Microphone (AnkerWork M650 RX)", body)
@@ -88,6 +89,28 @@ class FormatPanelTests(unittest.TestCase):
         services = WhisperServiceState()
         body = CONTENT.format_whisper_panel("listening", services, [], "  ", None)
         self.assertNotIn("\n\n", body)
+
+    def test_compact_panel_hides_routine_details_without_losing_transcript(self):
+        services = WhisperServiceState(connected=True)
+        services.polisher.apply_test(True, "ok")
+        services.context_extractor.apply_availability({"available": False})
+        body = CONTENT.format_whisper_panel(
+            "polished", services, ["Session text"], "Live words", "realtime",
+            input_device="Long microphone name",
+        )
+        self.assertEqual(body.splitlines()[0], "<+Polished/> · Context off")
+        self.assertNotIn("Long microphone name", body)
+        self.assertNotIn("Polish:", body)
+        self.assertIn("Session text", body)
+        self.assertIn("<@Live words/>", body)
+
+    def test_compact_panel_keeps_failures_visible(self):
+        services = WhisperServiceState(connected=True)
+        services.polisher.apply_test(False, "probe failed")
+        services.context_extractor.apply_test(False, "probe failed")
+        body = CONTENT.format_whisper_panel("listening", services, [], None, None)
+        self.assertIn("<!!Polish failed/>", body)
+        self.assertIn("<!!Context failed/>", body)
 
 
 class StatusAndContextPanelTests(unittest.TestCase):

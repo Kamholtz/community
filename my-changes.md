@@ -1,5 +1,40 @@
 # My Changes
 
+## Delayed polishing warning
+
+The Whisper HUD shows an orange warning below the state line if polished text
+has not arrived five seconds after a final transcript, in both polished-only
+and fallback modes. The delay is configurable with
+`user.whisper_polish_warning_ms` (default 5000). Insertion and live transcription
+do not dismiss the warning; receiving the polished result does. Missing earlier
+segments remain counted until the session ends. Stopping Whisper clears the
+warning and cancels its timer.
+
+## Polished-only Whisper insertion
+
+The panel state line shows "Polished only: on/off" in both compact and expanded
+views and refreshes immediately when toggled.
+
+Whisper now defaults to inserting only polished segments. Say "whisper polished
+only" to enable, "whisper polished fallback" to restore timed fallback, or
+"whisper polished toggle" to toggle. "Whisper polished status" shows the policy.
+The preference survives reloads and restarts in ignored
+`stored_state/whisper_insertion.json`; it overrides the default Talon setting
+`user.whisper_polished_only`. Strict mode takes precedence over segment polishing
+and fallback settings, including when stopping or receiving another segment.
+Unpolished text is saved locally for recovery with "whisper pending copy" and
+is removed from recovery storage after successful insertion. Recovery text is
+not automatically retried or inserted in a later session. Manual history and
+session insertion commands still insert the explicitly requested text.
+
+## Compact Whisper HUD status
+
+The transcript panel now defaults to a compact state/context strip. Routine
+polisher readiness and the full microphone name are in expandable details:
+say "whisper details" or choose "Show details" / "Hide details" from the
+panel's right-click menu. Failed probes remain visible in the compact view;
+optional context being off uses neutral text. Font sizes are unchanged.
+
 ## Disable Whisper Windows notifications
 
 Whisper messages, including "failed to handle event", now go to Talon's log
