@@ -12,6 +12,16 @@ same mapping; the other mapped gamepad controls plus Escape, Enter, Space, Tab,
 and F1 dismiss it. The Whisper integration now retains all finalised segments
 and includes current realtime text when copying the active-session snapshot.
 
+## (0) Hot Corners
+
+Moving the pointer into either top corner now opens the desktop switcher. The
+feature is enabled independently for Windows and Linux by
+`my-config/hot_corners_windows.talon` and
+`my-config/hot_corners_linux.talon`; set `user.hot_corners_enabled` to `false`
+in either file to disable it on that operating system. Each screen has its own
+8-by-8-pixel corner targets, and a corner triggers only once until the pointer
+leaves it.
+
 ## (1) Edit
 
 ### (1.1) Replace Edit Action Cut With Carve
