@@ -1,5 +1,53 @@
 # My Changes
 
+## Disable Whisper Windows notifications
+
+Whisper messages, including "failed to handle event", now go to Talon's log
+on Windows instead of desktop notifications. Existing HUD status and event-log
+updates remain available.
+
+## Whisper HUD panel, choice-panel history picker, and event-log routing
+
+Whisper mode now drives a persistent Talon HUD panel (topic `whisper_panel`,
+rendered on the HUD's wildcard Text panel — no talon_hud edits). The panel
+shows the live state, polisher/context-extractor health, and a rolling session
+transcript with the in-progress utterance colour-coded (blue realtime, orange
+awaiting polish); during graceful shutdown it republishes a once-per-second
+countdown instead of 120 s of dead air. `whisper history` now opens the HUD
+Choice panel ("option N" by voice or click) with the old imgui picker as the
+no-HUD fallback; `whisper pick <n>` is unchanged. Service degradation, probe
+summaries, connection, context, and session events route to the HUD event log
+(warning on degradation), and the modal force-open of the imgui status/context
+windows after probes is gone — `whisper status` renders on the HUD panel when
+available. Formatting lives in pure-Python
+`my-config/whisper/whisper_hud_content.py` (tested by
+`test/test_whisper_hud_content.py`); all HUD calls go through the guarded seam
+`my-config/whisper/whisper_hud.py`, which checks `user.talon_hud_available`
+(version >= 6) and warns once instead of failing silently. Panel text size is a
+HUD per-widget preference (`Text panel_font_size` in
+`talon_hud/preferences/monitor(...).csv`, set via
+`hud_set_widget_preference`; context menu, Choices, and event log were
+raised the same way), not `imgui.scale`.
+
+The panel also carries a "Copy session" button (right-click menu, or say
+"whisper copy session") wired to `whisper_session_copy_current`, and a
+"Mic → WSL" line naming the Windows default capture device — the one WSLg
+mirrors into WSL2 as RDPSource — resolved in the background at mode entry by
+`my-config/whisper/get_default_mic.ps1`. Services are now also verified by
+live use: a real `polished`/`session_polished` event marks the polisher
+passed and `context_updated` marks the context extractor passed
+(`ServiceState.verify_live()`), so labels no longer sit on "available, not
+tested" while the service is demonstrably working.
+
+## Whisper service diagnostics
+
+Whisper now consumes the server's `service_status` events and exposes
+`whisper status`, `whisper test polish`, `whisper test context`, and
+`whisper test all`. Tests run in isolated one-shot clients so they cannot stop
+the persistent dictation client. The polisher test retries once to accommodate
+cold model startup, and a status window distinguishes availability from a
+successful end-to-end test while preserving plain transcription as a fallback.
+
 ## Whisper D-pad overlay
 
 F1 now opens a four-direction Whisper control overlay. Up toggles Whisper and

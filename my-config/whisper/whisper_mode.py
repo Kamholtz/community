@@ -17,6 +17,9 @@ from pathlib import Path
 from talon.types import Rect
 from typing import Optional
 
+from . import whisper_hud
+from . import whisper_hud_content
+from .whisper_service_state import WhisperServiceState
 from .whisper_transcript_state import PendingTranscript, TranscriptState
 
 import json
@@ -26,6 +29,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 
 mod = Module()
 mod.mode("whisper", desc="Transcription mode for Whisper daemon")
@@ -88,15 +92,17 @@ ctx = Context()
 
 REALITIME_DIR = Path("~/repos/realtimestt-cli").expanduser()
 if sys.platform == "win32":
+    REALITIME_PYTHON = str(REALITIME_DIR / "venv" / "Scripts" / "python.exe")
     REALITIME_CMD = [
-        str(REALITIME_DIR / "venv" / "Scripts" / "python.exe"),
+        REALITIME_PYTHON,
         "webserver/client.py",
         "--json-lines",
         "--stdin-control",
     ]
 else:
+    REALITIME_PYTHON = "./venv/bin/python3"
     REALITIME_CMD = [
-        "./venv/bin/python3",
+        REALITIME_PYTHON,
         "./webserver/client.py",
         "--json-lines",
         "--stdin-control",
@@ -107,6 +113,10 @@ _whisper_line_queue: queue.Queue = queue.Queue()
 _whisper_stderr_queue: queue.Queue = queue.Queue()
 _whisper_command_queue: queue.Queue = queue.Queue()
 _whisper_event_queue: queue.Queue = queue.Queue()
+_whisper_probe_queue: queue.Queue = queue.Queue()
+_whisper_probe_job = None
+_whisper_probe_running = False
+_whisper_ignore_context_status = False
 _whisper_enabled = False
 _whisper_last_realtime = None
 _whisper_transcripts = TranscriptState()
@@ -131,6 +141,15 @@ _whisper_theme_map = {
 _whisper_insert_history: list[str] = []
 _whisper_session_transcript: list[str] = []
 _whisper_subtitle_canvases: list[Canvas] = []
+_whisper_services = WhisperServiceState()
+_whisper_hud_draft_text: Optional[str] = None
+_whisper_hud_draft_phase: Optional[str] = None
+_whisper_hud_panel_shown = False
+_whisper_hud_last_publish = 0.0
+_whisper_hud_history_active = False
+_whisper_shutdown_deadline: Optional[float] = None
+_whisper_input_device: Optional[str] = None
+_WHISPER_MIC_SCRIPT = Path(__file__).resolve().parent / "get_default_mic.ps1"
 _WHISPER_VAD_SUBTITLE = "Listening..."
 _WHISPER_STATUS_TOPIC = "whisper_status"
 _WHISPER_STATUS_ICON = str(
@@ -190,6 +209,9 @@ _WHISPER_TRANSCRIPT_SUBTITLE_STATES = {"realtime", "final", "polished"}
 
 
 def _notify(msg: str) -> None:
+    if sys.platform == "win32":
+        print(msg)
+        return
     try:
         actions.user.notify(msg)
     except Exception:
@@ -197,6 +219,14 @@ def _notify(msg: str) -> None:
             app.notify(msg)
         except Exception:
             print("Whisper: " + msg)
+
+
+def _format_service_summary() -> str:
+    return (
+        f"Dictation: {_whisper_services.dictation_label()}; "
+        f"polisher: {_whisper_services.polisher.label()}; "
+        f"context: {_whisper_services.context_extractor.label()}"
+    )
 
 
 def _proc_is_running() -> bool:
@@ -413,6 +443,103 @@ def _publish_polished_session_available() -> None:
         pass
 
 
+def _refresh_hud_panel(force: bool = False) -> None:
+    """Publish the combined Whisper HUD panel (state, service health, live
+    draft over the rolling session transcript). Realtime updates are
+    throttled; state transitions pass force=True."""
+    global _whisper_hud_last_publish, _whisper_hud_panel_shown
+    if not _whisper_enabled:
+        return
+    now = time.monotonic()
+    if not force and now - _whisper_hud_last_publish < 0.25:
+        return
+
+    shutdown_remaining = None
+    if _whisper_shutdown_pending and _whisper_shutdown_deadline is not None:
+        shutdown_remaining = max(0.0, _whisper_shutdown_deadline - now)
+
+    body = whisper_hud_content.format_whisper_panel(
+        _whisper_ui_state,
+        _whisper_services,
+        _whisper_session_transcript,
+        _whisper_hud_draft_text,
+        _whisper_hud_draft_phase,
+        shutdown_remaining,
+        input_device=_whisper_input_device,
+    )
+    buttons = [
+        (
+            "Copy session",
+            lambda *_: actions.user.whisper_session_copy_current(),
+        ),
+    ]
+    # Only force the panel open on the first publish after mode entry so a
+    # user who closed it is not fought with on every state change.
+    if whisper_hud.publish_panel(
+        body, show=not _whisper_hud_panel_shown, buttons=buttons
+    ):
+        _whisper_hud_panel_shown = True
+        _whisper_hud_last_publish = now
+
+
+def _refresh_input_device() -> None:
+    """Resolve the Windows default capture device in the background — WSLg
+    mirrors it into WSL2 as RDPSource, so it names the mic actually feeding
+    the Whisper server. Result lands on the panel via the UI event queue."""
+    if sys.platform != "win32" or not _WHISPER_MIC_SCRIPT.exists():
+        return
+
+    def worker() -> None:
+        global _whisper_input_device
+        try:
+            completed = subprocess.run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    str(_WHISPER_MIC_SCRIPT),
+                ],
+                capture_output=True,
+                text=True,
+                timeout=15,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
+            name = completed.stdout.strip()
+            if name:
+                _whisper_input_device = name
+                _queue_ui_action(lambda: _refresh_hud_panel(force=True))
+        except Exception as error:
+            print(f"Whisper: default mic lookup failed: {error}")
+
+    threading.Thread(target=worker, daemon=True).start()
+
+
+def _reset_hud_panel_state() -> None:
+    """Clear the HUD panel and draft so the Text panel is released on exit."""
+    global _whisper_hud_draft_text, _whisper_hud_draft_phase, _whisper_hud_panel_shown
+    _whisper_hud_draft_text = None
+    _whisper_hud_draft_phase = None
+    _whisper_hud_panel_shown = False
+    whisper_hud.clear_panel()
+
+
+def _set_hud_draft(text: Optional[str], phase: Optional[str], force: bool = True) -> None:
+    global _whisper_hud_draft_text, _whisper_hud_draft_phase
+    _whisper_hud_draft_text = text
+    _whisper_hud_draft_phase = phase
+    _refresh_hud_panel(force=force)
+
+
+def _notify_or_log(event_type: str, msg: str) -> None:
+    """Route an informational event to the HUD event log, falling back to a
+    notification when the HUD is unavailable."""
+    level = whisper_hud_content.log_level_for_event(event_type) or "event"
+    if not whisper_hud.add_log(level, msg):
+        _notify(msg)
+
+
 def _set_whisper_ui_state(state: str) -> None:
     global _whisper_ui_state
     if _whisper_ui_state == state:
@@ -420,6 +547,7 @@ def _set_whisper_ui_state(state: str) -> None:
 
     _whisper_ui_state = state
     _publish_whisper_status(state)
+    _refresh_hud_panel(force=True)
 
 
 def _remember_inserted_text(text: str) -> None:
@@ -436,6 +564,9 @@ def _remember_inserted_text(text: str) -> None:
 def _insert_and_remember(text: str) -> None:
     actions.insert(text)
     _remember_inserted_text(text)
+    # The utterance is settled and part of the session transcript now, so
+    # drop the live draft from the HUD panel.
+    _set_hud_draft(None, None)
 
 
 def _remember_session_transcript(text: str) -> None:
@@ -490,6 +621,23 @@ def _format_history_preview(text: str, max_length: int = 80) -> str:
     if len(preview) > max_length:
         return preview[: max_length - 3] + "..."
     return preview
+
+
+def _on_history_choice(choice) -> bool:
+    """HUD choice-panel callback: insert the picked history entry."""
+    global _whisper_hud_history_active
+    _whisper_hud_history_active = False
+    if isinstance(choice, dict) and "index" in choice:
+        actions.user.whisper_insert_history(choice["index"])
+    return False
+
+
+def _hide_history_picker() -> None:
+    global _whisper_hud_history_active
+    if _whisper_hud_history_active:
+        _whisper_hud_history_active = False
+        whisper_hud.hide_choices()
+    _whisper_history_gui.hide()
 
 
 def _get_whisper_history_entry(index: int) -> Optional[str]:
@@ -591,6 +739,53 @@ def _whisper_history_gui(gui: imgui.GUI):
         actions.user.whisper_history_hide()
 
 
+@imgui.open(y=0)
+def _whisper_status_gui(gui: imgui.GUI):
+    gui.text("Whisper Service Status")
+    gui.line()
+    gui.text(f"Dictation: {_whisper_services.dictation_label()}")
+    gui.text(f"Polishing: {_whisper_services.polishing_label()}")
+    gui.text(f"Polisher: {_whisper_services.polisher.label()}")
+    gui.text(f"Context extractor: {_whisper_services.context_extractor.label()}")
+    gui.text(f"Whisper audio: {_whisper_services.whisper.label()}")
+    for name, service in (
+        ("Polisher", _whisper_services.polisher),
+        ("Context extractor", _whisper_services.context_extractor),
+    ):
+        if service.tested_at:
+            gui.text(f"{name} tested: {service.tested_at}")
+        if service.detail:
+            gui.text(f"{name} result: {service.detail}")
+    gui.spacer()
+    if gui.button("Whisper status close"):
+        _whisper_status_gui.hide()
+
+
+def _show_context_status() -> None:
+    """Display context status on the HUD panel, imgui when HUD is absent."""
+    body = whisper_hud_content.format_context_panel(_whisper_context_status)
+    if not whisper_hud.publish_panel(body, show=True):
+        _whisper_context_gui.show()
+
+
+def _report_service_changes(old_polish: str, old_context: str) -> None:
+    """Surface live service_status label changes that used to be silent."""
+    changed = False
+    for name, old_label, new_label in (
+        ("polisher", old_polish, _whisper_services.polishing_label()),
+        ("context extractor", old_context, _whisper_services.context_extractor.label()),
+    ):
+        level = whisper_hud_content.log_level_for_service_change(old_label, new_label)
+        if level is None:
+            continue
+        changed = True
+        message = f"Whisper {name}: {new_label}"
+        if not whisper_hud.add_log(level, message) and level == "warning":
+            _notify(message)
+    if changed:
+        _refresh_hud_panel(force=True)
+
+
 def _drain_event_queue() -> None:
     while True:
         try:
@@ -605,7 +800,7 @@ def _drain_event_queue() -> None:
 
 
 def _handle_ws_event(event: dict) -> None:
-    global _whisper_connected_notified, _whisper_context_status, _whisper_last_event_signature, _whisper_last_realtime, _whisper_last_session_polished
+    global _whisper_connected_notified, _whisper_context_status, _whisper_ignore_context_status, _whisper_last_event_signature, _whisper_last_realtime, _whisper_last_session_polished
     event_type = event.get("type")
     if not event_type or not _whisper_enabled:
         return
@@ -623,18 +818,22 @@ def _handle_ws_event(event: dict) -> None:
         return
 
     if event_type == "client_connected":
+        _whisper_services.connected = True
         _set_whisper_ui_state("connected")
         if _whisper_context_text:
             _send_control("set_context_text", content=_whisper_context_text)
         if not _whisper_connected_notified:
             _whisper_connected_notified = True
-            _queue_ui_action(lambda: _notify("Whisper: connected"))
+            _queue_ui_action(
+                lambda: _notify_or_log("client_connected", "Whisper: connected")
+            )
         _queue_ui_action(
             lambda: _show_whisper_subtitle("Whisper connected", "connected")
         )
         return
 
     if event_type == "client_connection_failed":
+        _whisper_services.connected = False
         content = event.get("content") or "Unable to connect"
         retry_seconds = event.get("retry_seconds")
         message = f"Whisper connection failed: {content}"
@@ -649,6 +848,7 @@ def _handle_ws_event(event: dict) -> None:
         return
 
     if event_type == "client_disconnected":
+        _whisper_services.connected = False
         content = event.get("content") or "Server disconnected"
         if _whisper_shutdown_pending:
             _queue_ui_action(_complete_graceful_shutdown)
@@ -664,6 +864,7 @@ def _handle_ws_event(event: dict) -> None:
         return
 
     if event_type == "client_reconnecting":
+        _whisper_services.connected = False
         retry_seconds = event.get("retry_seconds")
         message = "Reconnecting to Whisper..."
         if retry_seconds is not None:
@@ -672,6 +873,15 @@ def _handle_ws_event(event: dict) -> None:
         _set_whisper_ui_state("connecting")
         _queue_ui_action(
             lambda text=message: _show_whisper_subtitle(text, "connecting")
+        )
+        return
+
+    if event_type == "service_status":
+        old_polish = _whisper_services.polishing_label()
+        old_context = _whisper_services.context_extractor.label()
+        _whisper_services.apply_service_status(event.get("content"))
+        _queue_ui_action(
+            lambda: _report_service_changes(old_polish, old_context)
         )
         return
 
@@ -706,6 +916,9 @@ def _handle_ws_event(event: dict) -> None:
         _whisper_last_realtime = content
         _set_whisper_ui_state("realtime")
         _queue_ui_action(
+            lambda text=content: _set_hud_draft(text, "realtime", force=False)
+        )
+        _queue_ui_action(
             lambda text=content: _show_whisper_subtitle(f"Live: {text}", "realtime")
         )
         return
@@ -734,6 +947,7 @@ def _handle_ws_event(event: dict) -> None:
             )
             _set_whisper_ui_state("polishing")
 
+        _queue_ui_action(lambda text=content: _set_hud_draft(text, "final"))
         _queue_ui_action(
             lambda text=content: _show_whisper_subtitle(f"Final: {text}", "final")
         )
@@ -749,6 +963,8 @@ def _handle_ws_event(event: dict) -> None:
             return
 
         _cancel_fallback(pending)
+        # A real polished transcript is stronger evidence than any probe.
+        _whisper_services.polisher.verify_live()
         _set_whisper_ui_state("polished")
         _queue_ui_action(
             lambda identity=pending.identity: _resolve_pending_transcript(identity)
@@ -775,9 +991,12 @@ def _handle_ws_event(event: dict) -> None:
         content = event.get("content")
         if content:
             _whisper_last_session_polished = content
+            _whisper_services.polisher.verify_live()
             _queue_ui_action(_publish_polished_session_available)
             _queue_ui_action(_copy_polished_session_after_disconnect)
-            _queue_ui_action(lambda: _notify("Whisper: session polished"))
+            _queue_ui_action(
+                lambda: _notify_or_log("session_polished", "Whisper: session polished")
+            )
             _queue_ui_action(
                 lambda text=content: _show_whisper_subtitle(
                     f"Session polished: {text}",
@@ -813,20 +1032,28 @@ def _handle_ws_event(event: dict) -> None:
             "status": "ready",
             "text": event.get("content") or "",
         }
+        _whisper_services.context_extractor.verify_live()
         _set_whisper_ui_state("context_ready")
-        _queue_ui_action(lambda: _notify("Whisper: context updated"))
+        _queue_ui_action(
+            lambda: _notify_or_log("context_updated", "Whisper: context updated")
+        )
         return
 
     if event_type == "context_status":
+        if _whisper_ignore_context_status:
+            _whisper_ignore_context_status = False
+            return
         _whisper_context_status = event.get("content")
         _set_whisper_ui_state("context_ready")
-        _queue_ui_action(_whisper_context_gui.show)
+        _queue_ui_action(_show_context_status)
         return
 
     if event_type == "context_cleared":
         _whisper_context_status = {"status": "empty", "text": ""}
         _set_whisper_ui_state("context_ready")
-        _queue_ui_action(lambda: _notify("Whisper: context cleared"))
+        _queue_ui_action(
+            lambda: _notify_or_log("context_cleared", "Whisper: context cleared")
+        )
         return
 
     if event_type == "context_error":
@@ -894,6 +1121,145 @@ def _send_control(command_type: str, **payload) -> bool:
     return True
 
 
+def _run_probe_command(arguments: list[str]) -> list[dict]:
+    command = [REALITIME_PYTHON, "webserver/client.py", "--json-lines", *arguments]
+    completed = subprocess.run(
+        command,
+        cwd=str(REALITIME_DIR),
+        capture_output=True,
+        text=True,
+        timeout=20,
+        check=False,
+    )
+    events = []
+    for line in completed.stdout.splitlines():
+        try:
+            event = json.loads(line)
+        except (TypeError, ValueError):
+            continue
+        if isinstance(event, dict):
+            events.append(event)
+    if not events:
+        error = completed.stderr.strip() or f"client exited with code {completed.returncode}"
+        raise RuntimeError(error)
+    return events
+
+
+def _find_probe_event(events: list[dict], *event_types: str) -> Optional[dict]:
+    return next((event for event in events if event.get("type") in event_types), None)
+
+
+def _probe_worker(kind: str) -> None:
+    try:
+        result = {"kind": kind, "status": None}
+        if kind in {"status", "all"}:
+            events = _run_probe_command(["--show-context"])
+            result["status"] = _find_probe_event(events, "service_status")
+
+        test_kinds = ("polisher", "context") if kind == "all" else (kind,)
+        for test_kind in test_kinds:
+            if test_kind == "polisher":
+                attempts = 0
+                event = None
+                while attempts < 2:
+                    attempts += 1
+                    events = _run_probe_command(["--test-polisher"])
+                    event = _find_probe_event(
+                        events, "test_polisher_result", "test_polisher_error"
+                    )
+                    if event and event.get("type") == "test_polisher_result":
+                        break
+                result["polisher"] = event
+                result["polisher_attempts"] = attempts
+                if result["status"] is None:
+                    result["status"] = _find_probe_event(events, "service_status")
+            elif test_kind == "context":
+                events = _run_probe_command(["--test-context-extractor"])
+                result["context"] = _find_probe_event(
+                    events,
+                    "test_context_extractor_result",
+                    "test_context_extractor_error",
+                )
+                if result["status"] is None:
+                    result["status"] = _find_probe_event(events, "service_status")
+        _whisper_probe_queue.put(result)
+    except Exception as error:
+        _whisper_probe_queue.put({"kind": kind, "error": str(error)})
+
+
+def _apply_probe_result(result: dict) -> None:
+    status = result.get("status")
+    if status:
+        _whisper_services.apply_service_status(status.get("content"))
+    polisher = result.get("polisher")
+    if polisher:
+        _whisper_services.polisher.apply_test(
+            polisher.get("type") == "test_polisher_result",
+            str(polisher.get("content") or "No result"),
+            result.get("polisher_attempts", 1),
+        )
+    context = result.get("context")
+    if context:
+        _whisper_services.context_extractor.apply_test(
+            context.get("type") == "test_context_extractor_result",
+            str(context.get("content") or "No result"),
+        )
+
+
+def _clear_ignored_context_status() -> None:
+    global _whisper_ignore_context_status
+    _whisper_ignore_context_status = False
+
+
+def _poll_probe_results() -> None:
+    global _whisper_probe_job, _whisper_probe_running
+    try:
+        result = _whisper_probe_queue.get_nowait()
+    except queue.Empty:
+        return
+    _whisper_probe_running = False
+    if _whisper_probe_job is not None:
+        cron.cancel(_whisper_probe_job)
+        _whisper_probe_job = None
+    if result.get("error"):
+        message = f"Whisper test failed: {result['error']}"
+        whisper_hud.add_log("error", message)
+        _notify(message)
+        return
+    _apply_probe_result(result)
+    summary = f"Whisper: {_format_service_summary()}"
+    # The user asked for status, so show the full breakdown — on the HUD
+    # panel instead of force-opening the modal imgui window when possible.
+    body = whisper_hud_content.format_service_status_panel(_whisper_services)
+    if whisper_hud.publish_panel(body, show=True):
+        # The next whisper state change re-publishes the live panel over this.
+        whisper_hud.add_log("event", summary)
+    else:
+        _notify(summary)
+        _whisper_status_gui.show()
+
+
+def _start_probe(kind: str) -> None:
+    global _whisper_ignore_context_status, _whisper_probe_job, _whisper_probe_running
+    if _whisper_probe_running:
+        _notify("Whisper: a service test is already running")
+        return
+    if not REALITIME_DIR.exists():
+        _notify(f"Whisper: missing dir {REALITIME_DIR}")
+        return
+    if kind in {"polisher", "all"}:
+        _whisper_services.polisher.test_state = "testing"
+    if kind in {"context", "all"}:
+        _whisper_services.context_extractor.test_state = "testing"
+    _whisper_ignore_context_status = kind in {"status", "all"}
+    if _whisper_ignore_context_status:
+        cron.after("3s", _clear_ignored_context_status)
+    _whisper_probe_running = True
+    _notify(f"Whisper: testing {kind.replace('_', ' ')}")
+    threading.Thread(target=_probe_worker, args=(kind,), daemon=True).start()
+    _whisper_probe_job = cron.interval("100ms", _poll_probe_results)
+
+
 def _read_proc_output() -> None:
     for _ in range(20):
         try:
@@ -939,10 +1305,20 @@ def _drain_stderr() -> None:
             print(f"Whisper client: {line}")
 
 
+def _tick_shutdown_panel() -> None:
+    """Republish the HUD panel about once a second while a graceful shutdown
+    is pending so the countdown stays visible instead of 120s of dead air."""
+    if not _whisper_shutdown_pending or _whisper_shutdown_deadline is None:
+        return
+    if time.monotonic() - _whisper_hud_last_publish >= 1.0:
+        _refresh_hud_panel(force=True)
+
+
 def _poll_proc_output() -> None:
     _read_proc_output()
     _drain_stderr()
     _drain_event_queue()
+    _tick_shutdown_panel()
 
 
 def _start_polling() -> None:
@@ -1157,10 +1533,12 @@ def _enable_whisper() -> bool:
     _whisper_copy_on_shutdown = False
     _whisper_transcripts.reset()
     _whisper_session_transcript = []
+    _reset_hud_panel_state()
     _whisper_enabled = True
     _enter_whisper_mode()
     _apply_whisper_theme()
     _set_whisper_ui_state("connecting")
+    _refresh_input_device()
     _publish_whisper_mode_buttons()
     _queue_ui_action(lambda: _show_whisper_subtitle("Connecting to Whisper...", "connecting"))
 
@@ -1182,6 +1560,7 @@ def _disable_whisper() -> None:
         _finish_context_capture()
         _exit_whisper_mode()
         _restore_hud_theme()
+        _reset_hud_panel_state()
         _whisper_copy_on_shutdown = False
         _remove_whisper_mode_copy_button()
         _publish_command_mode_whisper_button()
@@ -1197,6 +1576,7 @@ def _disable_whisper() -> None:
     _whisper_copy_on_shutdown = False
     _whisper_transcripts.reset()
     _whisper_ui_state = None
+    _reset_hud_panel_state()
     _exit_whisper_mode()
     _restore_hud_theme()
     _remove_whisper_mode_copy_button()
@@ -1206,11 +1586,12 @@ def _disable_whisper() -> None:
 
 
 def _complete_graceful_shutdown() -> None:
-    global _whisper_shutdown_job, _whisper_shutdown_pending
+    global _whisper_shutdown_deadline, _whisper_shutdown_job, _whisper_shutdown_pending
     if _whisper_shutdown_job is not None:
         cron.cancel(_whisper_shutdown_job)
         _whisper_shutdown_job = None
     _whisper_shutdown_pending = False
+    _whisper_shutdown_deadline = None
     _disable_whisper()
 
 
@@ -1235,12 +1616,15 @@ def _begin_graceful_shutdown() -> None:
         return
 
     _whisper_shutdown_pending = True
-    _set_whisper_ui_state("session_finishing")
-    _show_whisper_subtitle("Finishing transcription...", "session_finishing")
     timeout_ms = max(
         0,
         settings.get("user.whisper_graceful_shutdown_timeout_ms"),
     )
+    global _whisper_shutdown_deadline
+    _whisper_shutdown_deadline = time.monotonic() + timeout_ms / 1000
+    _set_whisper_ui_state("session_finishing")
+    _refresh_hud_panel(force=True)
+    _show_whisper_subtitle("Finishing transcription...", "session_finishing")
     _whisper_shutdown_job = cron.after(
         f"{timeout_ms}ms",
         _force_graceful_shutdown,
@@ -1275,6 +1659,22 @@ class Actions:
         """Return whether Whisper transcription is active or starting."""
         return _whisper_enabled or _proc_is_running()
 
+    def whisper_status() -> None:
+        """Refresh and display optional Whisper service availability."""
+        _start_probe("status")
+
+    def whisper_test_polisher() -> None:
+        """Test the transcript polisher in an isolated client process."""
+        _start_probe("polisher")
+
+    def whisper_test_context() -> None:
+        """Test the text context extractor in an isolated client process."""
+        _start_probe("context")
+
+    def whisper_test_all() -> None:
+        """Test all optional services that are safe while dictating."""
+        _start_probe("all")
+
     def whisper_session_copy() -> None:
         """Copy the last session-polished transcript to the clipboard."""
         _copy_last_session_polished()
@@ -1300,24 +1700,32 @@ class Actions:
             return
 
         actions.insert(text)
-        _whisper_history_gui.hide()
+        _hide_history_picker()
 
     def whisper_history_toggle() -> None:
-        """Toggle the Whisper dictation history GUI."""
-        if _whisper_history_gui.showing:
-            _whisper_history_gui.hide()
+        """Toggle the Whisper dictation history picker."""
+        global _whisper_hud_history_active
+        if _whisper_hud_history_active or _whisper_history_gui.showing:
+            _hide_history_picker()
+            return
+        if not _whisper_insert_history:
+            _notify("Whisper: no dictation history")
+            return
+        items = whisper_hud_content.build_history_choices(_whisper_insert_history)
+        if whisper_hud.publish_history_choices(items, _on_history_choice):
+            _whisper_hud_history_active = True
         else:
             _whisper_history_gui.show()
 
     def whisper_history_hide() -> None:
-        """Hide the Whisper dictation history GUI."""
-        _whisper_history_gui.hide()
+        """Hide the Whisper dictation history picker."""
+        _hide_history_picker()
 
     def whisper_history_clear() -> None:
         """Clear the Whisper dictation history."""
         global _whisper_insert_history
         _whisper_insert_history = []
-        _whisper_history_gui.hide()
+        _hide_history_picker()
 
     def whisper_polish_session() -> None:
         """Request a polished transcript for the active Whisper session."""

@@ -11,3 +11,7 @@ whisper context show: user.whisper_context_show()
 whisper context clear: user.whisper_context_clear()
 whisper context selection:
     user.whisper_context_set(edit.selected_text())
+whisper status: user.whisper_status()
+whisper test polish: user.whisper_test_polisher()
+whisper test context: user.whisper_test_context()
+whisper test all: user.whisper_test_all()
