@@ -155,3 +155,7 @@ Updated `apps/fluent_search/fluent_search.py` to recognize Fluent Search when Ta
 ### (5.1) Move Misrecognitions to Words To Replace
 
 Moved correction-style vocabulary mappings from `core/vocabulary/vocabulary.talon-list` into `settings/words_to_replace.csv`, leaving the vocabulary list focused on ordinary terms, proper nouns, and acronym pronunciations.
+
+## Quick-pick Whisper toggle
+
+Added a persistent Whisper toggle to the global quick-pick bottom row. Green indicates on and grey indicates off, with explicit state labels and matching hover colours. The open overlay checks the actual Whisper state every 200 ms, including changes from voice commands and asynchronous shutdown, and cancels the check when closed. Button text scales to fit without truncating the state.

@@ -5,7 +5,7 @@ import os
 import platform
 import struct
 
-from talon import Context, Module, actions, app, speech_system, ui
+from talon import Context, Module, actions, app, cron, speech_system, ui
 from talon.canvas import Canvas, MouseEvent
 from talon.grammar import Phrase
 from talon.screen import Screen
@@ -104,6 +104,10 @@ BACKGROUND_COLOR = "fffafa"  # Snow
 HOVER_COLOR = "6495ed"  # CornflowerBlue
 BORDER_COLOR = "000000"  # Black
 TEXT_COLOR = "000000"  # Black
+WHISPER_ON_COLOR = "90ee90"
+WHISPER_ON_HOVER_COLOR = "66cc66"
+WHISPER_OFF_COLOR = "d3d3d3"
+WHISPER_OFF_HOVER_COLOR = "aaaaaa"
 SNAP_COLORS = [
     "cd5c5c",  # IndianRed
     "1e90ff",  # DodgerBlue
@@ -120,6 +124,8 @@ class QuickPickOption:
     callback: Callable[[], None]
     move_mouse: Optional[bool] = False
     close_menu: Optional[bool] = True
+    background_color: str = BACKGROUND_COLOR
+    hover_color: str = HOVER_COLOR
 
 
 @dataclass
@@ -198,6 +204,8 @@ hover_rect: Optional[Rect] = None
 repeater_callback: Optional[Callable[[], None]] = None
 buttons: list[Button] = []
 current_menu: Optional[QuickPickMenu] = None
+whisper_refresh_job = None
+last_whisper_state: Optional[bool] = None
 
 
 def tracking_control_off_restore_mouse():
@@ -274,14 +282,17 @@ def get_midpoint(length: int, value: float):
     return (length * value + (length - 1) * size.margin) / 2
 
 
-def add_button(c: SkiaCanvas, text: str, rect: Rect):
+def add_button(
+    c: SkiaCanvas, text: str, rect: Rect,
+    background_color: str = BACKGROUND_COLOR, hover_color: str = HOVER_COLOR,
+):
     if not size:
         return
 
     rrect = RoundRect.from_rect(rect, x=size.corner_radius, y=size.corner_radius)
 
     c.paint.style = c.paint.Style.FILL
-    c.paint.color = HOVER_COLOR if hover_rect == rect else BACKGROUND_COLOR
+    c.paint.color = hover_color if hover_rect == rect else background_color
     c.draw_rrect(rrect)
 
     c.paint.style = c.paint.Style.STROKE
@@ -292,10 +303,11 @@ def add_button(c: SkiaCanvas, text: str, rect: Rect):
     c.paint.color = TEXT_COLOR
     c.paint.textsize = size.text
 
-    if len(text) > 10:
-        text = text[:10]
-
     text_rect = c.paint.measure_text(text)[1]
+    available_width = rect.width - size.margin * 2
+    if text_rect.width > available_width:
+        c.paint.textsize *= available_width / text_rect.width
+        text_rect = c.paint.measure_text(text)[1]
     c.draw_text(
         text,
         rect.center.x + text_rect.x - text_rect.width / 2,
@@ -315,7 +327,7 @@ def draw_horizontal(c: SkiaCanvas, options: list[QuickPickOption], x: float, y: 
         buttons.append(
             Button(rect, option.callback, option.move_mouse, option.close_menu)
         )
-        add_button(c, option.text, rect)
+        add_button(c, option.text, rect, option.background_color, option.hover_color)
 
 
 def draw_vertical(c: SkiaCanvas, options: list[QuickPickOption], x: float, y: float):
@@ -330,7 +342,7 @@ def draw_vertical(c: SkiaCanvas, options: list[QuickPickOption], x: float, y: fl
         buttons.append(
             Button(rect, option.callback, option.move_mouse, option.close_menu)
         )
-        add_button(c, option.text, rect)
+        add_button(c, option.text, rect, option.background_color, option.hover_color)
 
 
 def draw_circle(
@@ -498,8 +510,42 @@ def switch_menu(menu: QuickPickMenu):
         canvas.freeze()
 
 
+def get_whisper_state() -> Optional[bool]:
+    """Return the live state, or None when the optional Whisper actions are absent."""
+    try:
+        return actions.user.whisper_is_active()
+    except (KeyError, AttributeError):
+        return None
+
+
+def refresh_whisper_state():
+    global last_whisper_state
+    if not canvas or not current_menu or current_menu.id != "global":
+        return
+    state = get_whisper_state()
+    if state != last_whisper_state:
+        last_whisper_state = state
+        canvas.freeze()
+
+
+def toggle_whisper():
+    try:
+        actions.user.whisper_toggle()
+    finally:
+        refresh_whisper_state()
+
+
 def get_bottom_options() -> list[QuickPickOption]:
     options = list(media_options)
+    active = get_whisper_state()
+    if active is not None:
+        options.append(QuickPickOption(
+            "WHISPER ON" if active else "WHISPER OFF",
+            toggle_whisper,
+            close_menu=False,
+            background_color=WHISPER_ON_COLOR if active else WHISPER_OFF_COLOR,
+            hover_color=WHISPER_ON_HOVER_COLOR if active else WHISPER_OFF_HOVER_COLOR,
+        ))
     if app.platform == "windows":
         options.append(QuickPickOption("RESTART", lambda: actions.user.talon_restart()))
     return options
@@ -612,6 +658,7 @@ def on_mouse(e: MouseEvent):
 
 def show(menu: QuickPickMenu):
     global canvas, current_menu, mouse_pos, size
+    global whisper_refresh_job, last_whisper_state
     if canvas:
         hide()
 
@@ -623,11 +670,17 @@ def show(menu: QuickPickMenu):
     canvas.blocks_mouse = True
     canvas.register("draw", on_draw)
     canvas.register("mouse", on_mouse)
+    last_whisper_state = get_whisper_state()
     canvas.freeze()
+    whisper_refresh_job = cron.interval("200ms", refresh_whisper_state)
 
 
 def hide():
     global canvas, current_menu, hover_rect
+    global whisper_refresh_job
+    if whisper_refresh_job is not None:
+        cron.cancel(whisper_refresh_job)
+        whisper_refresh_job = None
     if not canvas:
         return
 
@@ -703,3 +756,4 @@ def on_post_phrase(phrase: Phrase):
 
 
 speech_system.register("post:phrase", on_post_phrase)
+app.register("unload", hide)
