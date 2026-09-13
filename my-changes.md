@@ -2,6 +2,10 @@
 
 ## Distinct Whisper stop button
 
+The default HUD mode indicator now requests graceful Whisper shutdown when
+clicked in Whisper mode, rather than only disabling Talon speech and leaving
+Whisper active.
+
 The Whisper return-to-command-mode HUD button now uses a charcoal stop square
 instead of the speech bubble shared with the default HUD mode indicator. Its
 graceful shutdown behaviour is unchanged. The separate asset keeps the default

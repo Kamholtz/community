@@ -76,7 +76,9 @@ class Actions:
     def hud_toggle_mode():
         """Allow the mode toggle to work while whisper mode is active."""
         current_mode = actions.user.hud_determine_mode()
-        if current_mode in ["command", "dictation", "mixed", "user.whisper"]:
+        if current_mode == "user.whisper":
+            actions.user.whisper_done()
+        elif current_mode in ["command", "dictation", "mixed"]:
             actions.speech.disable()
         elif current_mode == "sleep":
             actions.speech.enable()
