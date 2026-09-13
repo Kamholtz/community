@@ -177,7 +177,7 @@ _WHISPER_STATUS_ICON = str(
     / "talon_hud_themes"
     / "dark_whisper"
     / "images"
-    / "user.whisper_icon.png"
+    / "whisper_stop.png"
 )
 # Status buttons use a light circular background in both HUD themes, so the
 # charcoal glyph matches the neighboring controls and remains legible in both.

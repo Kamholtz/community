@@ -1,5 +1,13 @@
 # My Changes
 
+## Distinct Whisper stop button
+
+The Whisper return-to-command-mode HUD button now uses a charcoal stop square
+instead of the speech bubble shared with the default HUD mode indicator. Its
+graceful shutdown behaviour is unchanged. The separate asset keeps the default
+mode indicator and copy controls intact and is legible on both themes' light
+button circles.
+
 ## Delayed polishing warning
 
 The Whisper HUD shows an orange warning below the state line if polished text
