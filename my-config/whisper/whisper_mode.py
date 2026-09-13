@@ -18,6 +18,7 @@ from talon.types import Rect
 from typing import Optional
 
 from . import whisper_hud
+from .whisper_hud_buttons import WhisperHudButtons
 from . import whisper_hud_content
 from .whisper_service_state import WhisperServiceState
 from .whisper_transcript_state import PendingTranscript, TranscriptState
@@ -192,7 +193,8 @@ _WHISPER_SESSION_TOPIC = "whisper_polished_session"
 _WHISPER_SESSION_ICON = "copy_icon"
 _WHISPER_COPY_ON_STOP_TOPIC = "whisper_copy_on_stop"
 _WHISPER_COPY_ON_STOP_ICON = str(
-    Path(_WHISPER_STATUS_ICON).with_name("whisper_finish_copy_large.png")
+    Path(__file__).resolve().parents[1] / "talon_hud_themes" / "dark_whisper"
+    / "images" / "whisper_finish_copy_large.png"
 )
 _WHISPER_STATUS_TEXT = {
     "connecting": "Connecting",
@@ -362,6 +364,7 @@ def _queue_ui_action(action) -> None:
 
 
 def _publish_whisper_status(state: str) -> None:
+    _publish_whisper_menu_options()
     text = _WHISPER_STATUS_TEXT.get(state, state.replace("_", " ").title())
     try:
         status_icon = actions.user.hud_create_status_icon(
@@ -371,12 +374,13 @@ def _publish_whisper_status(state: str) -> None:
             f"Return to command mode (Whisper {text})",
             _return_to_command_mode,
         )
-        actions.user.hud_publish_status_icon(_WHISPER_STATUS_TOPIC, status_icon)
+        _whisper_hud_buttons.publish_icon(_WHISPER_STATUS_TOPIC, status_icon)
     except Exception:
         pass
 
 
 def _publish_command_mode_whisper_button(*_args) -> None:
+    _publish_whisper_menu_options()
     try:
         status_icon = actions.user.hud_create_status_icon(
             _WHISPER_STATUS_TOPIC,
@@ -385,7 +389,7 @@ def _publish_command_mode_whisper_button(*_args) -> None:
             "Switch to Whisper mode",
             _switch_to_whisper_mode,
         )
-        actions.user.hud_publish_status_icon(_WHISPER_STATUS_TOPIC, status_icon)
+        _whisper_hud_buttons.publish_icon(_WHISPER_STATUS_TOPIC, status_icon)
     except Exception:
         pass
 
@@ -400,7 +404,7 @@ def _publish_whisper_mode_buttons() -> None:
             "Return to command mode and copy polished session on disconnect",
             _return_to_command_mode_and_copy,
         )
-        actions.user.hud_publish_status_icon(
+        _whisper_hud_buttons.publish_icon(
             _WHISPER_COPY_ON_STOP_TOPIC,
             copy_icon,
         )
@@ -461,7 +465,7 @@ def _publish_polished_session_available() -> None:
             "Copy latest polished Whisper session",
             _copy_last_session_polished,
         )
-        actions.user.hud_publish_status_icon(_WHISPER_SESSION_TOPIC, status_icon)
+        _whisper_hud_buttons.publish_icon(_WHISPER_SESSION_TOPIC, status_icon)
     except Exception:
         pass
 
@@ -1948,12 +1952,46 @@ class Actions:
             _notify("Whisper: no active client")
 
 
+def _publish_whisper_menu_options() -> None:
+    try:
+        _whisper_hud_buttons.publish_options()
+    except Exception as error:
+        whisper_hud._warn_once("hud_publish_status_option", error)
+
+
+def _whisper_menu_images() -> dict[str, str]:
+    return {
+        _WHISPER_STATUS_TOPIC: _WHISPER_STATUS_ICON if _whisper_enabled else _WHISPER_START_ICON,
+        _WHISPER_COPY_ON_STOP_TOPIC: _WHISPER_COPY_ON_STOP_ICON,
+        _WHISPER_SESSION_TOPIC: _WHISPER_SESSION_ICON,
+    }
+
+
 def _publish_initial_whisper_button() -> None:
     if _whisper_enabled:
         _publish_whisper_mode_buttons()
     else:
+        _remove_whisper_mode_copy_button()
         _publish_command_mode_whisper_button()
+    if _whisper_last_session_polished:
+        _publish_polished_session_available()
+    else:
+        try:
+            actions.user.hud_remove_status_icon(_WHISPER_SESSION_TOPIC)
+        except Exception:
+            pass
 
 
+_whisper_hud_buttons = WhisperHudButtons(
+    Path(__file__).resolve().parents[2] / "stored_state" / "whisper_hud_buttons.json",
+    actions.user,
+    {
+        _WHISPER_STATUS_TOPIC: "Whisper mode toggle",
+        _WHISPER_COPY_ON_STOP_TOPIC: "Whisper stop and copy",
+        _WHISPER_SESSION_TOPIC: "Whisper copy latest session",
+    },
+    _publish_initial_whisper_button,
+    _whisper_menu_images,
+)
 app.register("ready", _publish_initial_whisper_button)
 _publish_initial_whisper_button()

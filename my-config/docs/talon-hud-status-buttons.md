@@ -1,5 +1,22 @@
 # Talon HUD status buttons
 
+## Register right-click visibility options
+
+Publishing an icon does not add it to the status bar's context menu. Register
+a separate option with `hud_create_status_option(topic, add_button, remove_button)`
+and publish it with `hud_publish_status_option(topic + "_option", option)`.
+Create menu buttons with `hud_create_button(label, callback)`; callbacks should
+accept `*_args` because the HUD passes the widget.
+
+Whisper's three controls use `whisper/whisper_hud_buttons.py` to save independent
+visibility preferences in `stored_state/whisper_hud_buttons.json`. All icon
+publishing must pass through its visibility guard, including theme refreshes.
+For conditional icons, both status-option branches use the same preference-based
+Add/Remove button: an enabled icon can be temporarily absent without being removed
+by the user. Enabling stop and copy waits for active Whisper; enabling copy latest
+session waits for a polished session. Removing either also cancels that preference
+while its icon is unavailable.
+
 ## Add a clickable button
 
 Create and publish a status icon:

@@ -1,5 +1,33 @@
 # My Changes
 
+## Restore distinct stop-and-copy icon
+
+Restored the existing clipboard-with-stop-square asset for Whisper stop and copy
+in both the HUD and its context menu. Copy latest session retains overlapping
+pages. Their respective deferred and immediate copy callbacks are unchanged.
+
+## Whisper context-menu icons
+
+The Add/Remove Whisper menu entries include their corresponding status-button
+icons. The mode toggle tracks the current start/stop icon, and the copy entries
+use the current copy-button asset. Visibility integration was reconnected after
+a later save removed it from whisper_mode.py.
+
+## HUD context menu height
+
+The HUD context menu uses the current screen's height instead of a fixed
+500-pixel cap, so the additional Whisper options fit. The drawing canvas and
+mouse capture area resize together and the menu position stays within screen
+margins, including when opened near an edge or on another monitor.
+
+## Whisper HUD menu options
+
+Each Whisper status button now has an independent Add/Remove option in the
+HUD's right-click menu. Hidden choices persist in stored_state/whisper_hud_buttons.json
+and remain respected during status updates, theme changes and reloads.
+Stop and copy is only displayed while Whisper is active; copy latest session
+requires a polished session. Their menu options remain available at all times.
+
 ## Distinct Whisper copy buttons
 
 The finish-and-copy button uses a charcoal clipboard with a solid stop square.
