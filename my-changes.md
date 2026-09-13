@@ -1,5 +1,13 @@
 # My Changes
 
+## Distinct Whisper copy buttons
+
+The finish-and-copy button uses a charcoal clipboard with a solid stop square.
+Copying the latest polished session immediately retains the overlapping-pages
+icon. Both buttons retain their existing actions.
+The clipboard fills a 27 by 30 pixel canvas to match the original copy glyph,
+with a thicker outline and larger stop square for readability.
+
 ## Distinct Whisper stop button
 
 The default HUD mode indicator now requests graceful Whisper shutdown when

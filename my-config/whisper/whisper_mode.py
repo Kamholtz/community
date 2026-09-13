@@ -191,6 +191,9 @@ _WHISPER_START_ICON = str(
 _WHISPER_SESSION_TOPIC = "whisper_polished_session"
 _WHISPER_SESSION_ICON = "copy_icon"
 _WHISPER_COPY_ON_STOP_TOPIC = "whisper_copy_on_stop"
+_WHISPER_COPY_ON_STOP_ICON = str(
+    Path(_WHISPER_STATUS_ICON).with_name("whisper_finish_copy_large.png")
+)
 _WHISPER_STATUS_TEXT = {
     "connecting": "Connecting",
     "connected": "Connected",
@@ -392,7 +395,7 @@ def _publish_whisper_mode_buttons() -> None:
     try:
         copy_icon = actions.user.hud_create_status_icon(
             _WHISPER_COPY_ON_STOP_TOPIC,
-            _WHISPER_SESSION_ICON,
+            _WHISPER_COPY_ON_STOP_ICON,
             None,
             "Return to command mode and copy polished session on disconnect",
             _return_to_command_mode_and_copy,
