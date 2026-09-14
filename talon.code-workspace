@@ -33,6 +33,7 @@
 		}
 	],
 	"settings": {
+		"python.defaultInterpreterPath": "${env:APPDATA}/talon/venv/3.11/Scripts/python.exe",
 		"workbench.colorCustomizations": {
 			"activityBar.activeBackground": "#eecc64",
 			"activityBar.background": "#eecc64",
