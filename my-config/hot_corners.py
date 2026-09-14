@@ -6,7 +6,7 @@ mod.setting(
     "hot_corners_enabled",
     type=bool,
     default=False,
-    desc="Open the desktop switcher when the pointer enters a top screen corner",
+    desc="Open the desktop switcher at top left or Quick Pick at top right",
 )
 mod.setting(
     "hot_corners_size",
@@ -18,7 +18,7 @@ mod.setting(
 _corner_active = False
 
 
-def _is_in_top_corner(x: int, y: int) -> bool:
+def _top_corner_at(x: int, y: int) -> str:
     corner_size = max(1, settings.get("user.hot_corners_size"))
 
     for screen in ui.screens():
@@ -26,10 +26,12 @@ def _is_in_top_corner(x: int, y: int) -> bool:
         inside_top = rect.y <= y < rect.y + corner_size
         inside_left = rect.x <= x < rect.x + corner_size
         inside_right = rect.x + rect.width - corner_size <= x < rect.x + rect.width
-        if inside_top and (inside_left or inside_right):
-            return True
+        if inside_top and inside_right:
+            return "right"
+        if inside_top and inside_left:
+            return "left"
 
-    return False
+    return ""
 
 
 def _poll_hot_corners() -> None:
@@ -40,9 +42,13 @@ def _poll_hot_corners() -> None:
         return
 
     x, y = ctrl.mouse_pos()
-    in_corner = _is_in_top_corner(x, y)
+    corner = _top_corner_at(x, y)
+    in_corner = bool(corner)
     if in_corner and not _corner_active:
-        actions.user.desktop_show()
+        if corner == "right":
+            actions.user.quick_pick_global_show()
+        else:
+            actions.user.desktop_show()
 
     _corner_active = in_corner
 

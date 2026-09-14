@@ -1,5 +1,10 @@
 # My Changes
 
+## Top-right hot corner opens Quick Pick
+
+Entering the top-right corner opens the global Quick Pick menu. The top-left
+corner continues to open the desktop switcher. Both trigger once per entry.
+
 ## Restore distinct stop-and-copy icon
 
 Restored the existing clipboard-with-stop-square asset for Whisper stop and copy
