@@ -3,13 +3,13 @@ tag: user.code_operators_assignment
 -
 
 # Assignment
+divide equals: ASSIGNMENT_DIVISION
 equals: ASSIGNMENT
-or equals: ASSIGNMENT_OR
 
 # Combined computation and assignment
+increment: ASSIGNMENT_INCREMENT
 minus equals: ASSIGNMENT_SUBTRACTION
+mod equals: ASSIGNMENT_MODULO
+or equals: ASSIGNMENT_OR
 plus equals: ASSIGNMENT_ADDITION
 times equals: ASSIGNMENT_MULTIPLICATION
-divide equals: ASSIGNMENT_DIVISION
-mod equals: ASSIGNMENT_MODULO
-increment: ASSIGNMENT_INCREMENT

@@ -2,13 +2,13 @@ list: user.edit_modifier
 -
 
 document: document
-paragraph: paragraph
-line: line
-line start: lineStart
-way left: lineStart
-line end: lineEnd
-way right: lineEnd
-file start: fileStart
-way up: fileStart
 file end: fileEnd
+file start: fileStart
+line: line
+line end: lineEnd
+line start: lineStart
+paragraph: paragraph
 way down: fileEnd
+way left: lineStart
+way right: lineEnd
+way up: fileStart

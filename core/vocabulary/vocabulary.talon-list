@@ -1,269 +1,270 @@
 list: user.vocabulary
 -
 
-N map: nmap
-nmap
+8bitdo
+A P A style: APA Style
+A P I: API
+ACP protocol
 admin
+AliExpress
+Amazon Elastic Container Registry
+anti-malware
+anvil MPC
+API endpoint
+Application Load Balancer
+Aussie
+authorisation
+availability zone
+babashka
+based off
+Binwalk
+bitwarden
+Brisbane
+Broken Access Control
+bubblewrap
+Bunnings
+Burp Suite
+C P U: CPU
+C U D A: CUDA
+Calva
+cell heading
+ChatGPT
+Circuit Tracks
 Cisco
 Citrix
-VPN
-DNS
-Minecraft
-WezTerm
-devcontainer
-cursorless
-nswag
-Brisbane
-OpenAPI
-C U D A: CUDA
-N V I D I A: NVIDIA
-Roboflow
-eventref
-proj
-lua
-pyenv
-grep
-neovide
-Jupyter
-mmsegmentation
-mmdetection
-mmpose
-mmengine
-nix
-treesitter
-jq
-bitwarden
-ChatGPT
-TryHackMe
-ifconfig
-difftastic
-AliExpress
-U D P: UDP
-kendo
-rango
-lazyvim
-markdown
-authorisation
-T C P: TCP
-yeah
-tmux
-H T M L: HTML
-homography
-no-undef
-no-const-assign
-Binwalk
-Y A R A: YARA
-Radare2
-Jsunpack
-Retdec
-Nikto
-Netcat
-customise
-SQL Injection
-S Q L: SQL
-sequel: SQL
-sanitisation
-O R M: ORM
-parameterised
-S S H: SSH
-SSH-ing
-V M: VM
-W E P: WEP
-initialisation
-MAC address
-unauthorised
-Wi-Fi
-Zed Attack Proxy
-systemctl
-VSCode
-worktree
-eslint
-diff
-V N C: VNC
-W L A N: WLAN
-WLANs
-Entra
-tmuxinator
-F Z F: fzf
-nvm
-zoxide
-direnv
-zsh
-Hello Fresh
-Bunnings
-I-MED Radiology
-Goodna
-Aussie
-nixGL
-Tauri
-razor
-babashka
-Calva
 clojure
-restic
-rclone
-git worktree
-tensorboard
-pip install
-R A M: RAM
-W S L: WSL
-W S L 2: WSL2
-cell heading
-O N N X: ONNX
-work dir
-elixir
-tidewave
-deps
-Docling
-eval
-yolox
-VirtualBox
-I S O: ISO
-Security Information and Event Management
-S I E M: SIEM
-QRadar
-PopOS
-dataset
-phishing
-phishing attack
-fishing attack
-DDoS
-D D O S: DDoS
-phishing attacks
-cyber security
-anti-malware
-gitignore
-site param
-site params
-Splunk
-mmdeploy
-git revert
-git commit
-git commit amend
-git merge
-git status
-git diff
-pytorch
-TensorRT
-cuda
-workspace
-multiboard
-Lumus
-pilates
-lifecycle
-lifecycle policy
-Zotero
-N F S: NFS
-E F S: EFS
-SD card
-ACP protocol
-codespaces
-talon gaze O C R: talon gaze OCR
-CloudFormation
-network ACL
-edge associations
-Route propagation
-source code
-Metastructure
-E C 2: EC2
-EC2
-hardcoded
-A P A style: APA Style
-wire plumber: WirePlumber
-availability zone
-Application Load Balancer
-ECS on EC2
-E C S: ECS
-Amazon Elastic Container Registry
-Macie
-Virtual Private Cloud
-Route 53
-file history
-cursorfree
-eye tracker
-tobii eye tracker
-emacs config
-org mode
-doom emacs
-doom emacs config
-git message
-undo tree
-live sync
 clojure babashka
-org file
-talon commands
-cursorless emacs
-cursorless mode
-cursorless casual mode
-error
-treesitter grammar
-grammar
-cursorless implementation
-cursorless command
-tailscale
-openssh
-talon config
-file path
-M P C: MPC
-anvil MPC
+CloudFormation
+code hot reload
+codespaces
 Context7
 Context7 M C P: Context7 MCP
 Context7 M C P server: Context7 MCP server
-nix develop
-fluent search
-pi agent
-quick pick
-magit
-X mod map:xmodmap
-bubblewrap
-pytest
-maker world: makerworld
-8bitdo
-Circuit Tracks
-Novation Circuit Tracks
-Novation
-gumroad
-llama C P P: llama.cpp
-Ollama
-C P U: CPU
-O C R: OCR
-V R A M: VRAM
-vision latency
+cuda
+cursorfree
+cursorless
+cursorless casual mode
+cursorless command
+cursorless emacs
+cursorless implementation
+cursorless mode
+customise
+cyber security
+D D O S: DDoS
+database entry
+dataset
+DDoS
+deps
+devcontainer
+diff
+difftastic
+direnv
+DNS
+docker sandbox
+Docling
+done
+doom emacs
+doom emacs config
+DuckStation
+E C 2: EC2
+E C S: ECS
+E F S: EFS
+EC2
+ECS on EC2
+edge associations
+elixir
+emacs config
+Entra
+error
+eslint
+eval
+eventref
 extract screen
+eye tracker
+F Z F: fzf
+file history
+file path
+fishing attack
+fluent search
+for
+git commit
+git commit amend
+git diff
+git LFS
+git merge
+git message
+git revert
+git status
+git worktree
+gitignore
+gluetun
+Goodna
+grammar
+grep
+gumroad
+H T M L: HTML
+hardcoded
+Hello Fresh
+homography
+I S O: ISO
+I-MED Radiology
+ifconfig
+initialisation
+jq
+Jsunpack
+Jupyter
+kendo
+lazyvim
+lifecycle
+lifecycle policy
+live sync
+llama C P P: llama.cpp
+lua
+Lumus
+M P C: MPC
+MAC address
+Macie
+magit
+maker world: makerworld
+markdown
+Metastructure
+Minecraft
+mmdeploy
+mmdetection
+mmengine
+mmpose
+mmsegmentation
+mount
+multiboard
+N F S: NFS
+N map: nmap
+N V I D I A: NVIDIA
+neovide
+Netcat
+network ACL
+Nikto
+nix
+nix develop
+nixGL
+nmap
+no-const-assign
+no-undef
+Novation
+Novation Circuit Tracks
+nswag
+nvm
+O C R: OCR
+O N N X: ONNX
+O R M: ORM
+O W A S P: OWASP
+O wasp: OWASP
+Ollama
+on shape: OnShape
+OpenAPI
+openssh
+org file
+org mode
+parameterised
+phishing
+phishing attack
+phishing attacks
+pi agent
+pilates
+pip install
+PopOS
+proceed
+proceed with
+proj
+PS1
+pyenv
+pytest
+pytorch
+QRadar
+quick pick
+R A M: RAM
+Radare2
+rango
+razor
+rclone
+realtime S T T: RealtimeSTT
 Relacon
 Relacon Handheld Trackball
-Broken Access Control
-O wasp: OWASP
-O W A S P: OWASP
-unencrypted
-A P I: API
-API endpoint
-Burp Suite
-T A F E: TAFE
-tafe
-windows 11
-git LFS
-webpage
-Y L D L P: yt-dlp
-YouTube downloader
-code hot reload
-DuckStation
-PS1
-on shape: OnShape
+restic
 restic mount
-gluetun
-database entry
-user interface
-using
-where the
-for
-use
+Retdec
+Roboflow
+Route 53
+Route propagation
+S I E M: SIEM
+S Q L: SQL
+S S H: SSH
+sanitisation
+SD card
+Security Information and Event Management
+sequel: SQL
+site param
+site params
+sort
+source code
+Splunk
+SQL Injection
+SSH-ing
+systemctl
+T A F E: TAFE
+T C P: TCP
+tafe
+tailscale
+talon commands
+talon config
+talon gaze O C R: talon gaze OCR
+Tauri
+tensorboard
+TensorRT
+tidewave
+tmux
+tmuxinator
+tobii eye tracker
+treesitter
+treesitter grammar
+TryHackMe
+U D P: UDP
 U I component: UI component
 U I components: UI components
-mount
-docker sandbox
-done
-realtime S T T: RealtimeSTT
-proceed with
-based off
-sort
+unauthorised
+undo tree
+unencrypted
+use
+user interface
+using
+V M: VM
+V N C: VNC
+V R A M: VRAM
+Virtual Private Cloud
+VirtualBox
+vision latency
+VPN
+VSCode
+W E P: WEP
+W L A N: WLAN
+W S L: WSL
+W S L 2: WSL2
+webpage
+WezTerm
+where the
+Wi-Fi
+windows 11
+wire plumber: WirePlumber
+WLANs
+work dir
+workspace
+worktree
+X mod map:xmodmap
+Y A R A: YARA
+Y L D L P: yt-dlp
+yeah
+yolox
+YouTube downloader
+Zed Attack Proxy
+Zotero
+zoxide
+zsh

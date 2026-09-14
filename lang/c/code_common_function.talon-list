@@ -28,20 +28,20 @@ set jump: setjmp
 signal
 size of: sizeof
 stir cat: strcat
-string cat: strcat
 stir comp: strcmp
 stir copy: strcpy
 stir dupe: strdup
-string dupe: strdup
 stir elle cat: strlcat
-stir l cat: strlcat
 stir elle copy: strlcpy
-stir l copy: strlcpy
 stir en cat: strncat
-stir en copy: strncpy
 stir en comp: strncmp
+stir en copy: strncpy
+stir l cat: strlcat
+stir l copy: strlcpy
 stir len: strlen
-string len: strlen
 stir to int: strtoint
 stir to unsigned int: strtouint
+string cat: strcat
 string char: strchr
+string dupe: strdup
+string len: strlen

@@ -1,34 +1,4 @@
 Replacement,Original
-January,january
-February,february
-April,april
-June,june
-July,july
-August,august
-September,september
-October,october
-November,november
-December,december
-WezTerm,wezterm
-WezTerm,wezterm
-WezTerm,western
-WezTerm,waste home
-drowze,drowse
-drowze,drowze
-Cursorless,cursorless
-which,witch
-RAM,ram
-mode,marred
-kernel,colonel
-jupyter,jupiter
-reorganise,reorganize
-codec,kodak
-Africanisation,Africanization
-Africanise,Africanize
-Americanisation,Americanization
-Americanise,Americanize
-Arabise,Arabize
-Finlandisation,Finlandization
 accessorise,accessorize
 accessorised,accessorized
 accessorises,accessorizes
@@ -39,6 +9,7 @@ acclimatised,acclimatized
 acclimatises,acclimatizes
 acclimatising,acclimatizing
 accoutrements,accouterments
+add,ad
 aeon,eon
 aeons,eons
 aerogramme,aerogram
@@ -51,6 +22,8 @@ aesthetic,esthetic
 aesthetically,esthetically
 aesthetics,esthetics
 aetiology,etiology
+Africanisation,Africanization
+Africanise,Africanize
 ageing,aging
 aggrandise,aggrandize
 aggrandisement,aggrandizement
@@ -63,6 +36,8 @@ allegorise,allegorize
 almanack,almanac
 almanacks,almanacs
 aluminium,aluminum
+Americanisation,Americanization
+Americanise,Americanize
 amortisable,amortizable
 amortisation,amortization
 amortisations,amortizations
@@ -117,6 +92,8 @@ appetiser,appetizer
 appetisers,appetizers
 appetising,appetizing
 appetisingly,appetizingly
+April,april
+Arabise,Arabize
 arbour,arbor
 arbours,arbors
 archaeological,archeological
@@ -125,6 +102,7 @@ archaeologist,archeologist
 archaeologists,archeologists
 archaeology,archeology
 ardour,ardor
+args,ags
 armour,armor
 armoured,armored
 armourer,armorer
@@ -133,15 +111,18 @@ armouries,armories
 armoury,armory
 artefact,artifact
 artefacts,artifacts
+as a,asa
 atomise,atomize
 atomiser,atomizer
 attitudinise,attitudinize
+August,august
 authorisation,authorization
 authorise,authorize
 authorised,authorized
 authorises,authorizes
 authorising,authorizing
 autolyse,autolyze
+AWS,a ws
 axe,ax
 axiomatisation,axiomatization
 backpedalled,backpedaled
@@ -185,6 +166,7 @@ bevvy,bevy
 biassed,biased
 biassing,biasing
 bingeing,binging
+boolean,bullion
 botanise,botanize
 bougainvillaea,bougainvillea
 bougainvillaeas,bougainvilleas
@@ -198,12 +180,14 @@ breathalyser,breathalyzer
 breathalysers,breathalyzers
 breathalyses,breathalyzes
 breathalysing,breathalyzing
+browse,brows
 brutalise,brutalize
 brutalised,brutalized
 brutalises,brutalizes
 brutalising,brutalizing
 buses,busses
 busing,bussing
+C sharp,ca sharp
 caesarean,cesarean
 caesareans,cesareans
 caesium,cesium
@@ -312,6 +296,7 @@ clamours,clamors
 clangour,clangor
 clarinettist,clarinetist
 clarinettists,clarinetists
+codec,kodak
 collectivise,collectivize
 collectivised,collectivized
 collectivises,collectivizes
@@ -392,10 +377,18 @@ crystallises,crystallizes
 crystallising,crystallizing
 cudgelled,cudgeled
 cudgelling,cudgeling
+curse us,cursorless
+Cursorless,cursorless
+cursorless,corselet
+cursorless emacs,castles emacs
+cursorless emacs,corselet emacs
+cursus,cursorless
 customise,customize
 customised,customized
 customises,customizes
 customising,customizing
+data source,data sauce
+December,december
 decentralisation,decentralization
 decentralise,decentralize
 decentralised,decentralized
@@ -468,6 +461,7 @@ destabilise,destabilize
 destabilised,destabilized
 destabilises,destabilizes
 destabilising,destabilizing
+devcontainer,death container
 dialled,dialed
 dialling,dialing
 dialogue,dialog
@@ -518,18 +512,31 @@ draughtswomen,draftswomen
 draughty,drafty
 drivelled,driveled
 drivelling,driveling
+drowze,drowse
+drowze,drowze
 duelled,dueled
 duelling,dueling
 dyspnoea,dyspnea
+EC2,este
+EC2,he se to
+EC2,he see to
+EC2,he see too
+EC2,he ceto
+EC2,es to
 economise,economize
 economised,economized
 economises,economizes
 economising,economizing
+Eddy,Eddie
 editorialise,editorialize
 editorialised,editorialized
 editorialises,editorializes
 editorialising,editorializing
 edoema,edema
+emacs,amex
+emacs,Amex
+emacs,he macs
+emacs,he max
 embolisation,embolization
 empathise,empathize
 empathised,empathized
@@ -627,6 +634,7 @@ favours,favors
 featurisation,featurization
 featurise,featurize
 featurised,featurized
+February,february
 feminise,feminize
 feminised,feminized
 feminises,feminizes
@@ -657,6 +665,7 @@ finalise,finalize
 finalised,finalized
 finalises,finalizes
 finalising,finalizing
+Finlandisation,Finlandization
 flautist,flutist
 flautists,flutists
 flavour,flavor
@@ -722,6 +731,8 @@ ghettoised,ghettoized
 ghettoises,ghettoizes
 ghettoising,ghettoizing
 gipsies,gypsies
+git merge,git marge
+git merge,get marge
 glamorise,glamorize
 glamorised,glamorized
 glamorises,glamorizes
@@ -737,6 +748,7 @@ goitre,goiter
 goitres,goiters
 gonorrhoea,gonorrhea
 gormandise,gormandize
+GPU,gau
 gramme,gram
 grammes,grams
 gravelled,graveled
@@ -799,6 +811,7 @@ hospitalise,hospitalize
 hospitalised,hospitalized
 hospitalises,hospitalizes
 hospitalising,hospitalizing
+hud,heads up display
 humanise,humanize
 humanised,humanized
 humanises,humanizes
@@ -906,6 +919,7 @@ itemise,itemize
 itemised,itemized
 itemises,itemizes
 itemising,itemizing
+January,january
 jeopardise,jeopardize
 jeopardised,jeopardized
 jeopardises,jeopardizes
@@ -914,7 +928,12 @@ jewelled,jeweled
 jeweller,jeweler
 jewellers,jewelers
 jewellery,jewelry
+json,Jason
 judgement,judgment
+July,july
+June,june
+jupyter,jupiter
+kernel,colonel
 kilogramme,kilogram
 kilogrammes,kilograms
 kilometre,kilometer
@@ -979,8 +998,11 @@ localising,localizing
 louvre,louver
 louvred,louvered
 louvres,louvers
+Lumus,Loomis
 lustre,luster
 lyophilise,lyophilize
+magit,maggot
+magit,ma get
 magnetise,magnetize
 magnetised,magnetized
 magnetises,magnetizes
@@ -1030,6 +1052,7 @@ memorised,memorized
 memorises,memorizes
 memorising,memorizing
 mercerise,mercerize
+merge,marge
 mesmerise,mesmerize
 mesmerised,mesmerized
 mesmerises,mesmerizes
@@ -1075,6 +1098,8 @@ mobilise,mobilize
 mobilised,mobilized
 mobilises,mobilizes
 mobilising,mobilizing
+mode,marred
+mode,mud
 modelled,modeled
 modeller,modeler
 modellers,modelers
@@ -1154,6 +1179,8 @@ normalise,normalize
 normalised,normalized
 normalises,normalizes
 normalising,normalizing
+November,november
+October,october
 odour,odor
 odourless,odorless
 odours,odors
@@ -1196,6 +1223,7 @@ overemphasise,overemphasize
 overemphasised,overemphasized
 overemphasises,overemphasizes
 overemphasising,overemphasizing
+OWASP,O wasp
 oxidisation,oxidization
 oxidise,oxidize
 oxidised,oxidized
@@ -1272,6 +1300,7 @@ personalises,personalizes
 personalising,personalizing
 pharmacopoeia,pharmacopeia
 pharmacopoeias,pharmacopeias
+phase,faith
 philosophise,philosophize
 philosophised,philosophized
 philosophises,philosophizes
@@ -1312,6 +1341,7 @@ practises,practices
 practising,practicing
 praesidium,presidium
 praesidiums,presidiums
+pre,pray
 pressurisation,pressurization
 pressurise,pressurize
 pressurised,pressurized
@@ -1374,6 +1404,7 @@ radicalise,radicalize
 radicalised,radicalized
 radicalises,radicalizes
 radicalising,radicalizing
+RAM,ram
 rancour,rancor
 randomise,randomize
 randomised,randomized
@@ -1420,9 +1451,11 @@ remoulding,remolding
 remoulds,remolds
 reorganisation,reorganization
 reorganisations,reorganizations
+reorganise,reorganize
 reorganised,reorganized
 reorganises,reorganizes
 reorganising,reorganizing
+REPL,repel
 revelled,reveled
 reveller,reveler
 revellers,revelers
@@ -1504,6 +1537,7 @@ sentimentalise,sentimentalize
 sentimentalised,sentimentalized
 sentimentalises,sentimentalizes
 sentimentalising,sentimentalizing
+September,september
 sepulchre,sepulcher
 sepulchres,sepulchers
 serialisation,serialization
@@ -1634,11 +1668,13 @@ sympathisers,sympathizers
 sympathises,sympathizes
 sympathising,sympathizing
 synaesthesia,synesthesia
+sync,sink
 synchronisation,synchronization
 synchronise,synchronize
 synchronised,synchronized
 synchronises,synchronizes
 synchronising,synchronizing
+syncing,sinking
 syntagm,syntagma
 synthesise,synthesize
 synthesised,synthesized
@@ -1655,6 +1691,9 @@ systematise,systematize
 systematised,systematized
 systematises,systematizes
 systematising,systematizing
+TAFE,tafe
+talon,toll on
+talon debugging,tell on debugging
 tantalise,tantalize
 tantalised,tantalized
 tantalises,tantalizes
@@ -1684,8 +1723,12 @@ theorise,theorize
 theorised,theorized
 theorises,theorizes
 theorising,theorizing
+Tobii eye tracker,toby eye tracker
+Tobii eye tracker 5,toby eye tracker 5
+TODO,to do
 tonne,ton
 tonnes,tons
+total,turtle
 towelled,toweled
 towelling,toweling
 toxaemia,toxemia
@@ -1734,6 +1777,7 @@ tyre,tire
 tyres,tires
 unauthorised,unauthorized
 uncivilised,uncivilized
+under-documented,under documented
 underutilised,underutilized
 unequalled,unequaled
 unfavourable,unfavorable
@@ -1756,6 +1800,7 @@ urbanise,urbanize
 urbanised,urbanized
 urbanises,urbanizes
 urbanising,urbanizing
+user,youse
 utilisable,utilizable
 utilisation,utilization
 utilise,utilize
@@ -1798,6 +1843,7 @@ vocalise,vocalize
 vocalised,vocalized
 vocalises,vocalizes
 vocalising,vocalizing
+VSCode,vice code
 vulcanisate,vulcanizate
 vulcanised,vulcanized
 vulgarisation,vulgarization
@@ -1816,6 +1862,11 @@ westernise,westernize
 westernised,westernized
 westernises,westernizes
 westernising,westernizing
+WezTerm,wezterm
+WezTerm,wezterm
+WezTerm,western
+WezTerm,waste home
+which,witch
 womanise,womanize
 womanised,womanized
 womaniser,womanizer
@@ -1829,62 +1880,11 @@ woolly,wooly
 worshipped,worshiped
 worshipper,worshiper
 worshipping,worshiping
+write to,right to
+yaml,samel
 yodelled,yodeled
 yodelling,yodeling
 yoghourt,yogurt
 yoghourts,yogurts
 yoghurt,yogurt
 yoghurts,yogurts
-curse us,cursorless
-cursus,cursorless
-emacs,amex
-emacs,Amex
-emacs,he macs
-json,Jason
-cursorless emacs,castles emacs
-cursorless emacs,corselet emacs
-cursorless,corselet
-under-documented,under documented
-browse,brows
-git merge,git marge
-git merge,get marge
-merge,marge
-TODO,to do
-data source,data sauce
-boolean,bullion
-pre,pray
-total,turtle
-user,youse
-hud,heads up display
-C sharp,ca sharp
-devcontainer,death container
-mode,mud
-as a,asa
-talon,toll on
-REPL,repel
-GPU,gau
-args,ags
-add,ad
-emacs,he max
-Lumus,Loomis
-Eddy,Eddie
-Tobii eye tracker 5,toby eye tracker 5
-Tobii eye tracker,toby eye tracker
-yaml,samel
-AWS,a ws
-VSCode,vice code
-phase,faith
-magit,maggot
-magit,ma get
-sync,sink
-syncing,sinking
-EC2,este
-EC2,he se to
-EC2,he see to
-EC2,he see too
-EC2,he ceto
-EC2,es to
-talon debugging,tell on debugging
-write to,right to
-OWASP,O wasp
-TAFE,tafe

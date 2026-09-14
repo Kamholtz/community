@@ -3,10 +3,10 @@ os: mac
 -
 
 alt: alt
-control: ctrl
-shift: shift
-super: cmd
 command: cmd
-option: alt
+control: ctrl
 function: fn
 globe: fn
+option: alt
+shift: shift
+super: cmd

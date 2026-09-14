@@ -36,13 +36,13 @@ remote rename
 remote set url: remote set-url
 remote set you are el: remote set-url
 remote show
+remove: rm
 rerere
 rerere diff
 rerere status
 reset
 restore
 revert
-remove: rm
 short log: shortlog
 show
 sparse checkout: sparse-checkout
@@ -51,8 +51,8 @@ stash apply
 stash list
 stash pop
 stash push
-stash show
 stash save
+stash show
 status
 submodule
 submodule add

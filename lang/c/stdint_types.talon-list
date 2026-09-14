@@ -2,17 +2,17 @@ list: user.stdint_types
 code.language: c
 -
 
-character: int8_t
 char: int8_t
-short: int16_t
-long: int32_t
-long long: int64_t
+character: int8_t
+double
+float
 int: int32_t
 integer: int32_t
-void
-double
-struct
-struck: struct
+long: int32_t
+long long: int64_t
 num: enum
+short: int16_t
+struck: struct
+struct
 union
-float
+void

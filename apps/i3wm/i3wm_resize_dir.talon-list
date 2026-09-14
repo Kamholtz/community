@@ -2,8 +2,8 @@ list: user.i3wm_resize_dir
 -
 
 down
+height
 left
 right
 up
 width
-height

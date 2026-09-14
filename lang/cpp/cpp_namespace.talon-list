@@ -2,23 +2,23 @@ list: user.cpp_namespace
 code.language: cpp
 -
 
-stood: std
-standard: std
-boost
-ranges
-chrono
-filesystem
-literals
-placeholders
-regex
-this thread: this_thread
-experimental
-polymorphic: pmr
-views
 a sink I O: asio
+algorithm
+atomic
+boost
+chrono
+experimental
+filesystem
 format: fmt
 J son: json
-thread
-atomic
+literals
 memory
-algorithm
+placeholders
+polymorphic: pmr
+ranges
+regex
+standard: std
+stood: std
+this thread: this_thread
+thread
+views

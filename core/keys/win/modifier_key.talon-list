@@ -4,9 +4,9 @@ os: linux
 -
 
 alt: alt
-control: ctrl
-shift: shift
-# super is the windows key
-super: super
 command: ctrl
+control: ctrl
+# super is the windows key
 option: alt
+shift: shift
+super: super

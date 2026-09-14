@@ -3,15 +3,15 @@ os: mac
 -
 
 end: end
-home: home
-minus: minus
-return: return
 enter: keypad_enter
+escape: escape
+forward delete: delete
+home: home
+insert: insert
+minus: minus
 page down: pagedown
 page up: pageup
-escape: escape
+return: return
 space: space
 tab: tab
-insert: insert
 wipe: backspace
-forward delete: delete

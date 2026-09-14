@@ -2,15 +2,15 @@ list: user.code_keyword
 code.language: cpp
 -
 
-asm: asm
-aye es em: asm
-align as: alignas
 a line as: alignas
-align of: alignof
 a line of: alignof
-and equal: " and_eq "
+align as: alignas
+align of: alignof
 and: " and "
+and equal: " and_eq "
+asm: asm
 auto: "auto "
+aye es em: asm
 bit and: " bitand "
 bit or: " bitor "
 bool
@@ -44,8 +44,8 @@ else: "else "
 end if: "endif "
 enum: "enum "
 error: "error "
-ex or equal: " xor_eq "
 ex or: " xor "
+ex or equal: " xor_eq "
 export: "export "
 extern: "extern "
 false
@@ -54,9 +54,9 @@ float
 for: "for "
 friend: "friend "
 goto: "goto "
+if: "if "
 if defined: "ifdef "
 if not defined: "ifndef "
-if: "if "
 import: "import "
 include: "include "
 inline: "inline "
@@ -68,12 +68,12 @@ mutable: "mutable "
 namespace: "namespace "
 new: "new "
 no except: noexcept
-not equal: " not_eq "
 not: "not "
+not equal: " not_eq "
 null pointer: nullptr
 operator
-or equal: " or_eq "
 or: " or "
+or equal: " or_eq "
 override: "override "
 pragma: "pragma "
 private
@@ -106,5 +106,5 @@ using: "using "
 void
 volatile: "volatile "
 w char tea: wchar_t
-wide char tea: wchar_t
 while: "while "
+wide char tea: wchar_t

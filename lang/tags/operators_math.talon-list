@@ -3,18 +3,18 @@ tag: user.code_operators_math
 -
 
 # Math operators
-minus: MATH_SUBTRACT
-plus: MATH_ADD
-times: MATH_MULTIPLY
+and: MATH_AND
 divide: MATH_DIVIDE
 int divide: MATH_INTEGER_DIVIDE
+minus: MATH_SUBTRACT
 mod: MATH_MODULO
-power: MATH_EXPONENT
+not: MATH_NOT
+or: MATH_OR
 
 # logical operators
-and: MATH_AND
-or: MATH_OR
-not: MATH_NOT
+plus: MATH_ADD
+power: MATH_EXPONENT
+times: MATH_MULTIPLY
 weak and: MATH_WEAK_AND
-weak or: MATH_WEAK_OR
 weak not: MATH_WEAK_NOT
+weak or: MATH_WEAK_OR

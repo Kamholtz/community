@@ -4,14 +4,14 @@ tag: user.code_operators_math
 
 # Comparison operators
 equal: MATH_EQUAL
-not equal: MATH_NOT_EQUAL
-weak equal: MATH_WEAK_EQUAL
-weak not equal: MATH_WEAK_NOT_EQUAL
 greater: MATH_GREATER_THAN
-less: MATH_LESS_THAN
 greater or equal: MATH_GREATER_THAN_OR_EQUAL
+in: MATH_IN
+less: MATH_LESS_THAN
 less or equal: MATH_LESS_THAN_OR_EQUAL
+not equal: MATH_NOT_EQUAL
+not in: MATH_NOT_IN
 
 # Set operators
-in: MATH_IN
-not in: MATH_NOT_IN
+weak equal: MATH_WEAK_EQUAL
+weak not equal: MATH_WEAK_NOT_EQUAL

@@ -4,5 +4,5 @@ code.language: sql
 
 # these vary by dialect
 count: Count
-min: Min
 max: Max
+min: Min

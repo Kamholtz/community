@@ -1,68 +1,68 @@
 list: user.unix_utility
 -
 
+are sync: rsync
 ark: awk
-base sixty four decode: base64 -d
 base sixty four: base64
-concat: cat
-change mode recurse: chmod -R
+base sixty four decode: base64 -d
 change mode: chmod
-change owner recurse: chown -R
+change mode recurse: chmod -R
 change owner: chown
+change owner recurse: chown -R
+concat: cat
 curl
 cut
-disk free human: df -h
-disk free: df
 dig
-disk usage human: du -h
+disk free: df
+disk free human: df -h
 disk usage: du
+disk usage human: du -h
 echo
 false
 find
-grab here: grep -Hirn
 grab: grep
-head
+grab here: grep -Hirn
 harp top: htop
-I D user: id -u
+head
 I D: id
+I D user: id -u
 less
-link soft: ln -s
 link: ln
+link soft: ln -s
 M D five sum: md5sum
 make dear: mkdir
+nvim
 paste
 print format: printf
-work dear: pwd
+pseudo: sudo
+restic
 reverse: rev
-are sync: rsync
+rsync
+S S H: ssh
 said: sed
 sequence: seq
 shah two fifty six sum: sha256sum
 sleep
+sort
 sort human: sort -h
 sort numeric: sort -n
 sort reverse: sort -r
 sort unique: sort -u
-sort
-S S H: ssh
 stat
-pseudo: sudo
-tail follow: tail -f
 tail
-tea append: tee -a
+tail follow: tail -f
 tea: tee
+tea append: tee -a
 touch
-translate delete: tr -d
 translate: tr
+translate delete: tr -d
 true
-unique count: uniq -c
 unique: uniq
-word count characters: wc -c
-word count lines: wc -l
-word count: wc
+unique count: uniq -c
 who
 who am I: whoami
-rsync
-restic
-nvim
+word count: wc
+word count characters: wc -c
+word count lines: wc -l
+work dear: pwd
 z

@@ -1,5 +1,5 @@
 list: user.before_or_after
 -
 
-before: BEFORE
 after: AFTER
+before: BEFORE

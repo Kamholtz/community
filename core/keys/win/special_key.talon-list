@@ -3,18 +3,18 @@ os: windows
 os: linux
 -
 
-end: end
-home: home
-minus: minus
-enter: enter
 clap: enter
+end: end
+enter: enter
+escape: escape
+forward delete: delete
+home: home
+insert: insert
+menu key: menu
+minus: minus
 page down: pagedown
 page up: pageup
-escape: escape
+print screen: printscr
 space: space
 tab: tab
-insert: insert
 wipe: backspace
-forward delete: delete
-menu key: menu
-print screen: printscr

@@ -5,14 +5,14 @@ os: linux
 # alt
 alt: alt
 alter: alt
-option: alt
+command: ctrl
 # ctrl
 control: ctrl
-troll: ctrl
-command: ctrl
-# shift
+option: alt
 shift: shift
+# shift
 sky: shift
-# super is the windows key
 super: super
+# super is the windows key
+troll: ctrl
 win: super

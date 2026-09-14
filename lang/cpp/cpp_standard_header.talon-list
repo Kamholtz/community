@@ -17,40 +17,38 @@ concepts
 condition variable: condition_variable
 contracts
 coroutine
-see stood int: cstdint
-see standard int: cstdint
 debugging
 deck: deque
 exception
 execution
 expected
+F stream: fstream
 filesystem
 flat map: flat_map
 flat set: flat_set
 format
 forward list: forward_list
-F stream: fstream
 functional
 future
 generator
 hazard pointer: hazard_pointer
 hive
-initializer list: initializer_list
-inplace vector: inplace_vector
-in out manip: iomanip
+I O stream: iostream
 in out: ios
 in out forward: iosfwd
-I O stream: iostream
+in out manip: iomanip
 in out stream: iostream
 in stream: istream
+initializer list: initializer_list
+inplace vector: inplace_vector
 iterator
 latch
 limits
 linear algebra: linalg
 list
 locale
-map
 M D span: mdspan
+map
 memory
 memory resource: memory_resource
 mutex
@@ -61,12 +59,14 @@ optional
 out stream: ostream
 print
 queue
+R C U: rcu
 random
 ranges
 ratio
-R C U: rcu
 regex
 scoped allocator: scoped_allocator
+see standard int: cstdint
+see stood int: cstdint
 semaphore
 set
 shared mutex: shared_mutex
@@ -74,25 +74,25 @@ sim D: simd
 source location: source_location
 span
 span stream: spanstream
-string stream: sstream
 stack
 stack trace: stacktrace
-stood except: stdexcept
 standard except: stdexcept
-stood float: stdfloat
 standard float: stdfloat
+stood except: stdexcept
+stood float: stdfloat
 stop token: stop_token
 stream buffer: streambuf
 string
+string stream: sstream
 string view: string_view
 sync stream: syncstream
 system error: system_error
 text encoding: text_encoding
 thread
 tuple
-type traits: type_traits
 type index: typeindex
 type info: typeinfo
+type traits: type_traits
 unordered map: unordered_map
 unordered set: unordered_set
 utility

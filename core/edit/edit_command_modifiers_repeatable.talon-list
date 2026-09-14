@@ -1,14 +1,14 @@
 list: user.edit_modifier_repeatable
 -
 
+down: lineDown
+east: right
+left: left
+north: lineUp
+right: right
+south: lineDown
+up: lineUp
+west: left
 word: word
 word left: wordLeft
 word right: wordRight
-up: lineUp
-down: lineDown
-left: left
-right: right
-north: lineUp
-south: lineDown
-west: left
-east: right

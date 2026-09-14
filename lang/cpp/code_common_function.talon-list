@@ -2,11 +2,11 @@ list: user.code_common_function
 code.language: cpp
 -
 
+ay to eye: atoi
+es en print eff: sprintf
+es print eff: sprintf
+exit: exit
 mem copy: memcpy
 mem set: memset
 print eff: printf
-es print eff: sprintf
-es en print eff: sprintf
-ay to eye: atoi
 size of: sizeof
-exit: exit

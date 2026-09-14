@@ -14,15 +14,15 @@ atomic fetch sub: atomic_fetch_sub
 atomic load: atomic_load
 atomic store: atomic_store
 binary search: binary_search
+clamp
 const begin: cbegin
 const end: cend
-clamp
+const reverse begin: crbegin
+const reverse end: crend
 copy
 copy backward: copy_backward
 count
 count if: count_if
-const reverse begin: crbegin
-const reverse end: crend
 current exception: current_exception
 distance
 emplace

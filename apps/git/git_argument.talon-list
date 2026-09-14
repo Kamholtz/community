@@ -5,13 +5,16 @@ abort: --abort
 all: --all
 allow empty: --allow-empty
 amend: --amend
+branch: -b
 cached: --cached
 cashed: --cached
 color words: --color-words
 colour words: --color-words
+combined: -c
 continue: --continue
 copy: --copy
 create: --create
+deep: -d
 delete: --delete
 detach: --detach
 dir diff: --dir-diff
@@ -25,12 +28,15 @@ force with lease: --force-with-lease
 global: --global
 global: --global
 hard: --hard
+HEAD
 ignore case: --ignore-case
 include untracked: --include-untracked
 interactive: --interactive
 keep index: --keep-index
 list: --list
 local: --local
+main
+master
 mixed: --mixed
 move: --move
 no edit: --no-edit
@@ -38,6 +44,9 @@ no keep index: --no-keep-index
 no rebase: --no-rebase
 no track: --no-track
 no verify: --no-verify
+origin
+origin main: origin/main
+origin master: origin/master
 orphan: --orphan
 patch: --patch
 prune: --prune
@@ -56,15 +65,6 @@ stat: --stat
 system: --system
 track: --track
 update: --update
-verbose: --verbose
-branch: -b
-combined: -c
-deep: -d
-very verbose: -vv
-HEAD
-main
-master
-origin
 upstream
-origin main: origin/main
-origin master: origin/master
+verbose: --verbose
+very verbose: -vv

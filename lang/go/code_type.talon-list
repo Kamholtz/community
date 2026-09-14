@@ -3,11 +3,11 @@ code.language: go
 -
 
 boolean: "bool"
-int: "int"
-you int: "uint"
-you int pointer: "uintptr"
-string: "string"
 byte: "byte"
-rune: "rune"
 channel: "chan "
 error: "error"
+int: "int"
+rune: "rune"
+string: "string"
+you int: "uint"
+you int pointer: "uintptr"

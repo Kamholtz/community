@@ -7,6 +7,7 @@ ant: a
 arch: a
 bat: b
 cap: c
+crunch: k
 drum: d
 each: e
 elk: e
@@ -16,13 +17,13 @@ gust: g
 harp: h
 ivy: i
 jury: j
-crunch: k
 look: l
 made: m
 near: n
-ott: o
 oink: o
+ott: o
 pit: p
+plex: x
 quench: q
 rip: r
 sun: s
@@ -30,7 +31,6 @@ trap: t
 urge: u
 vest: v
 whale: w
-plex: x
 # yell: y
 yank: y
 zip: z
