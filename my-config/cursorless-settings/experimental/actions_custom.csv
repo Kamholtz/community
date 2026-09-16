@@ -1,9 +1,9 @@
 Spoken form, VSCode command
 eval current, calva.evaluateSelection
 eval form, calva.evaluateEnclosingForm
-eval (top|top form) down, calva.evaluateTopLevelFormToCursor
-eval (top|top form), calva.evaluateCurrentTopLevelForm
-eval (top|top form) as comment, calva.evaluateTopLevelFormAsComment
+eval top down | eval top form down, calva.evaluateTopLevelFormToCursor
+eval top form | eval top, calva.evaluateCurrentTopLevelForm
+eval top as comment | eval top form as comment, calva.evaluateTopLevelFormAsComment
 raise form, paredit.raiseSexp
 format, calva-fmt.formatCurrentForm
 git stage block, git.diff.stageHunk

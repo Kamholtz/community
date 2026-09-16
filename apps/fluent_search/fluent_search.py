@@ -78,6 +78,6 @@ class UserActions:
         actions.key("shift-super")
         if not wait_for_fluent_search_window():
             return
-        actions.user.paste(text)
-        if submit:
-            actions.key("enter")
+        # actions.user.paste(text)
+        # if submit:
+        #     actions.key("enter")
