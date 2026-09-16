@@ -206,6 +206,7 @@ buttons: list[Button] = []
 current_menu: Optional[QuickPickMenu] = None
 whisper_refresh_job = None
 last_whisper_state: Optional[bool] = None
+origin_window = None
 
 
 def tracking_control_off_restore_mouse():
@@ -547,6 +548,7 @@ def get_bottom_options() -> list[QuickPickOption]:
             hover_color=WHISPER_ON_HOVER_COLOR if active else WHISPER_OFF_HOVER_COLOR,
         ))
     if app.platform == "windows":
+        options.append(QuickPickOption("SNIPPING", lambda: actions.key("super-shift-s")))
         options.append(QuickPickOption("RESTART", lambda: actions.user.talon_restart()))
     return options
 
@@ -628,7 +630,8 @@ def run_callback(callback: Callable[[], None]) -> bool:
     try:
         callback()
         return True
-    except Exception:
+    except Exception as e:
+        app.notify(f"Quick pick action failed: {e}")
         return False
 
 
@@ -647,6 +650,11 @@ def on_mouse(e: MouseEvent):
         if button:
             if button.close_menu:
                 hide()
+                if origin_window:
+                    try:
+                        actions.user.switcher_focus_window(origin_window)
+                    except Exception:
+                        pass
             if button.move_mouse and mouse_pos:
                 actions.mouse_move(mouse_pos.x, mouse_pos.y)
             actions.sleep("150ms")
@@ -658,11 +666,12 @@ def on_mouse(e: MouseEvent):
 
 def show(menu: QuickPickMenu):
     global canvas, current_menu, mouse_pos, size
-    global whisper_refresh_job, last_whisper_state
+    global whisper_refresh_job, last_whisper_state, origin_window
     if canvas:
         hide()
 
     current_menu = menu
+    origin_window = ui.active_window()
     mouse_pos = Point2d(actions.mouse_x(), actions.mouse_y())
     screen: Screen = ui.main_screen()
     size = Size(screen.scale)
