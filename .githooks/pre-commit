@@ -1,3 +1,7 @@
 #!/usr/bin/env sh
 set -eu
-python3 .agents/scripts/check_talon_config.py --scope staged
+
+PY=python3
+"$PY" --version >/dev/null 2>&1 || PY=python
+
+"$PY" .agents/scripts/check_talon_config.py --scope staged

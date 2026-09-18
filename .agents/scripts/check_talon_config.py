@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import py_compile
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -120,16 +119,16 @@ def run_pytest() -> int:
     if importlib.util.find_spec("pytest") is None:
         print("SKIP: pytest is not installed")
         return 0
-    if shutil.which("python3") is None:
-        return fail("python3 not found")
-    return subprocess.run(["python3", "-m", "pytest", "test/"], cwd=ROOT).returncode
+    return subprocess.run([sys.executable, "-m", "pytest", "test/"], cwd=ROOT).returncode
 
 
 def check_recent_talon_errors() -> int:
     script = ROOT / ".agents" / "skills" / "talon-startup-error-troubleshooter" / "scripts" / "scan_and_triage.py"
     if not script.exists():
         return fail(f"missing {script.relative_to(ROOT)}")
-    return subprocess.run(["python3", str(script.relative_to(ROOT)), "--since-last-file-change"], cwd=ROOT).returncode
+    return subprocess.run(
+        [sys.executable, str(script.relative_to(ROOT)), "--since-last-file-change"], cwd=ROOT
+    ).returncode
 
 
 def main() -> int:
