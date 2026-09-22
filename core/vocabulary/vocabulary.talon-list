@@ -4,14 +4,15 @@ list: user.vocabulary
 8bitdo
 A P A style: APA Style
 A P I: API
+A P I endpoint: API endpoint
 ACP protocol
 add
 admin
 AliExpress
 Amazon Elastic Container Registry
+amend
 anti-malware
 anvil MPC
-A P I endpoint: API endpoint
 Application Load Balancer
 Aussie
 authorisation
@@ -38,10 +39,12 @@ clojure babashka
 CloudFormation
 code hot reload
 codespaces
+COM port
+command
 Context7
 Context7 M C P: Context7 MCP
 Context7 M C P server: Context7 MCP server
-cuda: CUDA
+CUDA: CUDA
 cursorfree
 cursorless
 cursorless casual mode
@@ -88,6 +91,9 @@ file path
 fishing attack
 fluent search
 for
+fork
+G P I O: GPIO
+git amend
 git commit
 git commit amend
 git diff
@@ -100,6 +106,8 @@ git worktree
 gitignore
 gluetun
 Goodna
+GPIO pin
+GPIO pins
 grammar
 grep
 gumroad
@@ -115,6 +123,7 @@ jq
 Jsunpack
 Jupyter
 kendo
+L E D: LED
 lazyvim
 lifecycle
 lifecycle policy
@@ -152,6 +161,7 @@ no-const-assign
 no-undef
 Novation
 Novation Circuit Tracks
+now
 nswag
 nvm
 O C R: OCR
@@ -173,6 +183,8 @@ pi agent
 pilates
 pip install
 PopOS
+pre-commit
+pre-commit hook
 proceed
 proceed with
 proj
@@ -183,6 +195,7 @@ pytorch
 QRadar
 quick pick
 R A M: RAM
+R G B: RGB
 Radare2
 rango
 razor
@@ -231,9 +244,11 @@ TryHackMe
 U D P: UDP
 U I component: UI component
 U I components: UI components
+U S B: USB
 unauthorised
 undo tree
 unencrypted
+USB port
 use
 user interface
 using
