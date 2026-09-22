@@ -4,7 +4,11 @@
       "Bash(git add *)",
       "PowerShell(python3 --version)",
       "PowerShell(python .agents/scripts/check_talon_config.py --scope staged)",
-      "Bash(git status *)"
+      "Bash(git status *)",
+      "Bash(python3 -m py_compile apps/obsidian/obsidian.py)",
+      "Bash(python3 .agents/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py --since-last-file-change)",
+      "Bash(python3 .agents/skills/talon-startup-error-troubleshooter/scripts/scan_and_triage.py)",
+      "Bash(git grep *)"
     ]
   }
 }
