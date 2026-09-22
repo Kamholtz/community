@@ -58,7 +58,9 @@
 			"activityBarTop.inactiveForeground": "#15202b99",
 			"commandCenter.foreground": "#15202b",
 			"statusBar.debuggingBackground": "#e9bd36",
-			"statusBar.debuggingForeground": "#15202b"
+			"statusBar.debuggingForeground": "#15202b",
+			"activityBar.activeBorder": "#15202b",
+			"activityBarTop.activeBorder": "#15202b"
 		},
 		"peacock.color": "#e9bd36",
 		"chat.tools.terminal.autoApprove": {
