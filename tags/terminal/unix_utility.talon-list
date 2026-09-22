@@ -32,6 +32,9 @@ link soft: ln -s
 M D five sum: md5sum
 make dear: mkdir
 nvim
+mux: tmux
+mux new: tmux new
+mux kill: tmux kill-session -t
 paste
 print format: printf
 pseudo: sudo

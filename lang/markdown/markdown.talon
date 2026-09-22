@@ -54,3 +54,6 @@ checkbox: user.insert_snippet_by_name("checkbox")
 checkbox <user.text>:
     user.insert_snippet_by_name("checkbox")
     user.insert_formatted(text, "CAPITALIZE_FIRST_WORD")
+link clip: user.markdown_insert_link(clip.text())
+link wrap clip: user.markdown_wrap_selection_with_link(clip.text())
+table header <number_small>: user.markdown_insert_table_header(number_small)
