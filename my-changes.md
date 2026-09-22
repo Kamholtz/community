@@ -1,5 +1,12 @@
 # My Changes
 
+## Whisper panel follows overflowing text
+
+The HUD text panel advances to the last page when the Whisper panel gains a
+page. Manual paging remains available between page-count increases. Other HUD
+topics keep their existing behaviour. Implemented in the sibling
+`talon_hud/widgets/textpanel.py` repository.
+
 ## Top-right hot corner opens Quick Pick
 
 Entering the top-right corner opens the global Quick Pick menu. The top-left
