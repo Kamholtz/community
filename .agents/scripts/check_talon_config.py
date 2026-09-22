@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import os
 import py_compile
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -116,10 +118,20 @@ def run_pytest() -> int:
     if not (ROOT / "test").is_dir():
         print("SKIP: no test/ directory")
         return 0
-    if importlib.util.find_spec("pytest") is None:
-        print("SKIP: pytest is not installed")
-        return 0
-    return subprocess.run([sys.executable, "-m", "pytest", "test/"], cwd=ROOT).returncode
+    if importlib.util.find_spec("pytest") is not None:
+        return subprocess.run([sys.executable, "-m", "pytest", "test/"], cwd=ROOT).returncode
+    uv = shutil.which("uv")
+    if uv is not None:
+        # A foreign PYTHONHOME/PYTHONPATH (e.g. from a uv-managed python3 on
+        # PATH) corrupts the interpreter uv selects for this subprocess.
+        env = {key: value for key, value in os.environ.items() if key not in {"PYTHONHOME", "PYTHONPATH"}}
+        return subprocess.run(
+            [uv, "run", "--no-project", "--with-requirements", "requirements-dev.txt", "pytest", "test/"],
+            cwd=ROOT,
+            env=env,
+        ).returncode
+    print("SKIP: pytest is not installed (run `pip install -r requirements-dev.txt` or install uv)")
+    return 0
 
 
 def check_recent_talon_errors() -> int:

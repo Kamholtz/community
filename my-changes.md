@@ -1,5 +1,15 @@
 # My Changes
 
+## Pytest gate falls back to uv
+
+`check_talon_config.py`'s pytest gate previously skipped silently whenever
+`pytest` wasn't importable in whatever Python ran the script. It now falls
+back to `uv run --no-project --with-requirements requirements-dev.txt pytest
+test/` when `uv` is on PATH, reusing the same pinned pytest version as CI
+without a persistent venv. The `uv run` subprocess strips `PYTHONHOME` and
+`PYTHONPATH` from its environment; inheriting a uv-managed `python3`'s
+`PYTHONHOME` corrupted the selected interpreter's `_uuid` C-extension init.
+
 ## Whisper panel follows overflowing text
 
 The HUD text panel advances to the last page when the Whisper panel gains a

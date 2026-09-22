@@ -24,6 +24,10 @@ python3 .agents/scripts/check_talon_config.py --talon-errors
 # Unit tests (run outside Talon, requires pytest in a non-Talon Python env)
 pytest
 
+# No pytest on PATH? The gate script falls back to `uv run --no-project
+# --with-requirements requirements-dev.txt pytest test/` automatically if
+# `uv` is installed — same pytest version CI uses, no venv setup needed.
+
 # Pre-commit linting on changed files
 pre-commit run
 
