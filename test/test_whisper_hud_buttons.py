@@ -30,6 +30,10 @@ class HudButtonTests(unittest.TestCase):
         self.ns = {
             '_whisper_enabled': False, '_whisper_ui_state': None,
             '_whisper_last_session_polished': None,
+            '_WHISPER_POLISH_TOPIC': 'whisper_polishing',
+            '_polishing_enabled': lambda: True,
+            '_polishing_image': lambda: 'polish_on',
+            '_toggle_polishing': Mock(),
             '_WHISPER_STATUS_TOPIC': 'whisper_status',
             '_WHISPER_COPY_ON_STOP_TOPIC': 'whisper_copy_on_stop',
             '_WHISPER_SESSION_TOPIC': 'whisper_polished_session',
@@ -40,7 +44,7 @@ class HudButtonTests(unittest.TestCase):
             '_return_to_command_mode_and_copy': Mock(), '_copy_last_session_polished': Mock(),
             'whisper_hud': SimpleNamespace(_warn_once=Mock()),
         }
-        names = {'_publish_whisper_menu_options', '_whisper_menu_images', '_publish_whisper_status', '_publish_command_mode_whisper_button',
+        names = {'_publish_polishing_button', '_publish_whisper_menu_options', '_whisper_menu_images', '_publish_whisper_status', '_publish_command_mode_whisper_button',
                  '_publish_whisper_mode_buttons', '_remove_whisper_mode_copy_button',
                  '_publish_polished_session_available', '_publish_initial_whisper_button'}
         tree = ast.parse((ROOT / 'whisper_mode.py').read_text(encoding='utf-8'))
@@ -49,14 +53,15 @@ class HudButtonTests(unittest.TestCase):
         self.refresh = self.ns['_publish_initial_whisper_button']
         self.labels = {'whisper_status': 'Whisper mode toggle',
                        'whisper_copy_on_stop': 'Whisper stop and copy',
-                       'whisper_polished_session': 'Whisper copy latest session'}
+                       'whisper_polished_session': 'Whisper copy latest session',
+                       'whisper_polishing': 'Whisper polishing'}
         self.buttons = module.WhisperHudButtons(self.path, self.actions, self.labels, self.refresh, self.ns['_whisper_menu_images'])
         self.ns['_whisper_hud_buttons'] = self.buttons
 
     def test_conditional_icons_and_menu_callbacks(self):
         self.refresh()
         self.assertEqual(set(self.icons), {'whisper_status'})
-        self.assertEqual(len(self.options), 3)
+        self.assertEqual(len(self.options), 4)
         self.assertEqual(self.options['whisper_status_option'].default.image, 'start')
         self.assertEqual(self.options['whisper_copy_on_stop_option'].default.image, 'finish_copy')
         self.assertEqual(self.options['whisper_polished_session_option'].default.image, 'copy')
@@ -69,7 +74,7 @@ class HudButtonTests(unittest.TestCase):
         self.ns['_whisper_enabled'] = True
         self.ns['_whisper_last_session_polished'] = 'Polished text'
         self.refresh()
-        self.assertEqual(set(self.icons), {'whisper_status', 'whisper_polished_session'})
+        self.assertEqual(set(self.icons), {'whisper_status', 'whisper_polished_session', 'whisper_polishing'})
         self.assertEqual(self.options['whisper_status_option'].default.image, 'stop')
         self.assertEqual(self.options['whisper_copy_on_stop_option'].default.image, 'finish_copy')
         self.options['whisper_copy_on_stop_option'].default.callback(object())
@@ -98,7 +103,21 @@ class HudButtonTests(unittest.TestCase):
         self.assertEqual(self.icons, {})
         self.buttons.set_visible('whisper_status', True)
         self.assertEqual(set(self.icons), {'whisper_status'})
-        self.assertEqual(self.buttons.hidden, {'whisper_copy_on_stop', 'whisper_polished_session'})
+        self.assertEqual(self.buttons.hidden, {'whisper_copy_on_stop', 'whisper_polished_session', 'whisper_polishing'})
+
+    def test_polishing_image_label_and_callback_follow_state(self):
+        self.ns['_whisper_enabled'] = True
+        self.refresh()
+        icon = self.icons['whisper_polishing']
+        self.assertEqual(icon[1], 'polish_on')
+        self.assertIn('on;', icon[3])
+        icon[4](object(), object())
+        self.ns['_toggle_polishing'].assert_called_once()
+        self.ns['_polishing_enabled'] = lambda: False
+        self.ns['_polishing_image'] = lambda: 'polish_off'
+        self.refresh()
+        self.assertIn('off;', self.icons['whisper_polishing'][3])
+        self.assertEqual(self.options['whisper_polishing_option'].default.image, 'polish_off')
 
     def test_invalid_preferences_do_not_break_startup(self):
         self.path.write_text('{broken', encoding='utf-8')

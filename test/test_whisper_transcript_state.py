@@ -47,6 +47,21 @@ class TranscriptStateTests(unittest.TestCase):
 
         self.assertNotEqual(first.identity, second.identity)
 
+    def test_raw_mode_ignores_polish_before_queued_insertion(self):
+        state = TranscriptState()
+        _, pending = state.begin_full("raw", "raw")
+        self.assertIsNone(state.apply_polished("Changed."))
+        self.assertEqual(state.resolve(pending.identity, polished_only=True).insertion_text, "raw")
+        self.assertIsNone(state.resolve(pending.identity))
+        self.assertIsNone(state.apply_polished("Late."))
+
+    def test_captured_polished_mode_ignores_later_raw_preference(self):
+        state = TranscriptState()
+        _, pending = state.begin_full("raw", "polished")
+        self.assertIsNone(state.resolve(pending.identity, polished_only=False))
+        state.apply_polished("Polished.")
+        self.assertEqual(state.resolve(pending.identity).insertion_text, "Polished.")
+
     def test_polished_without_full_is_ignored(self):
         self.assertIsNone(TranscriptState().apply_polished("orphan"))
 

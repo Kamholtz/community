@@ -14,6 +14,15 @@ class InsertionPreferences:
         if path.exists():
             self.data.update(json.loads(path.read_text(encoding="utf-8")))
 
+    def polishing(self):
+        """Return the explicit insertion choice, or None for legacy settings."""
+        return self.data.get("polishing")
+
+    def set_polishing(self, enabled: bool | None) -> None:
+        with self.lock:
+            self.data["polishing"] = enabled
+            self._save()
+
     def enabled(self, default: bool) -> bool:
         value = self.data["polished_only"]
         return default if value is None else bool(value)

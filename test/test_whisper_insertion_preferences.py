@@ -41,6 +41,7 @@ class InsertionTests(unittest.TestCase):
             "_remember_session_transcript": Mock(),
             "_notify": Mock(),
             "_refresh_hud_panel": Mock(),
+            "_publish_whisper_menu_options": Mock(),
         }
         names = {
             "_polished_only", "_retain_pending_transcript",
@@ -54,6 +55,14 @@ class InsertionTests(unittest.TestCase):
 
     def call(self, name, *args):
         return self.namespace[name](*args)
+
+    def test_polishing_choice_is_independent_and_persistent(self):
+        self.assertIsNone(self.preferences.polishing())
+        self.preferences.set_polishing(False)
+        self.preferences.set_enabled(True)
+        self.assertFalse(Preferences(self.path).polishing())
+        self.preferences.set_polishing(True)
+        self.assertTrue(Preferences(self.path).polishing())
 
     def test_saved_toggle_overrides_default_after_restart(self):
         self.assertTrue(self.preferences.enabled(True))
@@ -91,6 +100,14 @@ class InsertionTests(unittest.TestCase):
         self.insert.assert_called_once_with("raw ")
         self.assertFalse(Preferences(self.path).enabled(True))
         self.assertEqual(self.preferences.withheld_text(), "")
+
+    def test_legacy_action_restores_legacy_policy_without_releasing_captured_text(self):
+        self.preferences.set_polishing(True)
+        self.state.begin_full("held", "polished")
+        self.call("_set_polished_only", False)
+        self.assertIsNone(self.preferences.polishing())
+        self.call("_flush_pending_transcript")
+        self.insert.assert_not_called()
 
     def test_duplicate_withheld_text_is_retained_independently(self):
         first = self.preferences.retain("repeat")

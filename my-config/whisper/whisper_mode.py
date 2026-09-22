@@ -97,7 +97,13 @@ mod.setting(
     "whisper_subtitles_show",
     type=bool,
     default=True,
-    desc="Show Whisper transcription using community-style canvas subtitles.",
+    desc="Show Whisper status and enabled transcript subtitles.",
+)
+mod.setting(
+    "whisper_transcript_subtitles_show",
+    type=bool,
+    default=False,
+    desc="Show live, final, and polished transcript subtitles alongside the HUD panel.",
 )
 mod.setting(
     "whisper_transcript_subtitle_color",
@@ -327,9 +333,14 @@ def _show_whisper_subtitle(
     text: str,
     state: str,
     outline: str = "222222",
+    *,
+    transcript: bool = False,
 ) -> None:
     if not settings.get("user.whisper_subtitles_show"):
         _clear_whisper_subtitles()
+        return
+
+    if transcript and not settings.get("user.whisper_transcript_subtitles_show"):
         return
 
     _clear_whisper_subtitles()
@@ -500,7 +511,9 @@ def _refresh_hud_panel(force: bool = False) -> None:
         polished_only=_polished_only(),
         polish_warning=_whisper_polish_warning,
     )
+    body += f"\nInsertion polishing: {'on' if _polishing_enabled() else 'off'}"
     buttons = [
+        ("Toggle insertion polishing", _toggle_polishing),
         (
             "Toggle polished only",
             lambda *_: actions.user.whisper_polished_only_toggle(),
@@ -673,7 +686,7 @@ def _reset_polish_warning() -> None:
 
 def _resolve_pending_transcript(identity: int) -> None:
     pending = _whisper_transcripts.pending
-    if pending is not None and pending.identity == identity and _polished_only():
+    if pending is not None and pending.identity == identity and (pending.insertion_mode == "polished" or (pending.insertion_mode is None and _polished_only())):
         _retain_pending_transcript(pending)
     pending = _whisper_transcripts.resolve(identity, polished_only=_polished_only())
     if pending is None:
@@ -688,7 +701,7 @@ def _resolve_pending_transcript(identity: int) -> None:
 def _insert_displaced_transcript(pending: PendingTranscript) -> None:
     if pending.inserted:
         return
-    if _polished_only() and not pending.polished:
+    if (pending.insertion_mode == "polished" or (pending.insertion_mode is None and _polished_only())) and not pending.polished:
         _cancel_fallback(pending)
         _retain_pending_transcript(pending)
         _notify("Whisper: unpolished text withheld; say whisper pending copy to recover")
@@ -701,7 +714,8 @@ def _insert_displaced_transcript(pending: PendingTranscript) -> None:
 
 
 def _polished_only() -> bool:
-    return _insertion_preferences.enabled(settings.get("user.whisper_polished_only"))
+    choice = _insertion_preferences.polishing()
+    return choice if choice is not None else _insertion_preferences.enabled(settings.get("user.whisper_polished_only"))
 
 
 def _retain_pending_transcript(pending: PendingTranscript) -> None:
@@ -716,13 +730,15 @@ def _release_pending_transcript(pending: PendingTranscript) -> None:
 
 def _set_polished_only(enabled: bool) -> None:
     _insertion_preferences.set_enabled(enabled)
+    _insertion_preferences.set_polishing(None)
     pending = _whisper_transcripts.pending
-    if pending is not None:
+    if pending is not None and pending.insertion_mode is None:
         _cancel_fallback(pending)
         if enabled:
             _retain_pending_transcript(pending)
         else:
             _resolve_pending_transcript(pending.identity)
+    _publish_whisper_menu_options()
     label = "polished only" if enabled else "polished with timed fallback"
     _notify(f"Whisper insertion: {label} (saved)")
     _refresh_hud_panel(force=True)
@@ -1037,7 +1053,7 @@ def _handle_ws_event(event: dict) -> None:
             lambda text=content: _set_hud_draft(text, "realtime", force=False)
         )
         _queue_ui_action(
-            lambda text=content: _show_whisper_subtitle(f"Live: {text}", "realtime")
+            lambda text=content: _show_whisper_subtitle(f"Live: {text}", "realtime", transcript=True)
         )
         return
 
@@ -1046,19 +1062,25 @@ def _handle_ws_event(event: dict) -> None:
         if not content:
             return
 
-        displaced, pending = _whisper_transcripts.begin_full(content)
-        _queue_ui_action(
-            lambda identity=pending.identity, started=time.monotonic(): _watch_for_polish(identity, started)
+        choice = _insertion_preferences.polishing()
+        insertion_mode = (
+            ("polished" if choice else "raw") if choice is not None
+            else ("polished" if _polished_only() else "fallback")
         )
+        displaced, pending = _whisper_transcripts.begin_full(content, insertion_mode)
+        if pending.insertion_mode != "raw":
+            _queue_ui_action(
+                lambda identity=pending.identity, started=time.monotonic(): _watch_for_polish(identity, started)
+            )
         if displaced is not None and not displaced.inserted:
             _queue_ui_action(
                 lambda transcript=displaced: _insert_displaced_transcript(transcript)
             )
 
-        if _polished_only():
+        if pending.insertion_mode == "polished" or (pending.insertion_mode is None and _polished_only()):
             _retain_pending_transcript(pending)
             _set_whisper_ui_state("polishing")
-        elif not settings.get("user.whisper_polish_segments"):
+        elif pending.insertion_mode == "raw" or not settings.get("user.whisper_polish_segments"):
             _set_whisper_ui_state("final")
             _queue_ui_action(
                 lambda identity=pending.identity: _resolve_pending_transcript(identity)
@@ -1073,7 +1095,7 @@ def _handle_ws_event(event: dict) -> None:
 
         _queue_ui_action(lambda text=content: _set_hud_draft(text, "final"))
         _queue_ui_action(
-            lambda text=content: _show_whisper_subtitle(f"Final: {text}", "final")
+            lambda text=content: _show_whisper_subtitle(f"Final: {text}", "final", transcript=True)
         )
         return
 
@@ -1099,6 +1121,7 @@ def _handle_ws_event(event: dict) -> None:
             lambda text=content: _show_whisper_subtitle(
                 f"Polished: {text}",
                 "polished",
+                transcript=True,
             )
         )
         return
@@ -1127,6 +1150,7 @@ def _handle_ws_event(event: dict) -> None:
                 lambda text=content: _show_whisper_subtitle(
                     f"Session polished: {text}",
                     "polished",
+                    transcript=True,
                 )
             )
         if _whisper_shutdown_pending:
@@ -1952,9 +1976,45 @@ class Actions:
             _notify("Whisper: no active client")
 
 
+_WHISPER_POLISH_TOPIC = "whisper_polishing"
+
+
+def _polishing_enabled() -> bool:
+    choice = _insertion_preferences.polishing()
+    return choice if choice is not None else (_polished_only() or settings.get("user.whisper_polish_segments"))
+
+
+def _polishing_image() -> str:
+    name = "whisper_polishing_on.png" if _polishing_enabled() else "whisper_polishing_off.png"
+    return str(Path(__file__).resolve().parents[1] / "talon_hud_themes" / "dark_whisper" / "images" / name)
+
+
+def _toggle_polishing(*_args) -> None:
+    _insertion_preferences.set_polishing(not _polishing_enabled())
+    _publish_whisper_menu_options()
+    _refresh_hud_panel(force=True)
+    _notify(f"Whisper polishing: {'on' if _polishing_enabled() else 'off'} (next final transcript; saved)")
+
+
+def _publish_polishing_button() -> None:
+    try:
+        if not _whisper_enabled:
+            actions.user.hud_remove_status_icon(_WHISPER_POLISH_TOPIC)
+            return
+        label = "on; click for raw text" if _polishing_enabled() else "off; click for polished text"
+        icon = actions.user.hud_create_status_icon(
+            _WHISPER_POLISH_TOPIC, _polishing_image(), None,
+            f"Whisper polishing {label}", _toggle_polishing,
+        )
+        _whisper_hud_buttons.publish_icon(_WHISPER_POLISH_TOPIC, icon)
+    except Exception as error:
+        whisper_hud._warn_once("whisper_polishing_button", error)
+
+
 def _publish_whisper_menu_options() -> None:
     try:
         _whisper_hud_buttons.publish_options()
+        _publish_polishing_button()
     except Exception as error:
         whisper_hud._warn_once("hud_publish_status_option", error)
 
@@ -1964,6 +2024,7 @@ def _whisper_menu_images() -> dict[str, str]:
         _WHISPER_STATUS_TOPIC: _WHISPER_STATUS_ICON if _whisper_enabled else _WHISPER_START_ICON,
         _WHISPER_COPY_ON_STOP_TOPIC: _WHISPER_COPY_ON_STOP_ICON,
         _WHISPER_SESSION_TOPIC: _WHISPER_SESSION_ICON,
+        _WHISPER_POLISH_TOPIC: _polishing_image(),
     }
 
 
@@ -1989,6 +2050,7 @@ _whisper_hud_buttons = WhisperHudButtons(
         _WHISPER_STATUS_TOPIC: "Whisper mode toggle",
         _WHISPER_COPY_ON_STOP_TOPIC: "Whisper stop and copy",
         _WHISPER_SESSION_TOPIC: "Whisper copy latest session",
+        _WHISPER_POLISH_TOPIC: "Whisper polishing",
     },
     _publish_initial_whisper_button,
     _whisper_menu_images,

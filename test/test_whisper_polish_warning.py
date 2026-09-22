@@ -39,6 +39,7 @@ class PolishWarningTests(unittest.TestCase):
         self.cron = SimpleNamespace(after=Mock(), interval=Mock(), cancel=Mock())
         self.namespace = {
             "json": json,
+            "_insertion_preferences": SimpleNamespace(polishing=lambda: None),
             "time": SimpleNamespace(monotonic=lambda: self.now),
             "settings": SimpleNamespace(get=self.config.__getitem__),
             "cron": self.cron,
@@ -77,6 +78,14 @@ class PolishWarningTests(unittest.TestCase):
         self.now = now
         self.namespace["_refresh_polish_warning"]()
         return self.namespace["_whisper_polish_warning"]
+
+    def test_explicit_raw_inserts_without_warning_or_polished_replacement(self):
+        self.namespace["_insertion_preferences"].polishing = lambda: False
+        self.event("full", "raw")
+        self.insert.assert_called_once_with("raw ")
+        self.assertIsNone(self.tick(10))
+        self.event("polished", "Changed.")
+        self.insert.assert_called_once_with("raw ")
 
     def test_strict_warning_at_five_seconds_clears_on_polish(self):
         self.event("full", "raw")

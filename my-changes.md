@@ -68,6 +68,16 @@ Windows+Shift+S.
 The Windows quick pick bottom row also includes a "SNIPPING" button that closes
 the menu and opens the same capture overlay.
 
+## Optional Whisper transcript subtitles
+
+Live, final, and polished transcription text now appears in the HUD without
+automatic transcript subtitles by default. Set
+`user.whisper_transcript_subtitles_show = 1` in a Talon `settings():` block to
+enable those subtitles, or `0` to disable them. Status subtitles remain visible
+(including the polished-only status command). The existing
+`user.whisper_subtitles_show` setting remains the master switch for all Whisper
+subtitles. Explicitly requesting the last polished session still displays it.
+
 ## Delayed polishing warning
 
 The Whisper HUD shows an orange warning below the state line if polished text
@@ -227,3 +237,10 @@ Moved correction-style vocabulary mappings from `core/vocabulary/vocabulary.talo
 ## Quick-pick Whisper toggle
 
 Added a persistent Whisper toggle to the global quick-pick bottom row. Green indicates on and grey indicates off, with explicit state labels and matching hover colours. The open overlay checks the actual Whisper state every 200 ms, including changes from voice commands and asynchronous shutdown, and cancels the check when closed. Button text scales to fit without truncating the state.
+
+
+## 2026-09-13: Whisper insertion polishing button
+
+- Added a saved green/grey polishing toggle to the Whisper status bar and panel, with persistent Add/Remove menu support.
+- Explicit on waits for polished text; off inserts the original final transcript and ignores polished replacements. Each final transcript captures its choice, so toggling does not release withheld text.
+- Existing settings remain active until the new toggle is used; legacy polished-only commands restore the legacy policy for subsequent transcripts. Session polishing and server computation are unchanged.

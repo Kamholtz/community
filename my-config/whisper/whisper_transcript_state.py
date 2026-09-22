@@ -14,10 +14,11 @@ class PendingTranscript:
     inserted: bool = False
     fallback_job: Any = None
     recovery_id: Optional[str] = None
+    insertion_mode: Optional[str] = None
 
     @property
     def insertion_text(self) -> str:
-        return self.polished or self.original
+        return self.original if self.insertion_mode == "raw" else self.polished or self.original
 
 
 class TranscriptState:
@@ -31,10 +32,10 @@ class TranscriptState:
         self._next_identity = 1
         self.pending = None
 
-    def begin_full(self, text: str) -> tuple[Optional[PendingTranscript], PendingTranscript]:
+    def begin_full(self, text: str, insertion_mode: Optional[str] = None) -> tuple[Optional[PendingTranscript], PendingTranscript]:
         """Start tracking a full transcript and return any displaced pending one."""
         displaced = self.pending
-        pending = PendingTranscript(self._next_identity, text)
+        pending = PendingTranscript(self._next_identity, text, insertion_mode=insertion_mode)
         self._next_identity += 1
         self.pending = pending
         return displaced, pending
@@ -42,7 +43,7 @@ class TranscriptState:
     def apply_polished(self, text: str) -> Optional[PendingTranscript]:
         """Associate polished text with the latest unresolved full transcript."""
         pending = self.pending
-        if pending is None or pending.inserted:
+        if pending is None or pending.inserted or pending.insertion_mode == "raw":
             return None
         pending.polished = text
         return pending
@@ -52,7 +53,7 @@ class TranscriptState:
         pending = self.pending
         if pending is None or pending.identity != identity or pending.inserted:
             return None
-        if polished_only and not pending.polished:
+        if (pending.insertion_mode == "polished" or (pending.insertion_mode is None and polished_only)) and not pending.polished:
             return None
         pending.inserted = True
         self.pending = None
