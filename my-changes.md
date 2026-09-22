@@ -5,6 +5,14 @@
 Entering the top-right corner opens the global Quick Pick menu. The top-left
 corner continues to open the desktop switcher. Both trigger once per entry.
 
+## Sort vocabulary before committing
+
+The VS Code vocabulary commit task runs a shared Python script on Linux and
+Windows. It sorts entries without case sensitivity, preserving CSV headings,
+Talon context headers, comments, blank lines and existing line endings. Repeated
+keys retain their relative order. Only the existing vocabulary task paths are
+staged and committed.
+
 ## Restore distinct stop-and-copy icon
 
 Restored the existing clipboard-with-stop-square asset for Whisper stop and copy

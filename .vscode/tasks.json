@@ -98,6 +98,25 @@
       }
     },
     {
+      "label": "Git: Commit Talon vocabulary lists",
+      "type": "process",
+      "command": "python3",
+      "args": ["${workspaceFolder}/my-config/scripts/commit_vocabulary.py"],
+      "windows": {
+        "command": "python"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Talon: Restart then show errors since last file change",
       "dependsOn": [
         "Talon tmux restart",
