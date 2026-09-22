@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "PowerShell(python3 --version)",
+      "PowerShell(python .agents/scripts/check_talon_config.py --scope staged)",
+      "Bash(git status *)"
+    ]
+  }
+}
