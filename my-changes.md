@@ -61,6 +61,13 @@ graceful shutdown behaviour is unchanged. The separate asset keeps the default
 mode indicator and copy controls intact and is legible on both themes' light
 button circles.
 
+## Windows Snipping Tool
+
+Say "grab snipping" on Windows to open the Snipping Tool capture overlay with
+Windows+Shift+S.
+The Windows quick pick bottom row also includes a "SNIPPING" button that closes
+the menu and opens the same capture overlay.
+
 ## Delayed polishing warning
 
 The Whisper HUD shows an orange warning below the state line if polished text
