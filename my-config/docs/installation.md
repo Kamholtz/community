@@ -22,9 +22,20 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 
 
+
 # Add bucket
+
 scoop bucket add nerd-fonts
+
 # Maple Mono (ttf format)
+
 scoop install Maple-Mono
+
 # Maple Mono NF
+
 scoop install Maple-Mono-NF
+
+
+winget install Schniz.fnm
+
+
