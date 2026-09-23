@@ -58,8 +58,9 @@ class UserActions:
         # XXX can't use app.focus() and unaware of any other way to
         # automate the way we do with LaunchBar
         # If you have a different search keyboard shortcut configured,
-        # replace ctrl-alt-space with it below.
-        actions.key("ctrl-alt")
+        # replace shift-alt with it below (see apps/fluent_search/hotkeys.md,
+        # "Search using Screen hotkey").
+        actions.key("shift-alt")
         if not wait_for_fluent_search_window():
             return
         # actions.key("backspace")

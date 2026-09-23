@@ -12,7 +12,7 @@ os: windows
 # ^ax$: key(alt-;)
 
 # Search using Screen hotkey (displays labels; screen 1 only)
-^ax screen$: key(ctrl-alt-;)
+^fluent screen$: key(shift-alt)
 
 # -- LaunchBar
 # Search hotkey (in fluent_search.py)
@@ -20,7 +20,9 @@ os: windows
 ^launch brief {user.abbreviation}$: user.fluent_search("apps\t{abbreviation}")
 ^launch bar$: user.fluent_search("")
 # Search using Processes hotkey
-^launch running$: key(ctrl-alt-shift-space)
+# No hotkey is configured for this source in hotkeys.md (Kill process /
+# Windows are both "None"); disabled until one is assigned.
+# ^launch running$: key(ctrl-alt-shift-space)
 
 # -- Contexts
 ^fluent con [<user.text>]: user.fluent_search("processes\t{text or ''}")
