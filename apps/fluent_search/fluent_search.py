@@ -58,9 +58,10 @@ class UserActions:
         # XXX can't use app.focus() and unaware of any other way to
         # automate the way we do with LaunchBar
         # If you have a different search keyboard shortcut configured,
-        # replace shift-alt with it below (see apps/fluent_search/hotkeys.md,
-        # "Search using Screen hotkey").
-        actions.key("shift-alt")
+        # replace ctrl-alt with it below. This opens the general search
+        # bar; shift-alt is a different, Screen-labels-only hotkey (see
+        # apps/fluent_search/hotkeys.md, "Search using Screen hotkey").
+        actions.key("ctrl-alt")
         if not wait_for_fluent_search_window():
             return
         # actions.key("backspace")

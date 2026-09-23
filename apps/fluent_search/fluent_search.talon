@@ -25,7 +25,10 @@ os: windows
 # ^launch running$: key(ctrl-alt-shift-space)
 
 # -- Contexts
-^fluent con [<user.text>]: user.fluent_search("processes\t{text or ''}")
+^fluent kill [<user.text>]: user.fluent_search("kill\t{text or ''}")
+# TODO: confirm the gesture/hotkey Fluent Search uses for "kill all"
+# matching results before enabling.
+# ^fluent kill all$: user.fluent_search("kill\t")
 
 # -- Contexts
 ^fluent walk [<user.text>]: user.fluent_search("windows\t{text or ''}")

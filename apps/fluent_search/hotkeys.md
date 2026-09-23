@@ -4,6 +4,7 @@
 
 | Action | Hotkey |
 |---|---|
+| Search hotkey | Ctrl + Alt |
 | Search using Screen hotkey | Shift + Alt |
 | Search in-window using Screen hotkey | Shift + Win |
 | In-window search hotkey | Alt + ; |
