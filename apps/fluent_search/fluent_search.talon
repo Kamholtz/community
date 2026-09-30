@@ -16,9 +16,9 @@ os: windows
 
 # -- LaunchBar
 # Search hotkey (in fluent_search.py)
-^launch <user.text>$: user.fluent_search("apps\t{text}")
-^launch brief {user.abbreviation}$: user.fluent_search("apps\t{abbreviation}")
-^launch bar$: user.fluent_search("")
+^fluent launch <user.text>$: user.fluent_search("apps\t{text}")
+^fluent launch brief {user.abbreviation}$: user.fluent_search("apps\t{abbreviation}")
+^fluent launch bar$: user.fluent_search("")
 # Search using Processes hotkey
 # No hotkey is configured for this source in hotkeys.md (Kill process /
 # Windows are both "None"); disabled until one is assigned.
@@ -33,6 +33,32 @@ os: windows
 # -- Contexts
 ^fluent walk [<user.text>]: user.fluent_search("windows\t{text or ''}")
 
+# -- Clipboard
+^fluent clip [<user.text>]: user.fluent_search("clipboard\t{text or ''}")
+
+# -- Files
+^fluent files [<user.text>]: user.fluent_search("files\t{text or ''}")
+
 # -- Menu search / Homerow
 # In-app search hotkey
 ^fluent (ax | menu | app): user.fluent_search_in_app(text or "", false)
+
+# -- Result gestures (Ctrl+1/Ctrl+C/etc. shared across most sources; see
+# apps/fluent_search/hotkeys.md)
+^fluent open$: key(ctrl-1)
+^fluent copy$: key(ctrl-c)
+^fluent delete$: key(delete)
+^fluent clear$: key(shift-delete)
+^fluent rename$: key(f2)
+^fluent admin$: key(ctrl-shift-enter)
+
+# -- Clipboard result gestures
+^fluent paste$: key(ctrl-v)
+^fluent keep$: key(ctrl-s)
+
+# -- Files result gestures
+^fluent open folder$: key(ctrl-2)
+^fluent search folder$: key(ctrl-r)
+^fluent open terminal$: key(ctrl-3)
+^fluent open with$: key(ctrl-4)
+^fluent copy file$: key(ctrl-5)
