@@ -5,8 +5,12 @@ code.language: python
 all
 any
 boolean: "bool"
+cron after: cron.after
+cron cancel: cron.cancel
+cron interval: cron.interval
 dick: "dict"
 enumerate
+F S watch: fs.watch
 float
 input
 integer: "int"
@@ -23,16 +27,12 @@ range
 reversed
 round
 set
+settings get: "settings.get"
 sorted
+
+# Talon Python functions
 string: "str"
 sum
 tuple
 type
 zip
-
-# Talon Python functions
-cron after: cron.after
-cron cancel: cron.cancel
-cron interval: cron.interval
-F S watch: fs.watch
-settings get: "settings.get"

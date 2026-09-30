@@ -31,10 +31,10 @@ link: ln
 link soft: ln -s
 M D five sum: md5sum
 make dear: mkdir
-nvim
 mux: tmux
-mux new: tmux new
 mux kill: tmux kill-session -t
+mux new: tmux new
+nvim
 paste
 print format: printf
 pseudo: sudo

@@ -59,16 +59,19 @@ database entry
 dataset
 DDoS
 deps
+deque
 devcontainer
 diff
 difftastic
 direnv
 DNS
+docker compose
 docker sandbox
 Docling
 done
 doom emacs
 doom emacs config
+drag-and-drop
 DuckStation
 E C 2: EC2
 E C S: ECS
@@ -111,6 +114,7 @@ GPIO pins
 grammar
 grep
 gumroad
+gWSL
 H T M L: HTML
 hardcoded
 Hello Fresh
@@ -137,6 +141,7 @@ Macie
 magit
 maker world: makerworld
 markdown
+merge changes
 Metastructure
 Minecraft
 mmdeploy
@@ -191,8 +196,10 @@ proj
 PS1
 pyenv
 pytest
+python REPL
 pytorch
 QRadar
+queue
 quick pick
 R A M: RAM
 R G B: RGB
@@ -214,6 +221,8 @@ S Q L: SQL
 S S H: SSH
 sanitisation
 SD card
+search
+search queue
 Security Information and Event Management
 sequel: SQL
 site param
@@ -244,6 +253,7 @@ TryHackMe
 U D P: UDP
 U I component: UI component
 U I components: UI components
+U R L: URL
 U S B: USB
 unauthorised
 undo tree
@@ -264,11 +274,14 @@ W E P: WEP
 W L A N: WLAN
 W S L: WSL
 W S L 2: WSL2
+wall
+wall thickness
 webpage
 WezTerm
 where the
 Wi-Fi
 windows 11
+Windows X server
 wire plumber: WirePlumber
 WLANs
 work dir

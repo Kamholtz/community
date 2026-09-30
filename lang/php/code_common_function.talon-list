@@ -2,6 +2,8 @@ list: user.code_common_function
 code.language: php
 -
 
+A R sort: arsort
+A sort: asort
 abs
 add slashes: addslashes
 array all: array_all
@@ -18,9 +20,9 @@ array first: array_first
 array flip: array_flip
 array intersect: array_intersect
 array key exists: array_key_exists
-array keys: array_keys
 array key first: array_key_first
 array key last: array_key_last
+array keys: array_keys
 array last: array_last
 array map: array_map
 array merge: array_merge
@@ -36,13 +38,11 @@ array sum: array_sum
 array unique: array_unique
 array unshift: array_unshift
 array values: array_values
-A R sort: arsort
-A sort: asort
 assert
 assert options: assert_options
+base name: basename
 base sixty four decode: base64_decode
 base sixty four encode: base64_encode
-base name: basename
 call user funk: call_user_func
 call user funk array: call_user_func_array
 ceil
@@ -56,6 +56,7 @@ dir name: dirname
 echo
 empty
 end
+err sort: rsort
 error log: error_log
 explode
 F close: fclose
@@ -71,8 +72,8 @@ file put contents: file_put_contents
 filter var: filter_var
 floor
 function exists: function_exists
-get class: get_class
 get C W D: getcwd
+get class: get_class
 get envy: getenv
 get opt: getopt
 get type: gettype
@@ -102,11 +103,11 @@ json validate: json_validate
 K R sort: krsort
 K sort: ksort
 L trim: ltrim
+make dir: mkdir
 max
 method exists: method_exists
 micro time: microtime
 min
-make dir: mkdir
 number format: number_format
 parse url: parse_url
 path info: pathinfo
@@ -119,7 +120,6 @@ preg split: preg_split
 print
 print F: printf
 print R: print_r
-rtrim
 rand
 range
 real path: realpath
@@ -127,22 +127,22 @@ rename
 reset
 rewind
 round
-err sort: rsort
+rtrim
 serialize
 shuffle
 sort
 sprint F: sprintf
 stir ends with: str_ends_with
-stir rye pos: strripos
-stir R pos: strrpos
-stir to time: strtotime
 stir len: strlen
 stir pad: str_pad
 stir pos: strpos
+stir R pos: strrpos
 stir repeat: str_repeat
 stir replace: str_replace
+stir rye pos: strripos
 stir stir: strstr
 stir to lower: strtolower
+stir to time: strtotime
 stir to upper: strtoupper
 stir tr: strtr
 stir val: strval
@@ -150,12 +150,12 @@ sub stir: substr
 tempnam
 time
 trim
+U A sort: uasort
+U C first: ucfirst
+U sort: usort
 ucwords
 unlink
 url decode: urldecode
 url encode: urlencode
 var dump: var_dump
 var export: var_export
-U A sort: uasort
-U C first: ucfirst
-U sort: usort

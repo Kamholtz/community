@@ -5,12 +5,12 @@ code.language: python
 add
 append
 are strip: rstrip
-elle strip: lstrip
 capitalize
 case fold: "casefold"
 clear
 copy
 count
+elle strip: lstrip
 ends with: "endswith"
 extend
 find
