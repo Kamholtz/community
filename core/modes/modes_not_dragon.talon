@@ -38,7 +38,7 @@ not speech.engine: dragon
     user.whisper_toggle()
 
 key(f1):
-    user.whisper_toggle()
+    user.toggle_f1_input_mode()
 
 key(alt-m):
-    user.whisper_toggle()
+    user.toggle_handy_transcription()

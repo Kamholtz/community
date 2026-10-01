@@ -4,8 +4,10 @@ mode: sleep
 not speech.engine: dragon
 -
 
-# Handy transcribes while ctrl-space is held down. Saying "wombat" starts the
-# hold and puts speech to sleep (like `porcupine`) so nothing else can fire;
-# saying it again releases the keys and wakes speech back up.
+# Handy toggles transcription with Ctrl+Space. Saying "wombat" sends that
+# shortcut without changing Talon's speech state.
 ^wombat$:
-    user.handy_toggle()
+    user.toggle_handy_transcription()
+
+^wombat toggle$:
+    user.toggle_f1_handy_mode()
