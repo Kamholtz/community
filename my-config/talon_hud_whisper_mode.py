@@ -86,4 +86,9 @@ class Actions:
     def hud_switch_theme(theme_name: str):
         """Refresh Whisper controls after the HUD changes theme."""
         actions.next(theme_name)
-        cron.after("50ms", actions.user.whisper_hud_refresh_button)
+        cron.after("50ms", _refresh_hud_buttons)
+
+
+def _refresh_hud_buttons() -> None:
+    actions.user.whisper_hud_refresh_button()
+    actions.user.transcription_hud_refresh_button()

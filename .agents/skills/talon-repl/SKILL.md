@@ -55,6 +55,26 @@ Execute multiple statements by piping multi-line input:
 echo -e "from talon import actions\nprint(actions.app.name())" | ~/.talon/bin/repl
 ```
 
+### PowerShell on Windows
+
+Talon's Windows REPL receives piped input as one Python statement. Do not rely
+on PowerShell backticks or pipe several Python statements directly: encode the
+source and send a single `exec(compile(...))` expression instead.
+
+```powershell
+$talonDir = "C:\Program Files\Talon"
+$source = @'
+from talon import registry
+print("user.some_action" in registry.actions)
+'@
+$encoded = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($source))
+$command = "import base64; exec(compile(base64.b64decode('$encoded'), '<repl>', 'exec'))"
+$command | & "$talonDir\python.exe" "$talonDir\repl.py"
+```
+
+Use the installed Talon directory if it differs. This is especially useful for
+read-only inspections and compound statements such as loops or `try` blocks.
+
 For compound statements such as loops, `try`/`except`, or nested parsing logic, wrap the payload in `exec("""...""")` when piping it. This avoids REPL indentation and block-submission issues:
 ```bash
 printf 'exec("""from talon import actions\nfor name in [\"one\", \"two\"]:\n    print(name)\n""")\n' | ~/.talon/bin/repl
