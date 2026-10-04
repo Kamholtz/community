@@ -13,6 +13,26 @@ os: windows
 
 # Search using Screen hotkey (displays labels; screen 1 only)
 ^fluent screen$: key(shift-alt)
+^fluent (click | left click)$:
+    key(shift-alt)
+    sleep(500ms)
+    key(1)
+^fluent double click$:
+    key(shift-alt)
+    sleep(500ms)
+    key(2)
+^fluent select click$:
+    key(shift-alt)
+    sleep(500ms)
+    key(3)
+^fluent right click$:
+    key(shift-alt)
+    sleep(500ms)
+    key(4)
+^fluent move mouse$:
+    key(shift-alt)
+    sleep(500ms)
+    key(5)
 
 # -- LaunchBar
 # Search hotkey (in fluent_search.py)
@@ -43,8 +63,11 @@ os: windows
 # In-app search hotkey
 ^fluent (ax | menu | app): user.fluent_search_in_app(text or "", false)
 
-# -- Result gestures (Ctrl+1/Ctrl+C/etc. shared across most sources; see
+# -- Result gestures (Ctrl+/Ctrl+C/etc. shared across most sources; see
 # apps/fluent_search/hotkeys.md)
+^fluent preview$: key(alt-p)
+^fluent preview window$: key(shift-enter)
+^fluent pin$: key(alt-ctrl-p)
 ^fluent open$: key(ctrl-1)
 ^fluent copy$: key(ctrl-c)
 ^fluent delete$: key(delete)
