@@ -13,24 +13,25 @@ os: windows
 
 # Search using Screen hotkey (displays labels; screen 1 only)
 ^fluent screen$: key(shift-alt)
+# Search using Screen hotkey scoped to the focused app/window.
 ^fluent (click | left click)$:
-    key(shift-alt)
+    key(shift-super)
     sleep(500ms)
     key(1)
 ^fluent double click$:
-    key(shift-alt)
+    key(shift-super)
     sleep(500ms)
     key(2)
 ^fluent select click$:
-    key(shift-alt)
+    key(shift-super)
     sleep(500ms)
     key(3)
 ^fluent right click$:
-    key(shift-alt)
+    key(shift-super)
     sleep(500ms)
     key(4)
 ^fluent move mouse$:
-    key(shift-alt)
+    key(shift-super)
     sleep(500ms)
     key(5)
 
