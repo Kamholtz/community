@@ -13,6 +13,27 @@ os: windows
 
 # Search using Screen hotkey (displays labels; screen 1 only)
 ^fluent screen$: key(shift-alt)
+# Search using Screen hotkey (displays labels; screen 1 only), then activate a gesture.
+^fluent screen (click | left click)$:
+    key(shift-alt)
+    sleep(500ms)
+    key(1)
+^fluent screen double click$:
+    key(shift-alt)
+    sleep(500ms)
+    key(2)
+^fluent screen select click$:
+    key(shift-alt)
+    sleep(500ms)
+    key(3)
+^fluent screen right click$:
+    key(shift-alt)
+    sleep(500ms)
+    key(4)
+^fluent screen move mouse$:
+    key(shift-alt)
+    sleep(500ms)
+    key(5)
 # Search using Screen hotkey scoped to the focused app/window.
 ^fluent (click | left click)$:
     key(shift-super)
