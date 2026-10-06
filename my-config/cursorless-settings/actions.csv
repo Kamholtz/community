@@ -44,7 +44,7 @@ paste, pasteFromClipboard
 phones, nextHomophone
 later, setSelectionAfter
 pour, editNewLineAfter
-prior, setSelectionBeforer
+prior, setSelectionBefore
 puff, insertEmptyLinesAround
 quick fix, showQuickFix
 reference, showReferences
