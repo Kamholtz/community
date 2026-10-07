@@ -29,7 +29,7 @@ Symbol,Mode (command/dictation/both),Spoken Forms (separated with commas)
 =,command,equals
 +,command,plus
 ~,command,tilde
-_,command,down score,underscore
+_,command,down score,underscore,bridge
 (,both,paren,L paren,left paren
 ),both,R paren,right paren,raren
 [,command,lack,L brack,bracket,L bracket,left bracket,square,L square,left square,lack
