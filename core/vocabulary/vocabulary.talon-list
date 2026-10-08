@@ -302,3 +302,4 @@ X11 forwarding
 touch allow
 graph
 math
+wrap
