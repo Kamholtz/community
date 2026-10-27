@@ -98,7 +98,7 @@
       }
     },
     {
-      "label": "Git: Commit Talon vocabulary lists",
+      "label": "Git: Commit Talon lists",
       "type": "process",
       "command": "python3",
       "args": ["${workspaceFolder}/my-config/scripts/commit_vocabulary.py"],
