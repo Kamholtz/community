@@ -90,6 +90,44 @@ class TranscriptionHudButtonTests(unittest.TestCase):
 
 
 class HandySpeechSuppressionTests(unittest.TestCase):
+    def test_hud_click_uses_the_handy_mode_selector(self):
+        source = (ROOT / "mode_toggle.py").read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        publish_function = next(
+            node
+            for node in tree.body
+            if isinstance(node, ast.FunctionDef)
+            and node.name == "_publish_transcription_hud_button"
+        )
+        create_icon_call = next(
+            node
+            for node in ast.walk(publish_function)
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "hud_create_status_icon"
+        )
+        callback = create_icon_call.args[4]
+
+        self.assertIsInstance(callback, ast.Name)
+        self.assertEqual(callback.id, "_toggle_f1_handy_mode_from_hud")
+
+        hud_callback = next(
+            node
+            for node in tree.body
+            if isinstance(node, ast.FunctionDef)
+            and node.name == "_toggle_f1_handy_mode_from_hud"
+        )
+        self.assertIsInstance(hud_callback.args.vararg, ast.arg)
+        self.assertEqual(hud_callback.args.vararg.arg, "_args")
+        action_call = next(
+            node
+            for node in ast.walk(hud_callback)
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "toggle_f1_handy_mode"
+        )
+        self.assertEqual(action_call.args, [])
+
     def test_handy_transcription_disables_and_reenables_speech(self):
         source = (ROOT / "mode_toggle.py").read_text(encoding="utf-8")
         tree = ast.parse(source)

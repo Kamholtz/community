@@ -141,6 +141,11 @@ def _transcription_hud_image() -> str:
     return _transcription_hud_details()[0]
 
 
+def _toggle_f1_handy_mode_from_hud(*_args) -> None:
+    """Toggle Handy mode after discarding HUD click event arguments."""
+    actions.user.toggle_f1_handy_mode()
+
+
 def _publish_transcription_hud_button(*_args) -> None:
     image, accessible_name = _transcription_hud_details()
     try:
@@ -150,7 +155,7 @@ def _publish_transcription_hud_button(*_args) -> None:
             image,
             None,
             accessible_name,
-            actions.user.toggle_f1_input_mode,
+            _toggle_f1_handy_mode_from_hud,
         )
         _transcription_hud_button.publish_icon(icon)
     except Exception:

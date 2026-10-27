@@ -1,5 +1,11 @@
 # My Changes
 
+## Handy HUD mode selector
+
+Clicking the transcription-mode status icon now changes the Handy selection
+between Talon dictation and Handy transcription, matching the `handy toggle`
+voice command. It no longer runs the currently selected input action.
+
 ## Pytest gate falls back to uv
 
 `check_talon_config.py`'s pytest gate previously skipped silently whenever
