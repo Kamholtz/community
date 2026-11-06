@@ -7,8 +7,8 @@ tag(): user.splits
 tag(): user.tabs
 
 
-please [<user.text>]:
-    key('ctrl-P')
+^please [<user.text>]:
+    key('ctrl-shift-p')
     insert(user.text or "")
 
 settings():

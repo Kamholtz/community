@@ -327,7 +327,7 @@ def obsidian_palette_command(command_id: str, fallback=False):
 class Actions:
     def command_palette_key():
         """Show command palette"""
-        actions.key("ctrl-p")
+        actions.key("ctrl-shift-p")
 
     def obsidian(command_id: str):
         """Invoke an action by Obsidian command id"""

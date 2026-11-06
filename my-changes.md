@@ -267,3 +267,9 @@ Added a persistent Whisper toggle to the global quick-pick bottom row. Green ind
 - Added a saved green/grey polishing toggle to the Whisper status bar and panel, with persistent Add/Remove menu support.
 - Explicit on waits for polished text; off inserts the original final transcript and ignores polished replacements. Each final transcript captures its choice, so toggling does not release withheld text.
 - Existing settings remain active until the new toggle is used; legacy polished-only commands restore the legacy policy for subsequent transcripts. Session polishing and server computation are unchanged.
+
+## 2026-11-06: Obsidian command palette search
+
+- Aligned the palette shortcut with the local `Ctrl+Shift+P` binding and
+  enabled Obsidian's built-in CLI route for Talon commands, including opening
+  the Command Palette for `please` searches.
