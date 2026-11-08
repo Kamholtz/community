@@ -21,4 +21,4 @@ class Actions:
         else:
             actions.tracking.control_toggle(True)
             if not actions.tracking.control_enabled():
-                actions.user.quick_pick_show_or_app_show()
+                actions.user.quick_pick_show_or_app_show_with_voice_labels()

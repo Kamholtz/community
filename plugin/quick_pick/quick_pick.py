@@ -171,6 +171,12 @@ class Button:
     close_menu: Optional[bool] = True
 
 
+VOICE_LABEL_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+VOICE_LABEL_BACKGROUND = "202124"
+VOICE_LABEL_BORDER = "008cff"
+VOICE_LABEL_TEXT = "ffffff"
+
+
 class Size:
     def __init__(self, scale: float):
         self.text = 24 * scale
@@ -207,6 +213,8 @@ current_menu: Optional[QuickPickMenu] = None
 whisper_refresh_job = None
 last_whisper_state: Optional[bool] = None
 origin_window = None
+voice_labels_enabled = False
+voice_label_buttons: dict[str, Button] = {}
 
 
 def tracking_control_off_restore_mouse():
@@ -314,6 +322,60 @@ def add_button(
         rect.center.x + text_rect.x - text_rect.width / 2,
         rect.center.y - text_rect.y - text_rect.height / 2,
     )
+
+
+def voice_label_for_index(index: int) -> str:
+    """Return an alphabetic label for a zero-based button index."""
+    label = ""
+    index += 1
+    while index:
+        index, remainder = divmod(index - 1, len(VOICE_LABEL_LETTERS))
+        label = VOICE_LABEL_LETTERS[remainder] + label
+    return label
+
+
+def draw_voice_labels(c: SkiaCanvas):
+    """Draw large voice labels beneath the current quick-pick buttons."""
+    global voice_label_buttons
+    voice_label_buttons = {}
+    if not voice_labels_enabled or not size:
+        return
+
+    c.paint.style = c.paint.Style.FILL
+    c.paint.typeface = FONT_FAMILY
+    c.paint.textsize = size.text * 0.75
+    for index, button in enumerate(buttons):
+        label = voice_label_for_index(index)
+        voice_label_buttons[label] = button
+        text_rect = c.paint.measure_text(label)[1]
+        padding_x = size.margin * 0.45
+        padding_y = size.margin * 0.25
+        badge = Rect(
+            button.rect.center.x - text_rect.width / 2 - padding_x,
+            button.rect.y + button.rect.height + size.margin * 0.35,
+            text_rect.width + padding_x * 2,
+            text_rect.height + padding_y * 2,
+        )
+        if badge.y + badge.height > c.height - size.margin:
+            badge.y = button.rect.y - size.margin * 0.35 - badge.height
+
+        rounded_badge = RoundRect.from_rect(
+            badge, x=size.corner_radius * 0.35, y=size.corner_radius * 0.35
+        )
+        c.paint.style = c.paint.Style.FILL
+        c.paint.color = VOICE_LABEL_BACKGROUND
+        c.draw_rrect(rounded_badge)
+        c.paint.style = c.paint.Style.STROKE
+        c.paint.stroke_width = max(1, size.text * 0.08)
+        c.paint.color = VOICE_LABEL_BORDER
+        c.draw_rrect(rounded_badge)
+        c.paint.style = c.paint.Style.FILL
+        c.paint.color = VOICE_LABEL_TEXT
+        c.draw_text(
+            label,
+            badge.center.x + text_rect.x - text_rect.width / 2,
+            badge.center.y - text_rect.y - text_rect.height / 2,
+        )
 
 
 def draw_horizontal(c: SkiaCanvas, options: list[QuickPickOption], x: float, y: float):
@@ -618,6 +680,8 @@ def on_draw(c: SkiaCanvas):
             c, view.layout_options, c.rect.center.x + size.offset, c.rect.center.y
         )
 
+    draw_voice_labels(c)
+
 
 def get_button_for_position(pos: Point2d):
     for button in buttons:
@@ -635,6 +699,24 @@ def run_callback(callback: Callable[[], None]) -> bool:
         return False
 
 
+def activate_button(button: Button) -> bool:
+    global repeater_callback
+    if button.close_menu:
+        hide()
+        if origin_window:
+            try:
+                actions.user.switcher_focus_window(origin_window)
+            except Exception:
+                pass
+    if button.move_mouse and mouse_pos:
+        actions.mouse_move(mouse_pos.x, mouse_pos.y)
+    actions.sleep("150ms")
+    if run_callback(button.callback):
+        repeater_callback = button.callback
+        return True
+    return False
+
+
 def on_mouse(e: MouseEvent):
     global hover_rect, repeater_callback
     button = get_button_for_position(e.gpos)
@@ -648,29 +730,19 @@ def on_mouse(e: MouseEvent):
 
     elif e.event == "mouseup" and e.button == 0:
         if button:
-            if button.close_menu:
-                hide()
-                if origin_window:
-                    try:
-                        actions.user.switcher_focus_window(origin_window)
-                    except Exception:
-                        pass
-            if button.move_mouse and mouse_pos:
-                actions.mouse_move(mouse_pos.x, mouse_pos.y)
-            actions.sleep("150ms")
-            if run_callback(button.callback):
-                repeater_callback = button.callback
+            activate_button(button)
         else:
             hide()
 
 
-def show(menu: QuickPickMenu):
-    global canvas, current_menu, mouse_pos, size
+def show(menu: QuickPickMenu, voice_labels: bool = False):
+    global canvas, current_menu, mouse_pos, size, voice_labels_enabled
     global whisper_refresh_job, last_whisper_state, origin_window
     if canvas:
         hide()
 
     current_menu = menu
+    voice_labels_enabled = voice_labels
     origin_window = ui.active_window()
     mouse_pos = Point2d(actions.mouse_x(), actions.mouse_y())
     screen: Screen = ui.main_screen()
@@ -685,7 +757,7 @@ def show(menu: QuickPickMenu):
 
 
 def hide():
-    global canvas, current_menu, hover_rect
+    global canvas, current_menu, hover_rect, voice_labels_enabled, voice_label_buttons
     global whisper_refresh_job
     if whisper_refresh_job is not None:
         cron.cancel(whisper_refresh_job)
@@ -699,6 +771,8 @@ def hide():
     canvas = None
     current_menu = None
     hover_rect = None
+    voice_labels_enabled = False
+    voice_label_buttons = {}
 
 
 @mod.action_class
@@ -713,6 +787,19 @@ class Actions:
             show(get_global_menu())
         else:
             hide()
+
+    def quick_pick_show_with_voice_labels():
+        """Show the global quick pick with alphabetic voice labels."""
+        if not canvas:
+            show(get_global_menu(), voice_labels=True)
+        else:
+            hide()
+
+    def quick_pick_select_label(label: str):
+        """Activate the currently displayed alphabetic voice label."""
+        button = voice_label_buttons.get(label.upper())
+        if canvas and button:
+            activate_button(button)
 
     def quick_pick_global_show():
         """Show the global quick pick menu."""
@@ -738,6 +825,18 @@ class Actions:
         """Show global quick pick, or switch from global to the active app menu."""
         if not canvas:
             show(get_global_menu())
+            return
+
+        menu = get_app_menu()
+        if current_menu and current_menu.id == "global" and menu:
+            switch_menu(menu)
+        else:
+            hide()
+
+    def quick_pick_show_or_app_show_with_voice_labels():
+        """Show quick pick with voice labels, including the active app menu."""
+        if not canvas:
+            show(get_global_menu(), voice_labels=True)
             return
 
         menu = get_app_menu()
