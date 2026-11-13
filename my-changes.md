@@ -1,5 +1,30 @@
 # My Changes
 
+## Onshape document shortcuts
+
+Added voice commands for Onshape keyboard shortcuts in
+`my-config/apps/onshape/onshape.talon`. The commands are active only when
+Firefox reports `cad.onshape.com` with a browser path beginning with
+`/documents/`.
+
+## Contact student-number insertion
+
+Private contact records can now provide a string `student_number`. Say a
+contact's full name, first name, or nickname followed by `student number` to
+insert it through prose dictation. Duplicate spoken aliases use the first
+matching record in `private/contacts.json`.
+
+## Personal configuration plans
+
+Personal Talon implementation plans now live in `my-config/plans/`. The
+contact student-number insertion plan records the proposed private-contact
+extension, its validation steps and rollback path.
+
+## Firefox Bitwarden sidebar
+
+In Firefox, saying `sidebar bitwarden` or `panel bitwarden` now sends
+`Shift+Alt+Y` to open the Bitwarden extension sidebar.
+
 ## Handy HUD mode selector
 
 Clicking the transcription-mode status icon now changes the Handy selection
