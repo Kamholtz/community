@@ -9,59 +9,83 @@ browser.path: /^\/documents\//
 -
 
 # General
+# Command lifecycle
 commit and continue: key(shift-enter)
 commit command: key(enter)
 exit command: key(escape)
+
+# Selection and clipboard
 deselect: key(space)
 copy feature: key(ctrl-c)
-curve analysis: key(shift-c)
-delete feature: key(delete)
-dihedral analysis: key(shift-d)
-feature search: key(ctrl-shift-f)
-report bug: key(ctrl-u)
-flip axis: key(a)
-mate connectors toggle: key(k)
-shortcuts toggle: key(shift-/)
-mate connector: key(ctrl-m)
-measure: key([)
 paste feature: key(ctrl-v)
+delete feature: key(delete)
+
+# Analysis and inspection
+curve analysis: key(shift-c)
+dihedral analysis: key(shift-d)
+measure: key([)
+
+# Search, navigation, and display
+feature search: key(ctrl-shift-f)
+shortcuts toggle: key(shift-/)
 recent tabs: key(ctrl-space)
-redo: key(ctrl-y)
 rename instance: key(shift-n)
-construction tool: key(q)
 search tools: key(alt-c)
 selection filter: key(`)
 shortcut toolbar: key(s)
 tab manager: key(alt-t)
+
+# Editing and recovery
+construction tool: key(q)
+flip axis: key(a)
+mate connectors toggle: key(k)
+mate connector: key(ctrl-m)
+redo: key(ctrl-y)
 undo: key(ctrl-z)
+report bug: key(ctrl-u)
 
 # Part Studio
+# Feature creation
 extrude: key(shift-e)
 fillet: key(shift-f)
-sketches toggle: key(shift-h)
-rollback bar up: key(shift-up)
-rollback bar down: key(shift-down)
 revolve: key(shift-w)
 new sketch: key(shift-s)
 
+# Feature tree and visibility
+sketches toggle: key(shift-h)
+rollback bar up: key(shift-up)
+rollback bar down: key(shift-down)
+
 # Assembly
-mates toggle: key(j)
+# Components and mates
 insert parts: key(i)
 fasten mate: key(m)
+mates toggle: key(j)
 show mates toggle: key(h)
 snap mode toggle: key(shift-s)
 
 # 3D View
+# Standard views
 back view: key(shift-2)
 bottom view: key(shift-6)
 front view: key(shift-1)
+isometric view: key(shift-7)
+named views: key(shift-v)
+right view: key(shift-4)
+top view: key(shift-5)
+normal view: key(n)
+
+# Visibility and display quality
 hide construction geometry: key(shift-p)
 hide instance: key(y)
 planes toggle: key(p)
-isometric view: key(shift-7)
 isolate instance: key(shift-i)
 transparent instance: key(shift-t)
-named views: key(shift-v)
+show hidden instance: key(shift-y)
+high quality: key(shift-r)
+section view: key(shift-x)
+
+# Pan and rotate
 pan left: key(ctrl-shift-left)
 pan right: key(ctrl-shift-right)
 pan up: key(ctrl-shift-up)
@@ -74,69 +98,80 @@ rotate left ninety: key(shift-left)
 rotate right ninety: key(shift-right)
 rotate up ninety: key(shift-up)
 rotate down ninety: key(shift-down)
-right view: key(shift-4)
 coarse rotate left: key(left)
 coarse rotate right: key(right)
 coarse rotate up: key(up)
 coarse rotate down: key(down)
-section view: key(shift-x)
-show hidden instance: key(shift-y)
-top view: key(shift-5)
-high quality: key(shift-r)
-normal view: key(n)
+
+# Zoom
 zoom in: key(shift-z)
 zoom out: key(z)
 fit view: key(f)
 zoom box: key(w)
 
 # Sketch
+# Geometry
 three point arc: key(a)
 centre point circle: key(c)
 centre point rectangle: key(r)
-coincident constraint: key(i)
-concentric constraint: key(shift-o)
 corner rectangle: key(g)
-curvature: key(shift-u)
-dimension constraint: key(d)
-equal constraint: key(e)
-extend: key(x)
-fix constraint: key(shift-j)
-horizontal constraint: key(h)
 line: key(l)
 line tangent arc: key(shift-a)
+sketch point: key(shift-s)
+
+# Constraints
+coincident constraint: key(i)
+concentric constraint: key(shift-o)
+dimension constraint: key(d)
+equal constraint: key(e)
+fix constraint: key(shift-j)
+horizontal constraint: key(h)
 midpoint constraint: key(shift-m)
 normal constraint: key(shift-k)
-offset: key(o)
 parallel constraint: key(b)
 perpendicular constraint: key(shift-l)
 pierce constraint: key(shift-g)
-sketch point: key(shift-s)
-sketch fillet: key(shift-f)
 symmetric constraint: key(shift-q)
 tangent constraint: key(t)
-trim: key(m)
-use project: key(u)
 vertical constraint: key(v)
 
+# Modify and project
+curvature: key(shift-u)
+extend: key(x)
+offset: key(o)
+sketch fillet: key(shift-f)
+trim: key(m)
+use project: key(u)
+
 # Feature Studio
+# Navigation and commit
 feature studio back: key(ctrl-])
+feature studio forward: key(ctrl-[)
 feature studio commit: key(ctrl-s)
 feature studio commit all: key(ctrl-shift-s)
+
+# Editor assistance
 dismiss autocomplete: key(escape)
-feature studio forward: key(ctrl-[)
 top level symbols: key(ctrl-shift-o)
 
 # Drawings
-diameter dimension: key(shift-d)
-foreshorten dimension: key(shift-h)
-sheets toggle: key(ctrl-s)
+# Sheet navigation
 first sheet: key(home)
 last sheet: key(end)
-maximum minimum dimension: key(ctrl-m)
 next sheet: key(page-down)
-note tool: key(n)
 previous sheet: key(page-up)
+
+# Sheets and views
+sheets toggle: key(ctrl-s)
 projected view: key(p)
-midpoint quad points: key(shift-q)
+
+# Annotation and dimensions
+note tool: key(n)
+diameter dimension: key(shift-d)
+foreshorten dimension: key(shift-h)
+maximum minimum dimension: key(ctrl-m)
 radial dimension: key(shift-r)
+
+# Drawing updates and selection aids
+midpoint quad points: key(shift-q)
 update drawing: key(ctrl-q)
