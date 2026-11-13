@@ -21,6 +21,7 @@ babashka
 based off
 Binwalk
 bitwarden
+breadth-first
 Brisbane
 Broken Access Control
 bubblewrap
@@ -89,6 +90,7 @@ eventref
 extract screen
 eye tracker
 F Z F: fzf
+failing
 file history
 file path
 fishing attack
@@ -96,6 +98,8 @@ fluent search
 for
 fork
 G P I O: GPIO
+gaze O C R: gaze OCR
+gemma
 git amend
 git commit
 git commit amend
@@ -112,6 +116,7 @@ Goodna
 GPIO pin
 GPIO pins
 grammar
+graph
 grep
 gumroad
 gWSL
@@ -141,6 +146,7 @@ Macie
 magit
 maker world: makerworld
 markdown
+math
 merge changes
 Metastructure
 Minecraft
@@ -150,6 +156,7 @@ mmengine
 mmpose
 mmsegmentation
 mount
+mouse
 multiboard
 N F S: NFS
 N map: nmap
@@ -175,6 +182,7 @@ O R M: ORM
 O W A S P: OWASP
 O wasp: OWASP
 Ollama
+ollama
 on shape: OnShape
 OpenAPI
 openssh
@@ -188,6 +196,7 @@ pi agent
 pilates
 pip install
 PopOS
+port scan
 pre-commit
 pre-commit hook
 proceed
@@ -240,14 +249,15 @@ tailscale
 talon commands
 talon config
 talon gaze O C R: talon gaze OCR
-gaze O C R: gaze OCR
 Tauri
 tensorboard
 TensorRT
+test suite
 tidewave
 tmux
 tmuxinator
 tobii eye tracker
+touch allow
 treesitter
 treesitter grammar
 TryHackMe
@@ -256,6 +266,7 @@ U I component: UI component
 U I components: UI components
 U R L: URL
 U S B: USB
+U U I D: UUID
 unauthorised
 undo tree
 unencrypted
@@ -269,6 +280,7 @@ V R A M: VRAM
 Virtual Private Cloud
 VirtualBox
 vision latency
+Vocaster Two
 VPN
 VSCode
 W E P: WEP
@@ -285,10 +297,13 @@ windows 11
 Windows X server
 wire plumber: WirePlumber
 WLANs
+wombat
 work dir
 workspace
 worktree
+wrap
 X mod map:xmodmap
+X11 forwarding
 Y A R A: YARA
 Y L D L P: yt-dlp
 yeah
@@ -298,18 +313,3 @@ Zed Attack Proxy
 Zotero
 zoxide
 zsh
-wombat
-X11 forwarding
-touch allow
-graph
-math
-wrap
-test suite
-failing
-breadth-first
-mouse
-port scan
-U U I D: UUID
-gemma
-ollama
-Vocaster Two

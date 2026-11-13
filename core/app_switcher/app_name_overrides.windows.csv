@@ -1,11 +1,11 @@
 Spoken form, App name/.exe (or list an app name/.exe by itself on a line to exclude it)
-grip, DataGrip
-one note, ONENOTE
-lock, slack.exe
 app, slack.exe
+grip, DataGrip
+lock, slack.exe
 lockapp, slack.exe
+one note, ONENOTE
 pycharm, pycharm64.exe
-webstorm, webstorm64.exe
-term, wezterm-gui.exe
 studio, devenv.exe
 team chat, teams
+term, wezterm-gui.exe
+webstorm, webstorm64.exe

@@ -39,10 +39,10 @@ increment, increment
 indent, indentLine
 inspect, showDebugHover
 join, joinLines
+later, setSelectionAfter
 move, moveToTarget
 paste, pasteFromClipboard
 phones, nextHomophone
-later, setSelectionAfter
 pour, editNewLineAfter
 prior, setSelectionBefore
 puff, insertEmptyLinesAround

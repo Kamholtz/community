@@ -1,58 +1,58 @@
 File extension,Name
-.py,dot pie
-.py,dot python
-.ex,dot elixir
-.talon,dot talon
-.md,dot mark down
-.sh,dot shell
-.vim,dot vim
+.bin,dot bin
+.bin,dot bend
 .c,dot see
+.class,dot class
+.clj,dot clojure
+.cljc,dot clojure common
+.cljs,dot clojure script
+.co.uk,dot co dot UK
+.com,dot com
 .cs,dot see sharp
 .cshtml,dot see sharp html
 .cshtml,dot razor
-.com,dot com
-.net,dot net
-.org,dot org
-.us,dot us
-.us,dot U S
-.co.uk,dot co dot UK
-.exe,dot exe
-.bin,dot bin
-.bin,dot bend
-.json,dot jason
-.json,dot jay son
-.js,dot J S
-.js,dot java script
-.ts,dot TS
-.ts,dot type script
+.css,dot css
 .csv,dot csv
 .csv,totssv
 .csv,tot csv
 .csv,dot cassie
-.txt,dot text
-.jl,dot julia
-.jl,dot J L
-.html,dot html
-.css,dot css
-.sass,dot sass
-.svg,dot svg
-.png,dot png
-.wav,dot wave
-.flac,dot flack
+.devcontainer,dot devcontainer
 .doc,dot doc
 .docx,dot doc x
-.pdf,dot pdf
-.tar,dot tar
+.edn,dot edn
+.ex,dot elixir
+.exe,dot exe
+.flac,dot flack
 .gz,dot g z
 .gzip,dot g zip
-.zip,dot zip
-.toml,dot toml
+.html,dot html
 .java,dot java
-.class,dot class
-.log,dot log
-.devcontainer,dot devcontainer
+.jl,dot julia
+.jl,dot J L
+.js,dot J S
+.js,dot java script
 .json,dot jason
-.clj,dot clojure
-.cljs,dot clojure script
-.cljc,dot clojure common
-.edn,dot edn
+.json,dot jay son
+.json,dot jason
+.log,dot log
+.md,dot mark down
+.net,dot net
+.org,dot org
+.pdf,dot pdf
+.png,dot png
+.py,dot pie
+.py,dot python
+.sass,dot sass
+.sh,dot shell
+.svg,dot svg
+.talon,dot talon
+.tar,dot tar
+.toml,dot toml
+.ts,dot TS
+.ts,dot type script
+.txt,dot text
+.us,dot us
+.us,dot U S
+.vim,dot vim
+.wav,dot wave
+.zip,dot zip

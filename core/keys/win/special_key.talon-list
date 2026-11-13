@@ -15,7 +15,7 @@ minus: minus
 page down: pagedown
 page up: pageup
 print screen: printscr
+scrub: backspace
 space: space
 tab: tab
 wipe: backspace
-scrub: backspace

@@ -1,4 +1,3 @@
-Command, Key binding, Short form, Spoken form
 abort-recursive-edit, ctrl-]
 auto-fill-mode,, auto-f
 backward-paragraph, meta-{
@@ -16,6 +15,7 @@ byte-recompile-directory
 byte-recompile-file
 clear-rectangle, ctrl-x r c
 clone-indirect-buffer,, clo-i
+Command, Key binding, Short form, Spoken form
 comment-dwim, meta-;
 comment-line,, comment-l
 comment-region, ctrl-c ;
@@ -33,9 +33,9 @@ delete-rectangle, ctrl-x r d
 delete-window, ctrl-x 0
 describe-character,, desc-char
 diff-buffer-with-file,, d-b-w-f
-display-buffer, ctrl-x 4 ctrl-o
 dired-jump, ctrl-x ctrl-j
 dired-jump-other-window, ctrl-x 4 ctrl-j
+display-buffer, ctrl-x 4 ctrl-o
 display-buffer, ctrl-x 4 ctrl-o
 display-line-numbers-mode,, dis-num
 down-list, meta-ctrl-down
