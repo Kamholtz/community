@@ -240,6 +240,7 @@ tailscale
 talon commands
 talon config
 talon gaze O C R: talon gaze OCR
+gaze O C R: gaze OCR
 Tauri
 tensorboard
 TensorRT
@@ -306,3 +307,9 @@ wrap
 test suite
 failing
 breadth-first
+mouse
+port scan
+U U I D: UUID
+gemma
+ollama
+Vocaster Two
