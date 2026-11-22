@@ -1,5 +1,9 @@
 # My Changes
 
+## RustDesk paste insertion
+
+RustDesk now uses a paste-to-insert threshold of `1`.
+
 ## Onshape document shortcuts
 
 Added voice commands for Onshape keyboard shortcuts in
